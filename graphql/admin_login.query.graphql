@@ -1,0 +1,6 @@
+mutation AdminLogin($data: AdminLoginInput!) {
+    adminLogin(data: $data) {
+        accessToken
+        refreshToken
+    }
+}

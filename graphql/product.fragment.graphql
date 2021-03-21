@@ -1,0 +1,22 @@
+fragment Product on Product {
+    id
+    name
+    price
+    image
+    author {
+        id
+        name
+    }
+    categories {
+        id
+        name
+    }
+}
+
+fragment PaginatedProductResponse on PaginatedProductResponse {
+    items {
+        ...Product
+    }
+    hasMore
+    total
+}

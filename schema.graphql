@@ -1,0 +1,469 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+type Admin {
+    createdAt: DateTime!
+    email: String!
+    id: ID!
+    name: String!
+    tokenVersion: Int!
+    updatedAt: DateTime!
+}
+
+type Author {
+    createdAt: DateTime!
+    id: ID!
+    image: String!
+    name: String!
+    overview: String!
+    products(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedProductResponse!
+    updatedAt: DateTime!
+}
+
+type Category {
+    createdAt: DateTime!
+    id: ID!
+    name: String!
+    products(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedProductResponse!
+    updatedAt: DateTime!
+}
+
+type Collection {
+    createdAt: DateTime!
+    id: ID!
+    image: String!
+    name: String!
+    products(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedProductResponse!
+    updatedAt: DateTime!
+}
+
+type Favorite {
+    createdAt: DateTime!
+    id: ID!
+    product: Product!
+    user: User!
+}
+
+type LoginResponse {
+    accessToken: String!
+    refreshToken: String!
+}
+
+type Mutation {
+    addFavorite(productId: String!): Boolean!
+    adminDelete(id: ID!): Boolean!
+    adminLogin(data: AdminLoginInput!): LoginResponse!
+    adminRegister(data: AdminRegisterInput!): Admin!
+    adminUpdate(data: AdminUpdateInput!): Boolean!
+    cancelOrder(orderId: String!): Boolean!
+    createAuthor(data: CreateAuthorInput!, imageFile: Upload!): Author!
+    createCategory(data: CreateCategoryInput!): Category!
+    createCollection(data: CreateCollectionInput!): Collection!
+    createProduct(data: CreateProductInput!, imageFile: Upload!): Product!
+    createPublisher(data: CreatePublisherInput!): Publisher!
+    createRequest(data: CreateUserRequestInput!): UserRequest!
+    deleteProduct(id: ID!): Boolean!
+    forgotPassword(data: SendVerificationCodeInput!): SessionInfo!
+    login(data: LoginInput!): LoginResponse!
+    placeOrder(data: PlaceOrderInput!): Order!
+    register(data: RegisterInput!): User!
+    removeFavorite(favoriteId: String!): Boolean!
+    removeFavoriteByProductId(productId: String!): Boolean!
+    removeRequest(requestId: String!): Boolean!
+    sendVerificationCode(data: SendVerificationCodeInput!): SessionInfo!
+    updateAuthor(data: UpdateAuthorInput!): Boolean!
+    updateCategory(data: UpdateCategoryInput!): Boolean!
+    updateCollection(data: UpdateCollectionInput!): Boolean!
+    updateOrder(data: UpdateOrderInput!): Boolean!
+    updatePassword(data: UpdatePasswordInput!): LoginResponse!
+    updatePhoneNumber(data: VerificationInput!): Boolean!
+    updateProduct(data: UpdateProductInput!, imageFile: Upload): Boolean!
+    updateProfile(data: UpdateProfileInput!): Boolean!
+    updatePublisher(data: UpdatePublisherInput!): Boolean!
+    updateRequest(data: UpdateUserRequestInput!): Boolean!
+}
+
+type Order {
+    address: String!
+    createdAt: DateTime!
+    id: ID!
+    phone: String
+    purchases: PaginatedPurchaseResponse!
+    status: OrderStatus!
+    updatedAt: DateTime!
+    user: User!
+}
+
+type PaginatedAdminResponse {
+    hasMore: Boolean!
+    items: [Admin!]!
+    total: Int!
+}
+
+type PaginatedAuthorResponse {
+    hasMore: Boolean!
+    items: [Author!]!
+    total: Int!
+}
+
+type PaginatedCategoryResponse {
+    hasMore: Boolean!
+    items: [Category!]!
+    total: Int!
+}
+
+type PaginatedCollectionResponse {
+    hasMore: Boolean!
+    items: [Collection!]!
+    total: Int!
+}
+
+type PaginatedFavoriteResponse {
+    hasMore: Boolean!
+    items: [Favorite!]!
+    total: Int!
+}
+
+type PaginatedOrderResponse {
+    hasMore: Boolean!
+    items: [Order!]!
+    total: Int!
+}
+
+type PaginatedProductResponse {
+    hasMore: Boolean!
+    items: [Product!]!
+    total: Int!
+}
+
+type PaginatedPublisherResponse {
+    hasMore: Boolean!
+    items: [Publisher!]!
+    total: Int!
+}
+
+type PaginatedPurchaseResponse {
+    hasMore: Boolean!
+    items: [Purchase!]!
+    total: Int!
+}
+
+type PaginatedUserRequestResponse {
+    hasMore: Boolean!
+    items: [UserRequest!]!
+    total: Int!
+}
+
+type PaginatedUserResponse {
+    hasMore: Boolean!
+    items: [User!]!
+    total: Int!
+}
+
+type Product {
+    author: Author!
+    categories: [Category!]!
+    collections: [Collection!]!
+    createdAt: DateTime!
+    favorites(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedFavoriteResponse!
+    id: ID!
+    image: String!
+    isFavorite: Boolean!
+    language: String!
+    name: String!
+    overview: String!
+    pages: Int
+    price: Float!
+    publishedAt: DateTime!
+    publisher: Publisher
+    purchases(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedPurchaseResponse!
+    status: ProductStatus!
+    updatedAt: DateTime!
+}
+
+type Publisher {
+    createdAt: DateTime!
+    id: ID!
+    name: String!
+    products(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): [Product!]!
+    updatedAt: DateTime!
+}
+
+type Purchase {
+    createdAt: DateTime!
+    id: ID!
+    order: Order!
+    product: Product!
+    quantity: Int!
+    updatedAt: DateTime!
+}
+
+type Query {
+    admins(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedAdminResponse!
+    author(id: ID!): Author
+    authors(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedAuthorResponse!
+    categories(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedCategoryResponse!
+    category(id: ID!): Category
+    collection(id: ID!): Collection
+    collections(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedCollectionResponse!
+    me: User!
+    myOrders(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedOrderResponse!
+    myRequests(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserRequestResponse!
+    order(id: ID!): Order
+    orders(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedOrderResponse!
+    product(id: ID!): Product
+    products(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedProductResponse!
+    publisher(id: ID!): Publisher
+    publishers(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedPublisherResponse!
+    requests(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserRequestResponse!
+    users(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserResponse!
+}
+
+type SessionInfo {
+    sessionInfo: String!
+}
+
+type User {
+    address: String
+    confirmed: Boolean!
+    createdAt: DateTime!
+    favorites(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedFavoriteResponse!
+    id: ID!
+    name: String!
+    orders(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedOrderResponse!
+    phone: String!
+    requests(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserRequestResponse!
+    tokenVersion: Int!
+    updatedAt: DateTime!
+}
+
+"A request by the user for a certain product. It can also be used for feedback."
+type UserRequest {
+    content: String!
+    createdAt: DateTime!
+    id: ID!
+    "The current status of the request."
+    status: UserRequestStatus!
+    updatedAt: DateTime!
+    "The user who made the request"
+    user: User!
+}
+
+enum OrderBy {
+    ASC
+    DESC
+}
+
+"The purchases order current status."
+enum OrderStatus {
+    Canceled
+    Delivered
+    Delivering
+    Failed
+    Pending
+    Processed
+}
+
+enum ProductStatus {
+    Available
+    ComingSoon
+    OnSale
+    SoldOut
+}
+
+enum UserRequestStatus {
+    Failed
+    Pending
+    Processing
+    Success
+}
+
+input AdminLoginInput {
+    email: String!
+    password: String!
+}
+
+input AdminRegisterInput {
+    email: String!
+    name: String!
+    password: String!
+}
+
+input AdminUpdateInput {
+    email: String
+    id: ID
+    name: String
+    password: String
+}
+
+input CreateAuthorInput {
+    name: String!
+    overview: String!
+}
+
+input CreateCategoryInput {
+    name: String!
+}
+
+input CreateCollectionInput {
+    name: String!
+}
+
+"The input data for creating new products."
+input CreateProductInput {
+    "The author/owner of the product."
+    author: ObjectIdInput!
+    "The categories that this product fit's in."
+    categories: [ObjectIdInput!]!
+    "The featured collections, if any."
+    collections: [ObjectIdInput!]!
+    "The language of the product."
+    language: String
+    "The name of the product."
+    name: String!
+    "A brief description of the product."
+    overview: String!
+    "If the product is a book, then this would represent the number of pages."
+    pages: Int
+    "Product price."
+    price: Float!
+    "The publication/release date."
+    publishedAt: DateTime
+    "The publisher/manufacturer of the product."
+    publisher: ObjectIdInput
+    "The current status of the product."
+    status: String!
+}
+
+input CreatePublisherInput {
+    name: String!
+}
+
+input CreateUserRequestInput {
+    content: String!
+}
+
+input LoginInput {
+    password: String!
+    phone: String!
+}
+
+input ObjectIdInput {
+    id: ID!
+}
+
+input OrderByMap {
+    field: String!
+    order: OrderBy!
+}
+
+input PlaceOrderInput {
+    address: String!
+    phone: String
+    purchases: [PurchasePartialInput!]!
+}
+
+input PurchasePartialInput {
+    product: ObjectIdInput!
+    quantity: Int!
+}
+
+input RegisterInput {
+    address: String
+    code: String!
+    name: String!
+    password: String!
+    sessionInfo: String!
+}
+
+input SendVerificationCodeInput {
+    phoneNumber: String!
+    recaptchaToken: String!
+}
+
+input UpdateAuthorInput {
+    id: ID!
+    name: String!
+    overview: String!
+}
+
+input UpdateCategoryInput {
+    id: ID!
+    name: String!
+}
+
+input UpdateCollectionInput {
+    id: ID!
+    name: String!
+}
+
+input UpdateOrderInput {
+    id: ID!
+    status: OrderStatus!
+}
+
+input UpdatePasswordInput {
+    code: String!
+    password: String!
+    sessionInfo: String!
+}
+
+"The input data for updating an existing product"
+input UpdateProductInput {
+    "The author/owner of the product."
+    author: ObjectIdInput!
+    "The categories that this product fit's in."
+    categories: [ObjectIdInput!]!
+    "The featured collections, if any."
+    collections: [ObjectIdInput!]!
+    id: ID!
+    "The language of the product."
+    language: String
+    "The name of the product."
+    name: String!
+    "A brief description of the product."
+    overview: String!
+    "If the product is a book, then this would represent the number of pages."
+    pages: Int
+    "Product price."
+    price: Float!
+    "The publication/release date."
+    publishedAt: DateTime
+    "The publisher/manufacturer of the product."
+    publisher: ObjectIdInput
+    "The current status of the product."
+    status: String!
+}
+
+input UpdateProfileInput {
+    address: String!
+    id: ID!
+    name: String!
+}
+
+input UpdatePublisherInput {
+    id: ID!
+    name: String!
+}
+
+input UpdateUserRequestInput {
+    content: String!
+    id: ID!
+    status: UserRequestStatus!
+}
+
+input VerificationInput {
+    code: String!
+    sessionInfo: String!
+}
+
+
+"The javascript `Date` as string. Type represents date and time as the ISO Date string."
+scalar DateTime
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

@@ -1,0 +1,10 @@
+query Home {
+    latestProducts: products(order: [{field: "createdAt", order: DESC}]) {
+        ...PaginatedProductResponse
+    }
+
+    categories {
+        ...PaginatedCategoryResponse
+    }
+}
+

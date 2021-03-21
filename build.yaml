@@ -1,0 +1,24 @@
+targets:
+  $default:
+    sources:
+      - lib/**
+      - graphql/**
+      - schema.graphql
+    builders:
+      artemis:
+        options:
+          fragments_glob: graphql/**.fragment.graphql
+          schema_mapping:
+            - schema: schema.graphql
+              queries_glob: graphql/**.query.graphql
+              output: lib/common/api/api.dart
+          scalar_mapping:
+            - custom_parser_import: 'package:hassah_book_flutter/common/utils/coercers.dart'
+              graphql_type: DateTime
+              dart_type: DateTime
+#            - custom_parser_import: 'package:hassah_book_flutter/common/utils/coercers.dart'
+#              graphql_type: Upload
+#              dart_type:
+#                name: MultipartFile
+#                imports:
+#                  - 'package:http/http.dart'

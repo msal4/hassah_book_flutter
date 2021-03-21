@@ -1,0 +1,15 @@
+fragment CategoryDetail on Category {
+    id
+    name
+    products {
+        ...PaginatedProductResponse
+    }
+}
+
+fragment PaginatedCategoryResponse on PaginatedCategoryResponse {
+    items {
+        ...CategoryDetail
+    }
+    hasMore
+    total
+}
