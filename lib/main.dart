@@ -4,6 +4,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
+import 'package:hassah_book_flutter/common/utils/color.dart';
+
+const _kNavBarRadius = 30.0;
 
 void main() async {
   await initHiveForFlutter();
@@ -24,19 +27,19 @@ class _AppState extends State<App> {
       child: MaterialApp(
         title: 'Hassah Book',
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+          primarySwatch: createMaterialColor(Color(0xFFFA784A)),
           visualDensity: VisualDensity.adaptivePlatformDensity,
           fontFamily: "Dubai",
         ),
         routes: {
-          '/': (context) => Main(),
+          '/': (context) => MainPage(),
         },
       ),
     );
   }
 }
 
-class Main extends HookWidget {
+class MainPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final currentTab = useState(0);
@@ -58,26 +61,35 @@ class Main extends HookWidget {
           elevation: 0,
           backgroundColor: Colors.transparent,
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          showUnselectedLabels: false,
-          showSelectedLabels: false,
-          type: BottomNavigationBarType.fixed,
-          currentIndex: currentTab.value,
-          items: [
-            BottomNavigationBarItem(
-              label: 'Home',
-              icon: Icon(Icons.home_outlined),
-            ),
-            BottomNavigationBarItem(
-              label: 'Categories and Collections',
-              icon: Icon(Icons.menu_outlined),
-            ),
-            BottomNavigationBarItem(
-              label: 'Bookmarks',
-              icon: Icon(Icons.bookmark_border_outlined),
-            ),
-          ],
-          onTap: (index) => currentTab.value = index,
+        bottomNavigationBar: Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(_kNavBarRadius), topRight: Radius.circular(_kNavBarRadius)),
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+          ),
+          child: BottomNavigationBar(
+            elevation: 0,
+            backgroundColor: Colors.grey.shade100,
+            showUnselectedLabels: false,
+            showSelectedLabels: false,
+            type: BottomNavigationBarType.fixed,
+            currentIndex: currentTab.value,
+            items: [
+              BottomNavigationBarItem(
+                label: 'Home',
+                icon: _buildIcon("home", 0, currentTab.value),
+              ),
+              BottomNavigationBarItem(
+                label: 'Categories and Collections',
+                icon: _buildIcon("categories", 1, currentTab.value),
+              ),
+              BottomNavigationBarItem(
+                label: 'Bookmarks',
+                icon: _buildIcon("bookmark", 2, currentTab.value),
+              ),
+            ],
+            onTap: (index) => currentTab.value = index,
+          ),
         ),
         body: IndexedStack(
           index: currentTab.value,
@@ -90,4 +102,6 @@ class Main extends HookWidget {
       ),
     );
   }
+
+  Widget _buildIcon(String name, int idx, int currentIdx) => SvgPicture.asset("assets/svg/$name${idx == currentIdx ? "_filled" : ""}.svg");
 }

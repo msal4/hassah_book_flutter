@@ -63,7 +63,7 @@ class SearchBox extends HookWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(kDefaultRadius),
-        color: Colors.grey.shade200,
+        color: Colors.grey.shade100,
       ),
       child: TextField(
         style: textTheme.headline6,
