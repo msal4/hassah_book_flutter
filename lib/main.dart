@@ -6,6 +6,8 @@ import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
 
+import 'app/pages/product_detail.dart';
+
 const _kNavBarRadius = 30.0;
 
 void main() async {
@@ -28,11 +30,13 @@ class _AppState extends State<App> {
         title: 'Hassah Book',
         theme: ThemeData(
           primarySwatch: createMaterialColor(Color(0xFFFA784A)),
+          accentColor: Color(0xFF45AE9E),
           visualDensity: VisualDensity.adaptivePlatformDensity,
           fontFamily: "Dubai",
         ),
         routes: {
           '/': (context) => MainPage(),
+          '/products': (context) => ProductDetailPage(),
         },
       ),
     );

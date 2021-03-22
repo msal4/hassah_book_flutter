@@ -22,36 +22,32 @@ class ProductCard extends StatelessWidget {
       message: "${product.name} by ${product.author.name}",
       child: Material(
         borderRadius: BorderRadius.circular(kDefaultRadius),
-        clipBehavior: Clip.hardEdge,
+        clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, '/products');
+            Navigator.pushNamed(context, '/products', arguments: product);
           },
           child: Container(
             width: width,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(kDefaultRadius),
-                  child: Image.network(
-                    product.image,
-                    fit: BoxFit.cover,
-                    frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+                Hero(
+                  tag: "image-${product.id}",
+                  child: Container(
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(kDefaultRadius),
+                    ),
+                    child: Image.network(
+                      product.image,
+                      fit: BoxFit.cover,
+                      frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+                    ),
                   ),
                 ),
-                SizedBox(height: 5),
-                Text(
-                  product.name,
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.headline6,
-                ),
-                SizedBox(height: 5),
-                Text(
-                  "by ${product.author.name}",
-                  overflow: TextOverflow.ellipsis,
-                  style: textTheme.bodyText2,
-                ),
+                Text(product.name, style: textTheme.headline6, overflow: TextOverflow.ellipsis),
+                Text("by ${product.author.name}", style: textTheme.bodyText2, overflow: TextOverflow.ellipsis),
               ],
             ),
           ),

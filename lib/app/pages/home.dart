@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
         return ListView.separated(
           padding: const EdgeInsets.symmetric(vertical: 10),
           separatorBuilder: (ctx, idx) => SizedBox(height: 10),
-          itemCount: home.categories.items.length + 1,
+          itemCount: 2,
           itemBuilder: (_, index) {
             if (index == 0) {
               return Padding(
