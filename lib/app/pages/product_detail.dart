@@ -22,6 +22,7 @@ class ProductDetailPage extends HookWidget {
             centerTitle: true,
             floating: true,
             backgroundColor: theme.scaffoldBackgroundColor,
+            snap: true,
           ),
           SliverToBoxAdapter(
             child: SafeArea(
