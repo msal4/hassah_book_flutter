@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 
-const _kDefaultImageWidth = 150.0;
+const kDefaultImageWidth = 150.0;
 
 class ProductCard extends StatelessWidget {
   const ProductCard({
     Key key,
     @required this.product,
-    this.width = _kDefaultImageWidth,
+    this.width = kDefaultImageWidth,
   }) : super(key: key);
 
   final ProductMixin product;

@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
+import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
@@ -60,8 +61,7 @@ class MainPage extends HookWidget {
             SvgPicture.asset("assets/svg/bag.svg"),
             CircleAvatar(
               maxRadius: kToolbarHeight,
-              backgroundImage:
-                  AssetImage("assets/images/avatar_placeholder.jpeg"),
+              backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
             ),
           ],
           elevation: 0,
@@ -70,9 +70,7 @@ class MainPage extends HookWidget {
         bottomNavigationBar: Container(
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(_kNavBarRadius),
-                topRight: Radius.circular(_kNavBarRadius)),
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(_kNavBarRadius), topRight: Radius.circular(_kNavBarRadius)),
             boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
           ),
           child: BottomNavigationBar(
@@ -104,13 +102,12 @@ class MainPage extends HookWidget {
           children: [
             HomePage(),
             CategoriesPage(),
-            Text('Bookmarks'),
+            BookmarksPage(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildIcon(String name, int idx, int currentIdx) => SvgPicture.asset(
-      "assets/svg/$name${idx == currentIdx ? "_filled" : ""}.svg");
+  Widget _buildIcon(String name, int idx, int currentIdx) => SvgPicture.asset("assets/svg/$name${idx == currentIdx ? "_filled" : ""}.svg");
 }
