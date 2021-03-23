@@ -7,13 +7,14 @@ const _kMinVerticalPadding = 2.0;
 const _kMaxNumChips = 3;
 
 class Chips extends HookWidget {
-  const Chips({Key key, @required this.items, this.maxNumChips = _kMaxNumChips})
+  const Chips({Key key, @required this.items, this.maxNumChips = _kMaxNumChips, this.collapsable = true})
       : assert(items != null, "items must not be null"),
         assert(maxNumChips != null, "maxNumChips must not be null"),
         super(key: key);
 
   final List<String> items;
   final int maxNumChips;
+  final bool collapsable;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,7 @@ class Chips extends HookWidget {
             theme: Theme.of(context),
             rightMargin: (items.last != item),
           ),
-        if (items.length > maxNumChips && currentItems.value.length == maxNumChips)
+        if (collapsable && items.length > maxNumChips && currentItems.value.length == maxNumChips)
           GestureDetector(
             onTap: () {
               currentItems.value = items;
@@ -61,7 +62,7 @@ class Chips extends HookWidget {
         borderRadius: BorderRadius.circular(9999),
         color: backgroundColor,
       ),
-      child: Text(text, style: theme.textTheme.bodyText1.copyWith(color: textColor, fontSize: 12)),
+      child: Text(text, style: theme.textTheme.bodyText1.copyWith(color: textColor, fontSize: 10)),
     );
   }
 }
