@@ -19,7 +19,7 @@ class Chips extends HookWidget {
   Widget build(BuildContext context) {
     final items = this.items.fold(<String>[], (List<String> previousList, element) {
       return !previousList.contains(element) ? [...previousList, element] : previousList;
-    });
+    }).toList();
 
     final theme = Theme.of(context);
     final currentItems = useState(items.length > maxNumChips ? items.sublist(0, maxNumChips) : items);

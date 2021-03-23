@@ -30,7 +30,7 @@ class ProductDetailPage extends HookWidget {
                   children: [
                     _buildProductImage(product),
                     SizedBox(height: kDefaultPadding),
-                    Chips(items: product.categories.map((e) => e.name)),
+                    Chips(items: product.categories.map((e) => e.name).toList()),
                     SizedBox(height: kDefaultPadding * 2),
                     _buildProductHeader(product, theme),
                     SizedBox(height: kDefaultPadding),
