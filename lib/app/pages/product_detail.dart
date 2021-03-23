@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
-
-const _kMinHorizontalPadding = 10.0;
-const _kMinVerticalPadding = 2.0;
 
 class ProductDetailPage extends HookWidget {
   @override
@@ -32,7 +30,7 @@ class ProductDetailPage extends HookWidget {
                   children: [
                     _buildProductImage(product),
                     SizedBox(height: kDefaultPadding),
-                    _ProductCategories(product: product),
+                    Chips(items: product.categories.map((e) => e.name)),
                     SizedBox(height: kDefaultPadding * 2),
                     _buildProductHeader(product, theme),
                     SizedBox(height: kDefaultPadding),
@@ -159,54 +157,6 @@ class ProductDetailPage extends HookWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-const _kMaxNumChips = 3;
-
-class _ProductCategories extends HookWidget {
-  const _ProductCategories({
-    Key key,
-    @required this.product,
-  }) : super(key: key);
-
-  final ProductMixin product;
-
-  @override
-  Widget build(BuildContext context) {
-    final cats = useState(product.categories.length > _kMaxNumChips ? product.categories.sublist(0, _kMaxNumChips) : product.categories);
-    final theme = Theme.of(context);
-
-    return Wrap(
-      alignment: WrapAlignment.center,
-      runSpacing: _kMinHorizontalPadding,
-      children: [
-        for (final cat in cats.value) _buildChip(text: cat.name, theme: Theme.of(context), rightMargin: (product.categories.last.id != cat.id)),
-        if (product.categories.length > _kMaxNumChips && cats.value.length == _kMaxNumChips)
-          GestureDetector(
-            onTap: () {
-              cats.value = product.categories;
-            },
-            child: _buildChip(theme: theme, backgroundColor: Colors.grey.shade100, textColor: theme.textTheme.bodyText1.color),
-          )
-      ],
-    );
-  }
-
-  Widget _buildChip({text = "...", rightMargin = false, ThemeData theme, Color backgroundColor, Color textColor}) {
-    if (backgroundColor == null) backgroundColor = theme.primaryColor;
-    if (textColor == null) textColor = Colors.white;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: _kMinHorizontalPadding, vertical: _kMinVerticalPadding),
-      margin: rightMargin ? const EdgeInsets.only(right: _kMinHorizontalPadding) : null,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(9999),
-        color: backgroundColor,
-      ),
-      child: Text(text, style: theme.textTheme.bodyText1.copyWith(color: textColor, fontSize: 12)),
     );
   }
 }
