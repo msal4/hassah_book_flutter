@@ -26,8 +26,6 @@ class ProductDetailPage extends HookWidget {
           ),
           SliverToBoxAdapter(
             child: SafeArea(
-              bottom: true,
-              top: false,
               child: Container(
                 padding: const EdgeInsets.all(kDefaultPadding),
                 child: Column(
@@ -42,14 +40,11 @@ class ProductDetailPage extends HookWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          _buildInfoColumn(
-                              title: "Rating", value: "3.2", theme: theme),
+                          _buildInfoColumn(title: "Rating", value: "3.2", theme: theme),
                           _buildDivider(),
-                          _buildInfoColumn(
-                              title: "Pages", value: "150", theme: theme),
+                          _buildInfoColumn(title: "Pages", value: "150", theme: theme),
                           _buildDivider(),
-                          _buildInfoColumn(
-                              title: "Language", value: "English", theme: theme)
+                          _buildInfoColumn(title: "Language", value: "English", theme: theme)
                         ],
                       ),
                     ),
@@ -60,11 +55,8 @@ class ProductDetailPage extends HookWidget {
                       },
                       child: Text(
                         "Movember Nostrilis tickler magnum pi Louis xiii professor plum graeme souness sweat irrigator,, ding-dong Louis xiii socially mobile Louis xiii movember graeme souness magnum pi sweat irrigator, Nostrilis tickler professor",
-                        style: theme.textTheme.bodyText1
-                            .copyWith(color: Colors.grey.shade800),
-                        overflow: overviewClipped.value
-                            ? TextOverflow.ellipsis
-                            : null,
+                        style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade800),
+                        overflow: overviewClipped.value ? TextOverflow.ellipsis : null,
                       ),
                     ),
                     SizedBox(height: kDefaultPadding),
@@ -78,10 +70,7 @@ class ProductDetailPage extends HookWidget {
                                 Spacer(),
                                 Icon(Icons.remove),
                                 SizedBox(width: kDefaultPadding),
-                                Text("2",
-                                    style: theme.textTheme.subtitle1.copyWith(
-                                        color: theme.accentColor,
-                                        fontWeight: FontWeight.bold)),
+                                Text("2", style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
                                 SizedBox(width: kDefaultPadding),
                                 Icon(Icons.add),
                               ],
@@ -93,8 +82,7 @@ class ProductDetailPage extends HookWidget {
                           color: theme.primaryColor,
                           child: Text(
                             "Add to Cart",
-                            style: theme.textTheme.button
-                                .copyWith(color: Colors.white),
+                            style: theme.textTheme.button.copyWith(color: Colors.white),
                           ),
                         )
                       ],
@@ -116,21 +104,16 @@ class ProductDetailPage extends HookWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("\$${product.price}",
-                  style: theme.textTheme.headline5.copyWith(
-                      fontWeight: FontWeight.bold, color: theme.accentColor)),
+              Text("\$${product.price}", style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor)),
               Text(product.name, style: theme.textTheme.headline6),
-              Text("by ${product.author.name}",
-                  style: theme.textTheme.bodyText2),
+              Text("by ${product.author.name}", style: theme.textTheme.bodyText2),
             ],
           ),
         ),
         SizedBox(width: kDefaultPadding),
         Container(
           padding: const EdgeInsets.all(kDefaultPadding / 2),
-          decoration: BoxDecoration(
-              color: theme.accentColor,
-              borderRadius: BorderRadius.circular(9999)),
+          decoration: BoxDecoration(color: theme.accentColor, borderRadius: BorderRadius.circular(9999)),
           child: Icon(Icons.bookmark, color: Colors.white, size: 20),
         )
       ],
@@ -150,26 +133,18 @@ class ProductDetailPage extends HookWidget {
           child: Image.network(
             product.image,
             fit: BoxFit.cover,
-            frameBuilder: (ctx, child, _, __) =>
-                Image.asset("assets/images/product_placeholder.png"),
+            frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
           ),
         ),
       ),
     );
   }
 
-  Column _buildInfoColumn(
-      {@required String title,
-      @required String value,
-      @required ThemeData theme}) {
+  Column _buildInfoColumn({@required String title, @required String value, @required ThemeData theme}) {
     return Column(
       children: [
-        Text(title,
-            style: theme.textTheme.bodyText1
-                .copyWith(color: Colors.grey.shade800)),
-        Text(value,
-            style: theme.textTheme.subtitle1
-                .copyWith(fontWeight: FontWeight.bold)),
+        Text(title, style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade800)),
+        Text(value, style: theme.textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -200,58 +175,38 @@ class _ProductCategories extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cats = useState(product.categories.length > _kMaxNumChips
-        ? product.categories.sublist(0, _kMaxNumChips)
-        : product.categories);
+    final cats = useState(product.categories.length > _kMaxNumChips ? product.categories.sublist(0, _kMaxNumChips) : product.categories);
     final theme = Theme.of(context);
 
     return Wrap(
       alignment: WrapAlignment.center,
       runSpacing: _kMinHorizontalPadding,
       children: [
-        for (final cat in cats.value)
-          _buildChip(
-              text: cat.name,
-              theme: Theme.of(context),
-              rightMargin: (product.categories.last.id != cat.id)),
-        if (product.categories.length > _kMaxNumChips &&
-            cats.value.length == _kMaxNumChips)
+        for (final cat in cats.value) _buildChip(text: cat.name, theme: Theme.of(context), rightMargin: (product.categories.last.id != cat.id)),
+        if (product.categories.length > _kMaxNumChips && cats.value.length == _kMaxNumChips)
           GestureDetector(
             onTap: () {
               cats.value = product.categories;
             },
-            child: _buildChip(
-                theme: theme,
-                backgroundColor: Colors.grey.shade100,
-                textColor: theme.textTheme.bodyText1.color),
+            child: _buildChip(theme: theme, backgroundColor: Colors.grey.shade100, textColor: theme.textTheme.bodyText1.color),
           )
       ],
     );
   }
 
-  Widget _buildChip(
-      {text = "...",
-      rightMargin = false,
-      ThemeData theme,
-      Color backgroundColor,
-      Color textColor}) {
+  Widget _buildChip({text = "...", rightMargin = false, ThemeData theme, Color backgroundColor, Color textColor}) {
     if (backgroundColor == null) backgroundColor = theme.primaryColor;
     if (textColor == null) textColor = Colors.white;
 
     return Container(
-      padding: const EdgeInsets.symmetric(
-          horizontal: _kMinHorizontalPadding, vertical: _kMinVerticalPadding),
-      margin: rightMargin
-          ? const EdgeInsets.only(right: _kMinHorizontalPadding)
-          : null,
+      padding: const EdgeInsets.symmetric(horizontal: _kMinHorizontalPadding, vertical: _kMinVerticalPadding),
+      margin: rightMargin ? const EdgeInsets.only(right: _kMinHorizontalPadding) : null,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(9999),
         color: backgroundColor,
       ),
-      child: Text(text,
-          style: theme.textTheme.bodyText1
-              .copyWith(color: textColor, fontSize: 12)),
+      child: Text(text, style: theme.textTheme.bodyText1.copyWith(color: textColor, fontSize: 12)),
     );
   }
 }

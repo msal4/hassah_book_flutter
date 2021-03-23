@@ -9,13 +9,15 @@ class CategoriesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
-    return ListView.separated(
-      padding: const EdgeInsets.all(kDefaultPadding),
-      itemBuilder: (context, idx) {
-        return _buildCategoryItem(idx, textTheme);
-      },
-      separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-      itemCount: categoriesList.length,
+    return SafeArea(
+      child: ListView.separated(
+        padding: const EdgeInsets.all(kDefaultPadding),
+        itemBuilder: (context, idx) {
+          return _buildCategoryItem(idx, textTheme);
+        },
+        separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
+        itemCount: categoriesList.length,
+      ),
     );
   }
 

@@ -12,13 +12,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final leftPadding = MediaQuery.of(context).padding.left + kDefaultPadding;
+    final rightPadding = MediaQuery.of(context).padding.right + kDefaultPadding;
+
     return Query(
       options: QueryOptions(documentNode: _homeQuery.document),
-      builder: (
-        QueryResult result, {
-        Future<QueryResult> Function() refetch,
-        FetchMore fetchMore,
-      }) {
+      builder: (QueryResult result, {Future<QueryResult> Function() refetch, FetchMore fetchMore}) {
         if (result.hasException) {
           return Retry(message: result.exception.toString(), onRetry: refetch);
         }
@@ -30,22 +29,24 @@ class HomePage extends StatelessWidget {
         final home = _homeQuery.parse(result.data);
 
         return ListView.separated(
-          padding: const EdgeInsets.symmetric(vertical: 10),
+          padding: EdgeInsets.symmetric(vertical: kDefaultPadding),
           separatorBuilder: (ctx, idx) => SizedBox(height: 10),
           itemCount: 2,
           itemBuilder: (_, index) {
             if (index == 0) {
               return Padding(
-                padding: const EdgeInsets.all(kDefaultPadding),
+                padding: EdgeInsets.only(
+                  top: kDefaultPadding,
+                  bottom: kDefaultPadding,
+                  right: rightPadding,
+                  left: leftPadding,
+                ),
                 child: SearchBox(),
               );
             }
 
             final category = home.categories.items[index - 1];
-            return ProductsRow(
-              title: category.name,
-              items: category.products.items,
-            );
+            return ProductsRow(title: category.name, items: category.products.items);
           },
         );
       },
@@ -61,17 +62,10 @@ class SearchBox extends HookWidget {
     return Container(
       padding: const EdgeInsets.only(left: kDefaultPadding),
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(kDefaultRadius),
-        color: Colors.grey.shade100,
-      ),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRadius), color: Colors.grey.shade100),
       child: TextField(
         style: textTheme.headline6,
-        decoration: InputDecoration(
-          icon: Icon(Icons.search),
-          hintText: "Search",
-          border: InputBorder.none,
-        ),
+        decoration: InputDecoration(icon: Icon(Icons.search), hintText: "Search", border: InputBorder.none),
       ),
     );
   }

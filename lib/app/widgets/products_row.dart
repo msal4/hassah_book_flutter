@@ -15,6 +15,9 @@ class ProductsRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final leftPadding = MediaQuery.of(context).padding.left + kDefaultPadding;
+    final rightPadding = MediaQuery.of(context).padding.right + kDefaultPadding;
+
     if (items.length == 0) {
       return SizedBox();
     }
@@ -25,14 +28,14 @@ class ProductsRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(left: kDefaultPadding),
+          padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
           child: Text(title, style: textTheme.headline6),
         ),
-        SizedBox(height: 10),
+        SizedBox(height: kDefaultPadding / 2),
         Container(
           height: _kDefaultRowHeight,
           child: ListView.separated(
-            padding: const EdgeInsets.only(left: kDefaultPadding),
+            padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
             scrollDirection: Axis.horizontal,
             itemCount: items.length,
             itemBuilder: (context, index) {
@@ -40,9 +43,7 @@ class ProductsRow extends StatelessWidget {
 
               return ProductCard(product: product);
             },
-            separatorBuilder: (context, index) {
-              return SizedBox(width: 20);
-            },
+            separatorBuilder: (_, __) => SizedBox(width: kDefaultPadding),
           ),
         ),
       ],
