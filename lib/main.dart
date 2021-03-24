@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
+import 'package:hassah_book_flutter/common/utils/const.dart';
 
 import 'app/pages/product_detail.dart';
 
@@ -45,10 +47,14 @@ class _AppState extends State<App> {
   }
 }
 
+const _kMinVelocityToHideAppBar = 10.0;
+const _kMaxVelocityToShowAdapter = -5.0;
+
 class MainPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final currentTab = useState(0);
+    final appBarVisible = useState(true);
 
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
@@ -56,55 +62,107 @@ class MainPage extends HookWidget {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          actions: [
-            SvgPicture.asset("assets/svg/bag.svg"),
-            CircleAvatar(
-              maxRadius: kToolbarHeight,
-              backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
-            ),
-          ],
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-        ),
-        bottomNavigationBar: Container(
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(_kNavBarRadius), topRight: Radius.circular(_kNavBarRadius)),
-            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-          ),
-          child: BottomNavigationBar(
-            elevation: 0,
-            backgroundColor: Colors.grey.shade100,
-            showUnselectedLabels: false,
-            showSelectedLabels: false,
-            type: BottomNavigationBarType.fixed,
-            currentIndex: currentTab.value,
-            items: [
-              BottomNavigationBarItem(
-                label: 'Home',
-                icon: _buildIcon("home", 0, currentTab.value),
-              ),
-              BottomNavigationBarItem(
-                label: 'Categories and Collections',
-                icon: _buildIcon("categories", 1, currentTab.value),
-              ),
-              BottomNavigationBarItem(
-                label: 'Bookmarks',
-                icon: _buildIcon("bookmark", 2, currentTab.value),
-              ),
-            ],
-            onTap: (index) => currentTab.value = index,
-          ),
-        ),
-        body: IndexedStack(
-          index: currentTab.value,
+        bottomNavigationBar: _buildBottomNavigationBar(currentTab, appBarVisible),
+        body: Stack(
           children: [
-            HomePage(),
-            CategoriesPage(),
-            BookmarksPage(),
+            NotificationListener<ScrollNotification>(
+              onNotification: (notification) => _onScrollNotification(notification, appBarVisible),
+              child: IndexedStack(
+                index: currentTab.value,
+                children: [HomePage(), CategoriesPage(), BookmarksPage()],
+              ),
+            ),
+            _buildAppBar(context, appBarVisible.value),
           ],
         ),
+      ),
+    );
+  }
+
+  bool _onScrollNotification(ScrollNotification notification, ValueNotifier<bool> appBarVisible) {
+    // when the scroll has settled on the scroll extent then always show the app bar.
+    if (notification.metrics.atEdge) {
+      appBarVisible.value = true;
+      return true;
+    }
+
+    // only hide/show the app bar if the user is scrolling to ignore the scroll animation as
+    // it causes issues when switching between tabs.
+    if (notification is ScrollUpdateNotification && notification.dragDetails != null) {
+      if (notification.scrollDelta > _kMinVelocityToHideAppBar) {
+        appBarVisible.value = false;
+      } else if (notification.scrollDelta < _kMaxVelocityToShowAdapter) {
+        appBarVisible.value = true;
+      }
+    }
+    return true;
+  }
+
+  Widget _buildAppBar(BuildContext context, bool isVisible) {
+    final padding = MediaQuery.of(context).padding;
+    final bgColor = Theme.of(context).scaffoldBackgroundColor;
+
+    return AnimatedOpacity(
+      opacity: isVisible ? 1 : 0,
+      duration: Duration(milliseconds: 300),
+      child: IgnorePointer(
+        ignoring: !isVisible,
+        child: Container(
+          height: kAppBarHeight + padding.top,
+          padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(colors: [bgColor, bgColor.withOpacity(0)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+          ),
+          child: SafeArea(
+            child: Row(
+              children: [
+                Spacer(),
+                SvgPicture.asset("assets/svg/bag.svg"),
+                SizedBox(width: kDefaultPadding),
+                CircleAvatar(
+                  radius: kAppBarHeight / 2,
+                  backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Container _buildBottomNavigationBar(ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.only(topLeft: Radius.circular(_kNavBarRadius), topRight: Radius.circular(_kNavBarRadius)),
+        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+      ),
+      child: BottomNavigationBar(
+        elevation: 0,
+        backgroundColor: Colors.grey.shade100,
+        showUnselectedLabels: false,
+        showSelectedLabels: false,
+        type: BottomNavigationBarType.fixed,
+        currentIndex: currentTab.value,
+        items: [
+          BottomNavigationBarItem(
+            label: 'Home',
+            icon: _buildIcon("home", 0, currentTab.value),
+          ),
+          BottomNavigationBarItem(
+            label: 'Categories and Collections',
+            icon: _buildIcon("categories", 1, currentTab.value),
+          ),
+          BottomNavigationBarItem(
+            label: 'Bookmarks',
+            icon: _buildIcon("bookmark", 2, currentTab.value),
+          ),
+        ],
+        onTap: (index) {
+          appBarVisible.value = true;
+          currentTab.value = index;
+        },
       ),
     );
   }

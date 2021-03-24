@@ -12,7 +12,7 @@ class BookmarksPage extends HookWidget {
     final padding = MediaQuery.of(context).padding;
     final leftPadding = padding.left + kDefaultPadding;
     final rightPadding = padding.right + kDefaultPadding;
-    final topPadding = padding.top + kDefaultPadding;
+    final topPadding = padding.top + kAppBarHeight;
     final bottomPadding = padding.bottom + kDefaultPadding;
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;

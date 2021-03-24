@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 
-class CategoriesPage extends StatelessWidget {
+class CategoriesPage extends HookWidget {
   final categoriesList = List<String>.generate(20, (index) => "Item $index");
 
   @override
@@ -11,7 +12,7 @@ class CategoriesPage extends StatelessWidget {
 
     return SafeArea(
       child: ListView.separated(
-        padding: const EdgeInsets.all(kDefaultPadding),
+        padding: EdgeInsets.all(kDefaultPadding).copyWith(top: kAppBarHeight),
         itemBuilder: (context, idx) {
           return _buildCategoryItem(idx, textTheme);
         },

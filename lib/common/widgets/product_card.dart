@@ -5,11 +5,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 const kDefaultImageWidth = 150.0;
 
 class ProductCard extends StatelessWidget {
-  const ProductCard({
-    Key key,
-    @required this.product,
-    this.width = kDefaultImageWidth,
-  }) : super(key: key);
+  const ProductCard({Key key, @required this.product, this.width = kDefaultImageWidth}) : super(key: key);
 
   final ProductMixin product;
   final double width;
@@ -36,9 +32,7 @@ class ProductCard extends StatelessWidget {
                   tag: "image-${product.id}",
                   child: Container(
                     clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(kDefaultRadius),
-                    ),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRadius)),
                     child: Image.network(
                       product.image,
                       fit: BoxFit.cover,
