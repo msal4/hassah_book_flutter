@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -28,26 +29,35 @@ class App extends StatefulWidget {
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    return HassahGraphQLProvider(
-      uri: 'http://localhost:4000/graphql',
-      child: MaterialApp(
-        title: 'Hassah Book',
-        theme: ThemeData(
-          primarySwatch: createMaterialColor(Color(0xFFFA784A)),
-          accentColor: Color(0xFF45AE9E),
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-          fontFamily: "Dubai",
+    final theme = ThemeData(
+      primarySwatch: createMaterialColor(Color(0xFFFA784A)),
+      accentColor: Color(0xFF45AE9E),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      fontFamily: "Dubai",
+    );
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: theme.scaffoldBackgroundColor,
+        statusBarIconBrightness: Brightness.dark,
+      ),
+      child: HassahGraphQLProvider(
+        uri: 'http://100.93.34.121:4000/graphql',
+        child: MaterialApp(
+          title: 'Hassah Book',
+          theme: theme,
+          routes: {
+            '/': (context) => MainPage(),
+            '/products': (context) => ProductDetailPage(),
+          },
         ),
-        routes: {
-          '/': (context) => MainPage(),
-          '/products': (context) => ProductDetailPage(),
-        },
       ),
     );
   }
 }
 
-const _kMinVelocityToHideAppBar = 10.0;
+const _kMinVelocityToHideAppBar = 0.0;
 const _kMaxVelocityToShowAdapter = -5.0;
 
 class MainPage extends HookWidget {
@@ -80,6 +90,8 @@ class MainPage extends HookWidget {
   }
 
   bool _onScrollNotification(ScrollNotification notification, ValueNotifier<bool> appBarVisible) {
+    if (notification.metrics.axis != Axis.vertical) return true;
+
     // when the scroll has settled on the scroll extent then always show the app bar.
     if (notification.metrics.atEdge) {
       appBarVisible.value = true;
@@ -140,7 +152,7 @@ class MainPage extends HookWidget {
       ),
       child: BottomNavigationBar(
         elevation: 0,
-        backgroundColor: Colors.grey.shade100,
+        // backgroundColor: Colors.grey.shade100,
         showUnselectedLabels: false,
         showSelectedLabels: false,
         type: BottomNavigationBarType.fixed,
