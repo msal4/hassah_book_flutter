@@ -18,11 +18,13 @@ class Chips extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
+    // remove duplicates
     final items = this.items.fold(<String>[], (List<String> previousList, element) {
       return !previousList.contains(element) ? [...previousList, element] : previousList;
     }).toList();
 
     final theme = Theme.of(context);
+
     final currentItems = useState(items.length > maxNumChips ? items.sublist(0, maxNumChips) : items);
 
     return Wrap(
