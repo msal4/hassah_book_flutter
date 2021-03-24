@@ -29,7 +29,7 @@ class ProductsRow extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
-          child: Text(title, style: textTheme.headline6),
+          child: Text(title, style: textTheme.headline6.copyWith(color: Colors.grey.shade800)),
         ),
         SizedBox(height: kDefaultPadding / 2),
         Container(

@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
     final rightPadding = MediaQuery.of(context).padding.right + kDefaultPadding;
 
     return Query(
-      options: QueryOptions(documentNode: _homeQuery.document),
+      options: QueryOptions(document: _homeQuery.document),
       builder: (QueryResult result, {Future<QueryResult> Function() refetch, FetchMore fetchMore}) {
         if (result.hasException) {
           return Retry(message: result.exception.toString(), onRetry: refetch);
@@ -30,14 +30,13 @@ class HomePage extends StatelessWidget {
 
         return ListView.separated(
           padding: EdgeInsets.symmetric(vertical: kDefaultPadding),
-          separatorBuilder: (ctx, idx) => SizedBox(height: 10),
-          itemCount: 2,
+          separatorBuilder: (ctx, idx) => SizedBox(height: kDefaultPadding),
+          itemCount: home.categories.items.length,
           itemBuilder: (_, index) {
             if (index == 0) {
               return Padding(
                 padding: EdgeInsets.only(
                   top: kDefaultPadding,
-                  bottom: kDefaultPadding,
                   right: rightPadding,
                   left: leftPadding,
                 ),
