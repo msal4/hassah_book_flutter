@@ -16,7 +16,7 @@ class ProductDetailPage extends HookWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            title: Text(product.name),
+            title: Text("Product Details"),
             centerTitle: true,
             floating: true,
             backgroundColor: theme.scaffoldBackgroundColor,
