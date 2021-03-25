@@ -101,7 +101,7 @@ class MainPage extends HookWidget {
     // only hide/show the app bar if the user is scrolling to ignore the scroll animation as
     // it causes issues when switching between tabs.
     if (notification is ScrollUpdateNotification && notification.dragDetails != null) {
-      if (notification.scrollDelta > _kMinVelocityToHideAppBar) {
+      if (notification.scrollDelta > _kMinVelocityToHideAppBar && notification.metrics.pixels > kAppBarHeight / 2) {
         appBarVisible.value = false;
       } else if (notification.scrollDelta < _kMaxVelocityToShowAdapter) {
         appBarVisible.value = true;
