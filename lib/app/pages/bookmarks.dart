@@ -6,6 +6,9 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
+const _kBookmarkIconWidth = 20.0;
+const _kBookmarkIconHeight = 35.0;
+
 class BookmarksPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
@@ -28,6 +31,7 @@ class BookmarksPage extends HookWidget {
             child: Stack(
               children: [
                 RoundContainer(
+                  padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 2).copyWith(left: kDefaultPadding, right: kDefaultPadding * 2),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -60,11 +64,13 @@ class BookmarksPage extends HookWidget {
                 Positioned(
                   right: kDefaultPadding / 2,
                   child: Container(
+                    width: _kBookmarkIconWidth,
+                    height: _kBookmarkIconHeight,
                     decoration: BoxDecoration(
                       color: theme.accentColor,
                       borderRadius: BorderRadius.only(bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)),
                     ),
-                    padding: const EdgeInsets.only(left: 3, right: 3, top: 14, bottom: 6),
+                    padding: const EdgeInsets.only(top: _kBookmarkIconHeight / 4),
                     child: Icon(Icons.bookmark_rounded, color: Colors.white, size: 15),
                   ),
                 ),
