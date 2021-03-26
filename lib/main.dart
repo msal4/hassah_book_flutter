@@ -47,6 +47,7 @@ class _AppState extends State<App> {
       appBarTheme: theme.appBarTheme.copyWith(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
+        centerTitle: true,
       ),
     );
 

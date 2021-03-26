@@ -20,13 +20,7 @@ class ProductDetailPage extends HookWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(
-            title: Text("Product Details"),
-            centerTitle: true,
-            floating: true,
-            backgroundColor: theme.scaffoldBackgroundColor,
-            snap: true,
-          ),
+          SliverAppBar(title: Text("Product Details"), floating: true, snap: true),
           SliverToBoxAdapter(
             child: SafeArea(
               child: Container(

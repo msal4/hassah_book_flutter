@@ -10,7 +10,7 @@ class ProfilePage extends StatelessWidget {
     final padding = MediaQuery.of(context).padding;
 
     return Scaffold(
-      appBar: AppBar(title: Text("Profile"), centerTitle: true),
+      appBar: AppBar(title: Text("Profile")),
       body: ListView(
         padding: EdgeInsets.all(kDefaultPadding).copyWith(bottom: padding.bottom + kDefaultPadding),
         children: [
