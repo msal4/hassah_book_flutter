@@ -107,21 +107,7 @@ class ProfilePage extends StatelessWidget {
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),
-                child: Icon(Icons.notifications_outlined, color: theme.primaryColor),
-              ),
-              title: Text("Privacy Policy"),
-              trailing: Icon(Icons.chevron_right),
-            ),
-          ),
-          SizedBox(height: kDefaultPadding),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-            child: ListTile(
-              tileColor: Colors.grey.shade100,
-              contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
-              leading: CircleAvatar(
-                backgroundColor: theme.primaryColor.withOpacity(.2),
-                child: Icon(Icons.notifications_outlined, color: theme.primaryColor),
+                child: Icon(Icons.privacy_tip_outlined, color: theme.primaryColor),
               ),
               title: Text("Privacy Policy"),
               trailing: Icon(Icons.chevron_right),
