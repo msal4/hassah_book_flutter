@@ -20,6 +20,7 @@ class RoundContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: padding,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(kDefaultRadius),
