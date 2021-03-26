@@ -85,7 +85,7 @@ class MainPage extends HookWidget {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        bottomNavigationBar: _buildBottomNavigationBar(currentTab, appBarVisible),
+        bottomNavigationBar: _buildBottomNavigationBar(context, currentTab, appBarVisible),
         body: Stack(
           children: [
             NotificationListener<ScrollNotification>(
@@ -156,7 +156,7 @@ class MainPage extends HookWidget {
     );
   }
 
-  Container _buildBottomNavigationBar(ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
+  Container _buildBottomNavigationBar(BuildContext context, ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(

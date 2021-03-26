@@ -8,6 +8,8 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
+const _kAuthorAvatarRadius = 50.0;
+
 class SearchPage extends HookWidget {
   static const routeName = "/search";
 
@@ -40,37 +42,7 @@ class SearchPage extends HookWidget {
                 padding: EdgeInsets.only(top: kDefaultPadding, bottom: kDefaultPadding + padding.top),
                 itemBuilder: (context, idx) {
                   if (idx == 0) {
-                    return Container(
-                      height: 140,
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-                        scrollDirection: Axis.horizontal,
-                        itemCount: 10,
-                        itemBuilder: (context, idx) {
-                          return Container(
-                            width: 100,
-                            child: Column(
-                              children: [
-                                CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Colors.grey.shade100,
-                                  backgroundImage: AssetImage("assets/images/product_placeholder.png"),
-                                  foregroundImage: NetworkImage(""),
-                                ),
-                                SizedBox(height: 5),
-                                Text(
-                                  "Alfred Hitchcock",
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.center,
-                                  style: theme.textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        separatorBuilder: (_, __) => SizedBox(width: kDefaultPadding),
-                      ),
-                    );
+                    return _buildAuthorsRow(theme);
                   }
 
                   return RoundContainer(
@@ -92,6 +64,42 @@ class SearchPage extends HookWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAuthorsRow(ThemeData theme) {
+    return Container(
+      height: _kAuthorAvatarRadius * 2 + 30,
+      child: ListView.separated(
+        padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+        scrollDirection: Axis.horizontal,
+        itemCount: 10,
+        itemBuilder: (context, idx) => _buildAuthor(theme),
+        separatorBuilder: (_, __) => SizedBox(width: kDefaultPadding),
+      ),
+    );
+  }
+
+  Widget _buildAuthor(ThemeData theme) {
+    return Container(
+      width: _kAuthorAvatarRadius * 2,
+      child: Column(
+        children: [
+          CircleAvatar(
+            radius: _kAuthorAvatarRadius,
+            backgroundColor: Colors.grey.shade100,
+            backgroundImage: AssetImage("assets/images/product_placeholder.png"),
+            foregroundImage: NetworkImage(""),
+          ),
+          SizedBox(height: 5),
+          Text(
+            "Alfred Hitchcock",
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
+          ),
+        ],
       ),
     );
   }
