@@ -9,6 +9,7 @@ import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
+import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
@@ -27,15 +28,26 @@ class App extends StatefulWidget {
   _AppState createState() => _AppState();
 }
 
+const _kOrangeColor = Color(0xFFFA784A);
+const _kGreenColor = Color(0xFF45AE9E);
+
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    final theme = ThemeData(
-      primarySwatch: createMaterialColor(Color(0xFFFA784A)),
-      accentColor: Color(0xFF45AE9E),
+    ThemeData theme = ThemeData(
+      primarySwatch: createMaterialColor(_kOrangeColor),
+      accentColor: _kGreenColor,
       scaffoldBackgroundColor: Colors.white,
       visualDensity: VisualDensity.adaptivePlatformDensity,
       fontFamily: "Dubai",
+    );
+
+    // configure the app bar
+    theme = theme.copyWith(
+      appBarTheme: theme.appBarTheme.copyWith(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
+      ),
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -61,6 +73,7 @@ class _AppState extends State<App> {
           },
           routes: {
             MainPage.routeName: (context) => MainPage(),
+            ProfilePage.routeName: (context) => ProfilePage(),
           },
         ),
       ),
@@ -136,7 +149,11 @@ class MainPage extends HookWidget {
           height: kAppBarHeight + padding.top,
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding),
           decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [bgColor, bgColor.withOpacity(0)], begin: Alignment.topCenter, end: Alignment.bottomCenter),
+            gradient: LinearGradient(
+              colors: [bgColor, bgColor.withOpacity(0)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
           ),
           child: SafeArea(
             child: Row(
@@ -144,9 +161,14 @@ class MainPage extends HookWidget {
                 Spacer(),
                 SvgPicture.asset("assets/svg/bag.svg"),
                 SizedBox(width: kDefaultPadding),
-                CircleAvatar(
-                  radius: kAppBarHeight / 2,
-                  backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(ProfilePage.routeName);
+                  },
+                  child: CircleAvatar(
+                    radius: kAppBarHeight / 2,
+                    backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
+                  ),
                 ),
               ],
             ),
@@ -156,7 +178,7 @@ class MainPage extends HookWidget {
     );
   }
 
-  Container _buildBottomNavigationBar(BuildContext context, ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
+  Widget _buildBottomNavigationBar(BuildContext context, ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
