@@ -38,10 +38,7 @@ class HomePage extends HookWidget {
           itemBuilder: (_, index) {
             if (index == 0) {
               return Padding(
-                padding: EdgeInsets.only(
-                  right: rightPadding,
-                  left: leftPadding,
-                ),
+                padding: EdgeInsets.only(right: rightPadding, left: leftPadding),
                 child: SearchBox(),
               );
             }
@@ -65,8 +62,12 @@ class SearchBox extends HookWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRadius), color: Colors.grey.shade100),
       child: TextField(
+        onTap: () {
+          Navigator.of(context).pushNamed("/search");
+        },
+        readOnly: true,
         style: textTheme.headline6,
-        decoration: InputDecoration(icon: Icon(Icons.search), hintText: "Search", border: InputBorder.none),
+        decoration: InputDecoration(icon: Icon(Icons.search, color: Colors.grey.shade800), hintText: "Search", border: InputBorder.none),
       ),
     );
   }

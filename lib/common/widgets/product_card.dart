@@ -17,6 +17,7 @@ class ProductCard extends StatelessWidget {
     return Tooltip(
       message: "${product.name} by ${product.author.name}",
       child: Material(
+        color: Colors.transparent,
         borderRadius: BorderRadius.circular(kDefaultRadius),
         clipBehavior: Clip.antiAlias,
         child: InkWell(

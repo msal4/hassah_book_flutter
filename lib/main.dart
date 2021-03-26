@@ -8,10 +8,11 @@ import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
+import 'package:hassah_book_flutter/app/pages/product_detail.dart';
+import 'package:hassah_book_flutter/app/pages/search.dart';
+import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
-
-import 'app/pages/product_detail.dart';
 
 const _kNavBarRadius = 30.0;
 
@@ -32,6 +33,7 @@ class _AppState extends State<App> {
     final theme = ThemeData(
       primarySwatch: createMaterialColor(Color(0xFFFA784A)),
       accentColor: Color(0xFF45AE9E),
+      scaffoldBackgroundColor: Colors.white,
       visualDensity: VisualDensity.adaptivePlatformDensity,
       fontFamily: "Dubai",
     );
@@ -47,9 +49,18 @@ class _AppState extends State<App> {
         child: MaterialApp(
           title: 'Hassah Book',
           theme: theme,
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case "/search":
+                return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
+              case '/products':
+                return MaterialPageRoute(builder: (context) => ProductDetailPage(product: settings.arguments));
+              default:
+                return null;
+            }
+          },
           routes: {
             '/': (context) => MainPage(),
-            '/products': (context) => ProductDetailPage(),
           },
         ),
       ),
@@ -152,7 +163,6 @@ class MainPage extends HookWidget {
       ),
       child: BottomNavigationBar(
         elevation: 0,
-        // backgroundColor: Colors.grey.shade100,
         showUnselectedLabels: false,
         showSelectedLabels: false,
         type: BottomNavigationBarType.fixed,

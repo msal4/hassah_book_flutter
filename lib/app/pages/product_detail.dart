@@ -6,9 +6,12 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 
 class ProductDetailPage extends HookWidget {
+  ProductDetailPage({@required this.product}) : assert(product != null, "product must not be null");
+
+  final ProductMixin product;
+
   @override
   Widget build(BuildContext context) {
-    final product = ModalRoute.of(context).settings.arguments as ProductMixin;
     final theme = Theme.of(context);
     final overviewClipped = useState(true);
 
