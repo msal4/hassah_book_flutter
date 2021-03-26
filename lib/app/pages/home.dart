@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/products_row.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
@@ -63,7 +64,7 @@ class SearchBox extends HookWidget {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRadius), color: Colors.grey.shade100),
       child: TextField(
         onTap: () {
-          Navigator.of(context).pushNamed("/search");
+          Navigator.of(context).pushNamed(SearchPage.routeName);
         },
         readOnly: true,
         style: textTheme.headline6,

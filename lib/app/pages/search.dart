@@ -9,6 +9,8 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
 class SearchPage extends HookWidget {
+  static const routeName = "/search";
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

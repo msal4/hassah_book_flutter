@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 
@@ -22,7 +23,7 @@ class ProductCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, '/products', arguments: product);
+            Navigator.pushNamed(context, ProductDetailPage.routeName, arguments: product);
           },
           child: Container(
             width: width,

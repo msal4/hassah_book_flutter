@@ -51,16 +51,16 @@ class _AppState extends State<App> {
           theme: theme,
           onGenerateRoute: (settings) {
             switch (settings.name) {
-              case "/search":
+              case SearchPage.routeName:
                 return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
-              case '/products':
+              case ProductDetailPage.routeName:
                 return MaterialPageRoute(builder: (context) => ProductDetailPage(product: settings.arguments));
               default:
                 return null;
             }
           },
           routes: {
-            '/': (context) => MainPage(),
+            MainPage.routeName: (context) => MainPage(),
           },
         ),
       ),
@@ -72,6 +72,8 @@ const _kMinVelocityToHideAppBar = 0.0;
 const _kMaxVelocityToShowAdapter = -5.0;
 
 class MainPage extends HookWidget {
+  static const routeName = "/";
+
   @override
   Widget build(BuildContext context) {
     final currentTab = useState(0);

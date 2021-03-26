@@ -10,6 +10,8 @@ class ProductDetailPage extends HookWidget {
 
   final ProductMixin product;
 
+  static const routeName = "/product_detail";
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
