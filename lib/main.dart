@@ -8,6 +8,7 @@ import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
+import 'package:hassah_book_flutter/app/pages/personal_information.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
@@ -75,6 +76,7 @@ class _AppState extends State<App> {
           routes: {
             MainPage.routeName: (context) => MainPage(),
             ProfilePage.routeName: (context) => ProfilePage(),
+            PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
           },
         ),
       ),

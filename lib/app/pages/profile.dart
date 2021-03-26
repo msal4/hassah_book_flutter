@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hassah_book_flutter/app/pages/personal_information.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -37,6 +38,9 @@ class ProfilePage extends StatelessWidget {
               ),
               title: Text("Personal Information"),
               trailing: Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.of(context).pushNamed(PersonalInformationPage.routeName);
+              },
             ),
           ),
           SizedBox(height: kDefaultPadding),
