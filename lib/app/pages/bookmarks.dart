@@ -26,7 +26,7 @@ class BookmarksPage extends HookWidget {
       itemBuilder: (context, idx) {
         // ClipRRect is needed so that the action doesn't animate beyond the bound of the product container.
         return ClipRRect(
-          borderRadius: BorderRadius.circular(kDefaultRadius),
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
           child: Slidable(
             actionPane: SlidableDrawerActionPane(),
             actionExtentRatio: _kActionExtentRatio,
@@ -93,7 +93,7 @@ class BookmarksPage extends HookWidget {
     return Container(
       width: kDefaultImageWidth / 2,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRadius)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
       child: Image.network(
         url,
         fit: BoxFit.cover,

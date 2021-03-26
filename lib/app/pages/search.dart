@@ -28,8 +28,8 @@ class SearchPage extends HookWidget {
             decoration: BoxDecoration(
               color: Colors.grey.shade100,
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(kDefaultRadius * 2),
-                topRight: Radius.circular(kDefaultRadius * 2),
+                topLeft: Radius.circular(kDefaultBorderRadius * 2),
+                topRight: Radius.circular(kDefaultBorderRadius * 2),
               ),
             ),
             child: NestedScrollView(
@@ -118,7 +118,7 @@ class SearchPage extends HookWidget {
     return Container(
       width: kDefaultImageWidth / 2,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRadius)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
       child: Image.network(
         url,
         fit: BoxFit.cover,

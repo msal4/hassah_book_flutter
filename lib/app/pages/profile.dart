@@ -28,7 +28,7 @@ class ProfilePage extends StatelessWidget {
           ),
           SizedBox(height: kDefaultPadding),
           ClipRRect(
-            borderRadius: BorderRadius.circular(kDefaultRadius),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -45,7 +45,7 @@ class ProfilePage extends StatelessWidget {
           ),
           SizedBox(height: kDefaultPadding),
           ClipRRect(
-            borderRadius: BorderRadius.circular(kDefaultRadius),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -59,7 +59,7 @@ class ProfilePage extends StatelessWidget {
           ),
           SizedBox(height: kDefaultPadding),
           ClipRRect(
-            borderRadius: BorderRadius.circular(kDefaultRadius),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -73,7 +73,7 @@ class ProfilePage extends StatelessWidget {
           ),
           SizedBox(height: kDefaultPadding),
           ClipRRect(
-            borderRadius: BorderRadius.circular(kDefaultRadius),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -87,7 +87,7 @@ class ProfilePage extends StatelessWidget {
           ),
           SizedBox(height: kDefaultPadding),
           ClipRRect(
-            borderRadius: BorderRadius.circular(kDefaultRadius),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -101,7 +101,7 @@ class ProfilePage extends StatelessWidget {
           ),
           SizedBox(height: kDefaultPadding),
           ClipRRect(
-            borderRadius: BorderRadius.circular(kDefaultRadius),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -115,7 +115,7 @@ class ProfilePage extends StatelessWidget {
           ),
           SizedBox(height: kDefaultPadding),
           ClipRRect(
-            borderRadius: BorderRadius.circular(kDefaultRadius),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),

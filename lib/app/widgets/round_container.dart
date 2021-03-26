@@ -23,7 +23,7 @@ class RoundContainer extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(kDefaultRadius),
+        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
       ),
       child: child,
     );

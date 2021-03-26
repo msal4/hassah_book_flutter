@@ -19,7 +19,7 @@ class ProductCard extends StatelessWidget {
       message: "${product.name} by ${product.author.name}",
       child: Material(
         color: Colors.transparent,
-        borderRadius: BorderRadius.circular(kDefaultRadius),
+        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
@@ -34,7 +34,7 @@ class ProductCard extends StatelessWidget {
                   tag: "image-${product.id}",
                   child: Container(
                     clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRadius)),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
                     child: Image.network(
                       product.image,
                       fit: BoxFit.cover,

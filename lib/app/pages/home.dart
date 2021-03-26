@@ -61,7 +61,7 @@ class SearchBox extends HookWidget {
     return Container(
       padding: const EdgeInsets.only(left: kDefaultPadding),
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultRadius), color: Colors.grey.shade100),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius), color: Colors.grey.shade100),
       child: TextField(
         onTap: () {
           Navigator.of(context).pushNamed(SearchPage.routeName);

@@ -125,7 +125,7 @@ class ProductDetailPage extends HookWidget {
           width: 200,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(kDefaultRadius),
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
           ),
           child: Image.network(
             product.image,
