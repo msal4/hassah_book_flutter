@@ -8,6 +8,8 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
+const _kAuthorRadius = 50.0;
+
 class SearchPage extends HookWidget {
   static const routeName = "/search";
 
@@ -68,7 +70,7 @@ class SearchPage extends HookWidget {
 
   Widget _buildAuthorsRow(ThemeData theme) {
     return Container(
-      height: kAvatarRadius * 2 + 30,
+      height: _kAuthorRadius * 2 + 30,
       child: ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
         scrollDirection: Axis.horizontal,
@@ -81,11 +83,11 @@ class SearchPage extends HookWidget {
 
   Widget _buildAuthor(ThemeData theme) {
     return Container(
-      width: kAvatarRadius * 2,
+      width: _kAuthorRadius * 2,
       child: Column(
         children: [
           CircleAvatar(
-            radius: kAvatarRadius,
+            radius: _kAuthorRadius,
             backgroundColor: Colors.grey.shade100,
             backgroundImage: AssetImage("assets/images/product_placeholder.png"),
             foregroundImage: NetworkImage(""),
