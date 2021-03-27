@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hassah_book_flutter/app/pages/profile.dart';
@@ -6,6 +8,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
 const _kBottomSheetMinExtent = 20.0;
+const _kBottomSheetMinHeight = 450.0;
 
 class CartPage extends StatelessWidget {
   static const routeName = "/cart";
@@ -17,10 +20,12 @@ class CartPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     // Get the min bottom sheet height fraction.
     final minSheetSize = (padding.bottom + _kBottomSheetMinExtent) / size.height;
+    final initialSheetHeight = min(_kBottomSheetMinHeight / size.height, 1.0);
 
     return Scaffold(
       bottomSheet: DraggableScrollableSheet(
         expand: false,
+        initialChildSize: initialSheetHeight,
         minChildSize: minSheetSize,
         builder: (BuildContext context, ScrollController scrollController) {
           return Container(
@@ -93,14 +98,16 @@ class CartPage extends StatelessWidget {
                 ),
                 Align(
                   alignment: Alignment.topCenter,
-                  child: Container(
-                    margin: const EdgeInsets.only(top: kDefaultPadding),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade500,
-                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                  child: IgnorePointer(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: kDefaultPadding),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade500,
+                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                      ),
+                      width: 40,
+                      height: 4,
                     ),
-                    width: 40,
-                    height: 4,
                   ),
                 ),
               ],
