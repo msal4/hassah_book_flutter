@@ -42,7 +42,7 @@ class _AppState extends State<App> {
       visualDensity: VisualDensity.adaptivePlatformDensity,
       fontFamily: "Dubai",
       splashColor: Colors.transparent,
-      highlightColor: Colors.grey.shade100,
+      backgroundColor: Color(0xFFF7F7F7),
     );
 
     theme = theme.copyWith(
@@ -57,6 +57,7 @@ class _AppState extends State<App> {
           borderRadius: BorderRadius.circular(kDefaultBorderRadius),
         ),
       ),
+      highlightColor: theme.backgroundColor,
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(

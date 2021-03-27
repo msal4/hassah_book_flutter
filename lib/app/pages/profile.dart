@@ -31,7 +31,7 @@ class ProfilePage extends StatelessWidget {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-              tileColor: Colors.grey.shade100,
+              tileColor: theme.backgroundColor,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),
@@ -49,7 +49,7 @@ class ProfilePage extends StatelessWidget {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-              tileColor: Colors.grey.shade100,
+              tileColor: theme.backgroundColor,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),
@@ -64,7 +64,7 @@ class ProfilePage extends StatelessWidget {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-              tileColor: Colors.grey.shade100,
+              tileColor: theme.backgroundColor,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),
@@ -79,7 +79,7 @@ class ProfilePage extends StatelessWidget {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-              tileColor: Colors.grey.shade100,
+              tileColor: theme.backgroundColor,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),
@@ -94,7 +94,7 @@ class ProfilePage extends StatelessWidget {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-              tileColor: Colors.grey.shade100,
+              tileColor: theme.backgroundColor,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),
@@ -109,7 +109,7 @@ class ProfilePage extends StatelessWidget {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-              tileColor: Colors.grey.shade100,
+              tileColor: theme.backgroundColor,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),

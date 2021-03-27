@@ -5,7 +5,7 @@ class RoundContainer extends StatelessWidget {
   const RoundContainer({
     Key key,
     this.child,
-    this.color = const Color(0xFFF5F5F5),
+    this.color,
     this.padding = const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
     this.margin,
   }) : super(key: key);
@@ -17,12 +17,14 @@ class RoundContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       margin: margin,
       padding: padding,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
-        color: color,
+        color: color ?? theme.backgroundColor,
         borderRadius: BorderRadius.circular(kDefaultBorderRadius),
       ),
       child: child,

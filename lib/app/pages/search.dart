@@ -28,7 +28,7 @@ class SearchPage extends HookWidget {
           child: Container(
             clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              color: Colors.grey.shade100,
+              color: theme.backgroundColor,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(kDefaultBorderRadius * 2),
                 topRight: Radius.circular(kDefaultBorderRadius * 2),
@@ -88,7 +88,7 @@ class SearchPage extends HookWidget {
         children: [
           CircleAvatar(
             radius: _kAuthorRadius,
-            backgroundColor: Colors.grey.shade100,
+            backgroundColor: theme.backgroundColor,
             backgroundImage: AssetImage("assets/images/product_placeholder.png"),
             foregroundImage: NetworkImage(""),
           ),
@@ -130,13 +130,13 @@ class SearchPage extends HookWidget {
   }
 
   SliverAppBar _buildSliverAppBar(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final theme = Theme.of(context);
 
     return SliverAppBar(
       floating: true,
       snap: true,
       toolbarHeight: kAppBarHeight,
-      backgroundColor: Colors.grey.shade100,
+      backgroundColor: theme.backgroundColor,
       titleSpacing: 0,
       leading: SizedBox(),
       leadingWidth: 0,
@@ -149,7 +149,7 @@ class SearchPage extends HookWidget {
             Expanded(
               child: TextField(
                 autofocus: true,
-                style: textTheme.headline6,
+                style: theme.textTheme.headline6,
                 decoration: InputDecoration(
                   hintText: "Search",
                   border: InputBorder.none,

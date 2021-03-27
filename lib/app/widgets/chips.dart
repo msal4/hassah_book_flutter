@@ -44,7 +44,7 @@ class Chips extends HookWidget {
             },
             child: _buildChip(
               theme: theme,
-              backgroundColor: Colors.grey.shade100,
+              backgroundColor: theme.backgroundColor,
               textColor: theme.textTheme.bodyText1.color,
             ),
           )
