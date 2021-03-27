@@ -176,18 +176,21 @@ class MainPage extends HookWidget {
             child: Row(
               children: [
                 Spacer(),
-                GestureDetector(
-                  onTap: () {
+                IconButton(
+                  onPressed: () {
                     Navigator.of(context).pushNamed(CartPage.routeName);
                   },
-                  child: SvgPicture.asset("assets/svg/bag.svg"),
+                  tooltip: "Cart",
+                  icon: SvgPicture.asset("assets/svg/bag.svg"),
                 ),
                 SizedBox(width: kDefaultPadding),
-                GestureDetector(
-                  onTap: () {
+                IconButton(
+                  padding: const EdgeInsets.only(),
+                  onPressed: () {
                     Navigator.of(context).pushNamed(ProfilePage.routeName);
                   },
-                  child: CircleAvatar(
+                  tooltip: "Profile",
+                  icon: CircleAvatar(
                     radius: kAppBarHeight / 2,
                     backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
                   ),
