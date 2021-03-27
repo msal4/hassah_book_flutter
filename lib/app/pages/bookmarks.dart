@@ -6,8 +6,6 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
-const _kActionExtentRatio = .25;
-
 const _kBookmarkIconWidth = 20.0;
 const _kBookmarkIconHeight = 35.0;
 
@@ -29,7 +27,7 @@ class BookmarksPage extends HookWidget {
           borderRadius: BorderRadius.circular(kDefaultBorderRadius),
           child: Slidable(
             actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: _kActionExtentRatio,
+            actionExtentRatio: kSlidableActionExtentRatio,
             child: _buildBookmarkedProduct(context, idx),
             secondaryActions: <Widget>[IconSlideAction(color: Color(0xFFF06F6F), icon: Icons.delete)],
           ),
