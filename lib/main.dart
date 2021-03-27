@@ -58,7 +58,7 @@ class _AppState extends State<App> {
           borderRadius: BorderRadius.circular(kDefaultBorderRadius),
         ),
       ),
-      highlightColor: theme.backgroundColor,
+      highlightColor: Colors.grey.withOpacity(.1),
       bottomSheetTheme: theme.bottomSheetTheme.copyWith(backgroundColor: Colors.transparent),
     );
 
