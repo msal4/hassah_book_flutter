@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
+import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
@@ -58,6 +59,7 @@ class _AppState extends State<App> {
         ),
       ),
       highlightColor: theme.backgroundColor,
+      bottomSheetTheme: theme.bottomSheetTheme.copyWith(backgroundColor: Colors.transparent),
     );
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -88,6 +90,7 @@ class _AppState extends State<App> {
             MainPage.routeName: (context) => MainPage(),
             ProfilePage.routeName: (context) => ProfilePage(),
             PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
+            CartPage.routeName: (context) => CartPage(),
           },
         ),
       ),
@@ -173,7 +176,12 @@ class MainPage extends HookWidget {
             child: Row(
               children: [
                 Spacer(),
-                SvgPicture.asset("assets/svg/bag.svg"),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pushNamed(CartPage.routeName);
+                  },
+                  child: SvgPicture.asset("assets/svg/bag.svg"),
+                ),
                 SizedBox(width: kDefaultPadding),
                 GestureDetector(
                   onTap: () {
