@@ -206,7 +206,6 @@ class MainPage extends HookWidget {
 
   Widget _buildBottomNavigationBar(BuildContext context, ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
     final theme = Theme.of(context);
-    final padding = MediaQuery.of(context).padding;
 
     return Container(
       clipBehavior: Clip.antiAlias,
