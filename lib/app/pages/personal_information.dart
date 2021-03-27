@@ -26,6 +26,7 @@ class PersonalInformationPage extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: TextField(
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
                 border: InputBorder.none,
@@ -38,6 +39,7 @@ class PersonalInformationPage extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: TextField(
+              textInputAction: TextInputAction.next,
               decoration: InputDecoration(
                 contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
                 border: InputBorder.none,
