@@ -30,6 +30,7 @@ class ProfilePage extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
@@ -47,6 +48,7 @@ class ProfilePage extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
@@ -61,6 +63,7 @@ class ProfilePage extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
@@ -75,6 +78,7 @@ class ProfilePage extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
@@ -89,6 +93,7 @@ class ProfilePage extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
@@ -103,6 +108,7 @@ class ProfilePage extends StatelessWidget {
           ClipRRect(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
             child: ListTile(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
               tileColor: Colors.grey.shade100,
               contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
               leading: CircleAvatar(
