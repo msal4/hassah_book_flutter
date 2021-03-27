@@ -201,39 +201,40 @@ class MainPage extends HookWidget {
   }
 
   Widget _buildBottomNavigationBar(BuildContext context, ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
+    final theme = Theme.of(context);
+    final padding = MediaQuery.of(context).padding;
+
     return Container(
       clipBehavior: Clip.antiAlias,
+      padding: EdgeInsets.all(kDefaultPadding).copyWith(top: kDefaultPadding, bottom: padding.bottom + kDefaultPadding),
       decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(_kNavBarRadius), topRight: Radius.circular(_kNavBarRadius)),
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
-      child: BottomNavigationBar(
-        elevation: 0,
-        showUnselectedLabels: false,
-        showSelectedLabels: false,
-        type: BottomNavigationBarType.fixed,
-        currentIndex: currentTab.value,
-        items: [
-          BottomNavigationBarItem(
-            label: 'Home',
-            icon: _buildIcon("home", 0, currentTab.value),
-          ),
-          BottomNavigationBarItem(
-            label: 'Categories and Collections',
-            icon: _buildIcon("categories", 1, currentTab.value),
-          ),
-          BottomNavigationBarItem(
-            label: 'Bookmarks',
-            icon: _buildIcon("bookmark", 2, currentTab.value),
-          ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          _buildIcon(name: "home", description: "Home", idx: 0, currentIdx: currentTab),
+          _buildIcon(name: "categories", description: "Categories and Collections", idx: 1, currentIdx: currentTab),
+          _buildIcon(name: "bookmark", description: "Bookmarks", idx: 2, currentIdx: currentTab),
         ],
-        onTap: (index) {
-          appBarVisible.value = true;
-          currentTab.value = index;
-        },
       ),
     );
   }
 
-  Widget _buildIcon(String name, int idx, int currentIdx) => SvgPicture.asset("assets/svg/$name${idx == currentIdx ? "_filled" : ""}.svg");
+  Widget _buildIcon({
+    @required String name,
+    @required String description,
+    @required int idx,
+    @required ValueNotifier<int> currentIdx,
+  }) {
+    return IconButton(
+      onPressed: () {
+        currentIdx.value = idx;
+      },
+      tooltip: description,
+      icon: SvgPicture.asset("assets/svg/$name${idx == currentIdx.value ? "_filled" : ""}.svg"),
+    );
+  }
 }
