@@ -9,16 +9,18 @@ class CategoriesPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final padding = MediaQuery.of(context).padding;
 
-    return SafeArea(
-      child: ListView.separated(
-        padding: EdgeInsets.all(kDefaultPadding).copyWith(top: kAppBarHeight),
-        itemBuilder: (context, idx) {
-          return _buildCategoryItem(idx, textTheme);
-        },
-        separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-        itemCount: categoriesList.length,
+    return ListView.separated(
+      padding: EdgeInsets.all(kDefaultPadding).copyWith(
+        top: padding.top + kAppBarHeight + kDefaultPadding,
+        bottom: padding.bottom,
       ),
+      itemBuilder: (context, idx) {
+        return _buildCategoryItem(idx, textTheme);
+      },
+      separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
+      itemCount: categoriesList.length,
     );
   }
 
