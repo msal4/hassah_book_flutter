@@ -148,6 +148,7 @@ class SearchPage extends HookWidget {
             SizedBox(width: kDefaultPadding),
             Expanded(
               child: TextField(
+                textInputAction: TextInputAction.search,
                 autofocus: true,
                 style: theme.textTheme.headline6,
                 decoration: InputDecoration(
