@@ -41,14 +41,21 @@ class _AppState extends State<App> {
       scaffoldBackgroundColor: Colors.white,
       visualDensity: VisualDensity.adaptivePlatformDensity,
       fontFamily: "Dubai",
+      splashColor: Colors.transparent,
+      highlightColor: Colors.grey.shade100,
     );
 
-    // configure the app bar
     theme = theme.copyWith(
       appBarTheme: theme.appBarTheme.copyWith(
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: true,
+      ),
+      tooltipTheme: theme.tooltipTheme.copyWith(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade800,
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+        ),
       ),
     );
 
@@ -64,6 +71,9 @@ class _AppState extends State<App> {
           title: 'Hassah Book',
           theme: theme,
           onGenerateRoute: (settings) {
+            // The reason I'm declaring the routes in two places is because some routes require a custom
+            // transition or arguments. I could've passed the arguments in the `routes` part as well but
+            // I wanted it to be clearer and it's also easier to write this way.
             switch (settings.name) {
               case SearchPage.routeName:
                 return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
