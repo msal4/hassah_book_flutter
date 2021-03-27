@@ -71,6 +71,7 @@ class _AppState extends State<App> {
       child: HassahGraphQLProvider(
         uri: 'http://100.93.34.121:4000/graphql',
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: 'Hassah Book',
           theme: theme,
           onGenerateRoute: (settings) {
@@ -209,19 +210,21 @@ class MainPage extends HookWidget {
 
     return Container(
       clipBehavior: Clip.antiAlias,
-      padding: EdgeInsets.all(kDefaultPadding).copyWith(top: kDefaultPadding, bottom: padding.bottom + kDefaultPadding),
+      padding: EdgeInsets.all(kDefaultPadding).copyWith(bottom: kDefaultPadding / 2),
       decoration: BoxDecoration(
         color: theme.scaffoldBackgroundColor,
         borderRadius: BorderRadius.only(topLeft: Radius.circular(_kNavBarRadius), topRight: Radius.circular(_kNavBarRadius)),
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildIcon(name: "home", description: "Home", idx: 0, currentIdx: currentTab),
-          _buildIcon(name: "categories", description: "Categories and Collections", idx: 1, currentIdx: currentTab),
-          _buildIcon(name: "bookmark", description: "Bookmarks", idx: 2, currentIdx: currentTab),
-        ],
+      child: SafeArea(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildIcon(name: "home", description: "Home", idx: 0, currentIdx: currentTab),
+            _buildIcon(name: "categories", description: "Categories and Collections", idx: 1, currentIdx: currentTab),
+            _buildIcon(name: "bookmark", description: "Bookmarks", idx: 2, currentIdx: currentTab),
+          ],
+        ),
       ),
     );
   }
