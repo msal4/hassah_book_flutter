@@ -8,16 +8,19 @@ class RoundContainer extends StatelessWidget {
     this.color,
     this.padding = const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
     this.margin,
+    this.borderRadius,
   }) : super(key: key);
 
   final Widget child;
   final Color color;
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry margin;
+  final BorderRadius borderRadius;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final borderRadius = this.borderRadius ?? BorderRadius.circular(kDefaultBorderRadius);
 
     return Container(
       margin: margin,
@@ -25,7 +28,7 @@ class RoundContainer extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: color ?? theme.backgroundColor,
-        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+        borderRadius: borderRadius,
       ),
       child: child,
     );

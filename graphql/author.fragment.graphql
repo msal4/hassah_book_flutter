@@ -1,0 +1,14 @@
+fragment Author on Author {
+    id
+    name
+    image
+    overview
+}
+
+fragment PaginatedAuthorResponse on PaginatedAuthorResponse {
+    items {
+        ...Author
+    }
+    hasMore
+    total
+}

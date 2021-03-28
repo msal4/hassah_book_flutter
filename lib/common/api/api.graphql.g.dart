@@ -137,6 +137,136 @@ Map<String, dynamic> _$AdminLoginInputToJson(AdminLoginInput instance) =>
       'password': instance.password,
     };
 
+Search$Query$PaginatedAuthorResponse
+    _$Search$Query$PaginatedAuthorResponseFromJson(Map<String, dynamic> json) {
+  return Search$Query$PaginatedAuthorResponse()
+    ..items = (json['items'] as List)
+        ?.map((e) => e == null
+            ? null
+            : PaginatedAuthorResponseMixin$Author.fromJson(
+                e as Map<String, dynamic>))
+        ?.toList()
+    ..hasMore = json['hasMore'] as bool
+    ..total = json['total'] as int;
+}
+
+Map<String, dynamic> _$Search$Query$PaginatedAuthorResponseToJson(
+        Search$Query$PaginatedAuthorResponse instance) =>
+    <String, dynamic>{
+      'items': instance.items?.map((e) => e?.toJson())?.toList(),
+      'hasMore': instance.hasMore,
+      'total': instance.total,
+    };
+
+Search$Query$PaginatedProductResponse
+    _$Search$Query$PaginatedProductResponseFromJson(Map<String, dynamic> json) {
+  return Search$Query$PaginatedProductResponse()
+    ..items = (json['items'] as List)
+        ?.map((e) => e == null
+            ? null
+            : PaginatedProductResponseMixin$Product.fromJson(
+                e as Map<String, dynamic>))
+        ?.toList()
+    ..hasMore = json['hasMore'] as bool
+    ..total = json['total'] as int;
+}
+
+Map<String, dynamic> _$Search$Query$PaginatedProductResponseToJson(
+        Search$Query$PaginatedProductResponse instance) =>
+    <String, dynamic>{
+      'items': instance.items?.map((e) => e?.toJson())?.toList(),
+      'hasMore': instance.hasMore,
+      'total': instance.total,
+    };
+
+Search$Query _$Search$QueryFromJson(Map<String, dynamic> json) {
+  return Search$Query()
+    ..authors = json['authors'] == null
+        ? null
+        : Search$Query$PaginatedAuthorResponse.fromJson(
+            json['authors'] as Map<String, dynamic>)
+    ..products = json['products'] == null
+        ? null
+        : Search$Query$PaginatedProductResponse.fromJson(
+            json['products'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$Search$QueryToJson(Search$Query instance) =>
+    <String, dynamic>{
+      'authors': instance.authors?.toJson(),
+      'products': instance.products?.toJson(),
+    };
+
+PaginatedAuthorResponseMixin$Author
+    _$PaginatedAuthorResponseMixin$AuthorFromJson(Map<String, dynamic> json) {
+  return PaginatedAuthorResponseMixin$Author()
+    ..id = json['id'] as String
+    ..name = json['name'] as String
+    ..image = json['image'] as String
+    ..overview = json['overview'] as String;
+}
+
+Map<String, dynamic> _$PaginatedAuthorResponseMixin$AuthorToJson(
+        PaginatedAuthorResponseMixin$Author instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'image': instance.image,
+      'overview': instance.overview,
+    };
+
+OrderByMap _$OrderByMapFromJson(Map<String, dynamic> json) {
+  return OrderByMap(
+    field: json['field'] as String,
+    order: _$enumDecodeNullable(_$OrderByEnumMap, json['order'],
+        unknownValue: OrderBy.artemisUnknown),
+  );
+}
+
+Map<String, dynamic> _$OrderByMapToJson(OrderByMap instance) =>
+    <String, dynamic>{
+      'field': instance.field,
+      'order': _$OrderByEnumMap[instance.order],
+    };
+
+T _$enumDecode<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    throw ArgumentError('A value must be provided. Supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+
+  final value = enumValues.entries
+      .singleWhere((e) => e.value == source, orElse: () => null)
+      ?.key;
+
+  if (value == null && unknownValue == null) {
+    throw ArgumentError('`$source` is not one of the supported values: '
+        '${enumValues.values.join(', ')}');
+  }
+  return value ?? unknownValue;
+}
+
+T _$enumDecodeNullable<T>(
+  Map<T, dynamic> enumValues,
+  dynamic source, {
+  T unknownValue,
+}) {
+  if (source == null) {
+    return null;
+  }
+  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
+}
+
+const _$OrderByEnumMap = {
+  OrderBy.asc: 'ASC',
+  OrderBy.desc: 'DESC',
+  OrderBy.artemisUnknown: 'ARTEMIS_UNKNOWN',
+};
+
 Home$Query$LatestProducts _$Home$Query$LatestProductsFromJson(
     Map<String, dynamic> json) {
   return Home$Query$LatestProducts()
@@ -251,4 +381,24 @@ Map<String, dynamic> _$AdminLoginArgumentsToJson(
         AdminLoginArguments instance) =>
     <String, dynamic>{
       'data': instance.data?.toJson(),
+    };
+
+SearchArguments _$SearchArgumentsFromJson(Map<String, dynamic> json) {
+  return SearchArguments(
+    searchQuery: json['searchQuery'] as String,
+    order: (json['order'] as List)
+        ?.map((e) =>
+            e == null ? null : OrderByMap.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+    skip: json['skip'] as int,
+    take: json['take'] as int,
+  );
+}
+
+Map<String, dynamic> _$SearchArgumentsToJson(SearchArguments instance) =>
+    <String, dynamic>{
+      'searchQuery': instance.searchQuery,
+      'order': instance.order?.map((e) => e?.toJson())?.toList(),
+      'skip': instance.skip,
+      'take': instance.take,
     };
