@@ -31,7 +31,10 @@ class CartPage extends StatelessWidget {
           return Container(
             decoration: BoxDecoration(
               color: theme.scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(kDefaultBorderRadius * 2),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(kDefaultBorderRadius * 2),
+                topRight: Radius.circular(kDefaultBorderRadius * 2),
+              ),
               boxShadow: [BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)],
             ),
             child: Stack(
