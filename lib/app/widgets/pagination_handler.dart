@@ -30,7 +30,7 @@ class PaginationHandler extends StatelessWidget {
         if (scrollNotification is ScrollUpdateNotification && enabled && scrollNotification.metrics.pixels + _kFetchMoreThreshold >= scrollNotification.metrics.maxScrollExtent) {
           fetchMore();
         }
-        return true;
+        return false;
       },
       child: child,
     );
