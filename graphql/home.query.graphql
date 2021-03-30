@@ -4,7 +4,7 @@ query Home {
     }
 
     categories {
-        ...PaginatedCategoryResponse
+        ...PaginatedCategoryDetailResponse
     }
 }
 

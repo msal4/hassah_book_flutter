@@ -9,7 +9,7 @@ class PaginationHandler extends StatelessWidget {
     @required this.child,
     this.bottomThreshold = _kFetchMoreThreshold,
     this.enabled = true,
-    this.fetchMore,
+    @required this.fetchMore,
   }) : assert(child != null, "child is required");
 
   final Widget child;

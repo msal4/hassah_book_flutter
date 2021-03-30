@@ -1,0 +1,5 @@
+query Collections($skip: Int, $take: Int) {
+    collections(skip: $skip, take: $take) {
+        ...PaginatedCollectionResponse
+    }
+}

@@ -1,0 +1,13 @@
+fragment Collection on Collection {
+    id
+    image
+    name
+}
+
+fragment PaginatedCollectionResponse on PaginatedCollectionResponse {
+    items {
+        ...Collection
+    }
+    hasMore
+    total
+}

@@ -294,7 +294,7 @@ Home$Query$PaginatedCategoryResponse
     ..items = (json['items'] as List)
         ?.map((e) => e == null
             ? null
-            : PaginatedCategoryResponseMixin$Category.fromJson(
+            : PaginatedCategoryDetailResponseMixin$Category.fromJson(
                 e as Map<String, dynamic>))
         ?.toList()
     ..hasMore = json['hasMore'] as bool
@@ -327,10 +327,10 @@ Map<String, dynamic> _$Home$QueryToJson(Home$Query instance) =>
       'categories': instance.categories?.toJson(),
     };
 
-PaginatedCategoryResponseMixin$Category
-    _$PaginatedCategoryResponseMixin$CategoryFromJson(
+PaginatedCategoryDetailResponseMixin$Category
+    _$PaginatedCategoryDetailResponseMixin$CategoryFromJson(
         Map<String, dynamic> json) {
-  return PaginatedCategoryResponseMixin$Category()
+  return PaginatedCategoryDetailResponseMixin$Category()
     ..id = json['id'] as String
     ..name = json['name'] as String
     ..products = json['products'] == null
@@ -339,8 +339,8 @@ PaginatedCategoryResponseMixin$Category
             json['products'] as Map<String, dynamic>);
 }
 
-Map<String, dynamic> _$PaginatedCategoryResponseMixin$CategoryToJson(
-        PaginatedCategoryResponseMixin$Category instance) =>
+Map<String, dynamic> _$PaginatedCategoryDetailResponseMixin$CategoryToJson(
+        PaginatedCategoryDetailResponseMixin$Category instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
@@ -367,6 +367,108 @@ Map<String, dynamic> _$CategoryDetailMixin$PaginatedProductResponseToJson(
       'items': instance.items?.map((e) => e?.toJson())?.toList(),
       'hasMore': instance.hasMore,
       'total': instance.total,
+    };
+
+Categories$Query$PaginatedCategoryResponse
+    _$Categories$Query$PaginatedCategoryResponseFromJson(
+        Map<String, dynamic> json) {
+  return Categories$Query$PaginatedCategoryResponse()
+    ..items = (json['items'] as List)
+        ?.map((e) => e == null
+            ? null
+            : PaginatedCategoryResponseMixin$Category.fromJson(
+                e as Map<String, dynamic>))
+        ?.toList()
+    ..hasMore = json['hasMore'] as bool
+    ..total = json['total'] as int;
+}
+
+Map<String, dynamic> _$Categories$Query$PaginatedCategoryResponseToJson(
+        Categories$Query$PaginatedCategoryResponse instance) =>
+    <String, dynamic>{
+      'items': instance.items?.map((e) => e?.toJson())?.toList(),
+      'hasMore': instance.hasMore,
+      'total': instance.total,
+    };
+
+Categories$Query _$Categories$QueryFromJson(Map<String, dynamic> json) {
+  return Categories$Query()
+    ..categories = json['categories'] == null
+        ? null
+        : Categories$Query$PaginatedCategoryResponse.fromJson(
+            json['categories'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$Categories$QueryToJson(Categories$Query instance) =>
+    <String, dynamic>{
+      'categories': instance.categories?.toJson(),
+    };
+
+PaginatedCategoryResponseMixin$Category
+    _$PaginatedCategoryResponseMixin$CategoryFromJson(
+        Map<String, dynamic> json) {
+  return PaginatedCategoryResponseMixin$Category()
+    ..id = json['id'] as String
+    ..name = json['name'] as String;
+}
+
+Map<String, dynamic> _$PaginatedCategoryResponseMixin$CategoryToJson(
+        PaginatedCategoryResponseMixin$Category instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
+Collections$Query$PaginatedCollectionResponse
+    _$Collections$Query$PaginatedCollectionResponseFromJson(
+        Map<String, dynamic> json) {
+  return Collections$Query$PaginatedCollectionResponse()
+    ..items = (json['items'] as List)
+        ?.map((e) => e == null
+            ? null
+            : PaginatedCollectionResponseMixin$Collection.fromJson(
+                e as Map<String, dynamic>))
+        ?.toList()
+    ..hasMore = json['hasMore'] as bool
+    ..total = json['total'] as int;
+}
+
+Map<String, dynamic> _$Collections$Query$PaginatedCollectionResponseToJson(
+        Collections$Query$PaginatedCollectionResponse instance) =>
+    <String, dynamic>{
+      'items': instance.items?.map((e) => e?.toJson())?.toList(),
+      'hasMore': instance.hasMore,
+      'total': instance.total,
+    };
+
+Collections$Query _$Collections$QueryFromJson(Map<String, dynamic> json) {
+  return Collections$Query()
+    ..collections = json['collections'] == null
+        ? null
+        : Collections$Query$PaginatedCollectionResponse.fromJson(
+            json['collections'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$Collections$QueryToJson(Collections$Query instance) =>
+    <String, dynamic>{
+      'collections': instance.collections?.toJson(),
+    };
+
+PaginatedCollectionResponseMixin$Collection
+    _$PaginatedCollectionResponseMixin$CollectionFromJson(
+        Map<String, dynamic> json) {
+  return PaginatedCollectionResponseMixin$Collection()
+    ..id = json['id'] as String
+    ..image = json['image'] as String
+    ..name = json['name'] as String;
+}
+
+Map<String, dynamic> _$PaginatedCollectionResponseMixin$CollectionToJson(
+        PaginatedCollectionResponseMixin$Collection instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'image': instance.image,
+      'name': instance.name,
     };
 
 AdminLoginArguments _$AdminLoginArgumentsFromJson(Map<String, dynamic> json) {
@@ -399,6 +501,34 @@ Map<String, dynamic> _$SearchArgumentsToJson(SearchArguments instance) =>
     <String, dynamic>{
       'searchQuery': instance.searchQuery,
       'order': instance.order?.map((e) => e?.toJson())?.toList(),
+      'skip': instance.skip,
+      'take': instance.take,
+    };
+
+CategoriesArguments _$CategoriesArgumentsFromJson(Map<String, dynamic> json) {
+  return CategoriesArguments(
+    skip: json['skip'] as int,
+    take: json['take'] as int,
+  );
+}
+
+Map<String, dynamic> _$CategoriesArgumentsToJson(
+        CategoriesArguments instance) =>
+    <String, dynamic>{
+      'skip': instance.skip,
+      'take': instance.take,
+    };
+
+CollectionsArguments _$CollectionsArgumentsFromJson(Map<String, dynamic> json) {
+  return CollectionsArguments(
+    skip: json['skip'] as int,
+    take: json['take'] as int,
+  );
+}
+
+Map<String, dynamic> _$CollectionsArgumentsToJson(
+        CollectionsArguments instance) =>
+    <String, dynamic>{
       'skip': instance.skip,
       'take': instance.take,
     };

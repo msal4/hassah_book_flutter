@@ -32,8 +32,8 @@ mixin AuthorMixin {
   String image;
   String overview;
 }
-mixin PaginatedCategoryResponseMixin {
-  List<PaginatedCategoryResponseMixin$Category> items;
+mixin PaginatedCategoryDetailResponseMixin {
+  List<PaginatedCategoryDetailResponseMixin$Category> items;
   bool hasMore;
   int total;
 }
@@ -41,6 +41,25 @@ mixin CategoryDetailMixin {
   String id;
   String name;
   CategoryDetailMixin$PaginatedProductResponse products;
+}
+mixin PaginatedCategoryResponseMixin {
+  List<PaginatedCategoryResponseMixin$Category> items;
+  bool hasMore;
+  int total;
+}
+mixin CategoryMixin {
+  String id;
+  String name;
+}
+mixin PaginatedCollectionResponseMixin {
+  List<PaginatedCollectionResponseMixin$Collection> items;
+  bool hasMore;
+  int total;
+}
+mixin CollectionMixin {
+  String id;
+  String image;
+  String name;
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -261,7 +280,7 @@ class Home$Query$LatestProducts extends JsonSerializable
 
 @JsonSerializable(explicitToJson: true)
 class Home$Query$PaginatedCategoryResponse extends JsonSerializable
-    with EquatableMixin, PaginatedCategoryResponseMixin {
+    with EquatableMixin, PaginatedCategoryDetailResponseMixin {
   Home$Query$PaginatedCategoryResponse();
 
   factory Home$Query$PaginatedCategoryResponse.fromJson(
@@ -291,18 +310,18 @@ class Home$Query extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
-class PaginatedCategoryResponseMixin$Category extends JsonSerializable
+class PaginatedCategoryDetailResponseMixin$Category extends JsonSerializable
     with EquatableMixin, CategoryDetailMixin {
-  PaginatedCategoryResponseMixin$Category();
+  PaginatedCategoryDetailResponseMixin$Category();
 
-  factory PaginatedCategoryResponseMixin$Category.fromJson(
+  factory PaginatedCategoryDetailResponseMixin$Category.fromJson(
           Map<String, dynamic> json) =>
-      _$PaginatedCategoryResponseMixin$CategoryFromJson(json);
+      _$PaginatedCategoryDetailResponseMixin$CategoryFromJson(json);
 
   @override
   List<Object> get props => [id, name, products];
   Map<String, dynamic> toJson() =>
-      _$PaginatedCategoryResponseMixin$CategoryToJson(this);
+      _$PaginatedCategoryDetailResponseMixin$CategoryToJson(this);
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -318,6 +337,94 @@ class CategoryDetailMixin$PaginatedProductResponse extends JsonSerializable
   List<Object> get props => [items, hasMore, total];
   Map<String, dynamic> toJson() =>
       _$CategoryDetailMixin$PaginatedProductResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Categories$Query$PaginatedCategoryResponse extends JsonSerializable
+    with EquatableMixin, PaginatedCategoryResponseMixin {
+  Categories$Query$PaginatedCategoryResponse();
+
+  factory Categories$Query$PaginatedCategoryResponse.fromJson(
+          Map<String, dynamic> json) =>
+      _$Categories$Query$PaginatedCategoryResponseFromJson(json);
+
+  @override
+  List<Object> get props => [items, hasMore, total];
+  Map<String, dynamic> toJson() =>
+      _$Categories$Query$PaginatedCategoryResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Categories$Query extends JsonSerializable with EquatableMixin {
+  Categories$Query();
+
+  factory Categories$Query.fromJson(Map<String, dynamic> json) =>
+      _$Categories$QueryFromJson(json);
+
+  Categories$Query$PaginatedCategoryResponse categories;
+
+  @override
+  List<Object> get props => [categories];
+  Map<String, dynamic> toJson() => _$Categories$QueryToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PaginatedCategoryResponseMixin$Category extends JsonSerializable
+    with EquatableMixin, CategoryMixin {
+  PaginatedCategoryResponseMixin$Category();
+
+  factory PaginatedCategoryResponseMixin$Category.fromJson(
+          Map<String, dynamic> json) =>
+      _$PaginatedCategoryResponseMixin$CategoryFromJson(json);
+
+  @override
+  List<Object> get props => [id, name];
+  Map<String, dynamic> toJson() =>
+      _$PaginatedCategoryResponseMixin$CategoryToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Collections$Query$PaginatedCollectionResponse extends JsonSerializable
+    with EquatableMixin, PaginatedCollectionResponseMixin {
+  Collections$Query$PaginatedCollectionResponse();
+
+  factory Collections$Query$PaginatedCollectionResponse.fromJson(
+          Map<String, dynamic> json) =>
+      _$Collections$Query$PaginatedCollectionResponseFromJson(json);
+
+  @override
+  List<Object> get props => [items, hasMore, total];
+  Map<String, dynamic> toJson() =>
+      _$Collections$Query$PaginatedCollectionResponseToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class Collections$Query extends JsonSerializable with EquatableMixin {
+  Collections$Query();
+
+  factory Collections$Query.fromJson(Map<String, dynamic> json) =>
+      _$Collections$QueryFromJson(json);
+
+  Collections$Query$PaginatedCollectionResponse collections;
+
+  @override
+  List<Object> get props => [collections];
+  Map<String, dynamic> toJson() => _$Collections$QueryToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class PaginatedCollectionResponseMixin$Collection extends JsonSerializable
+    with EquatableMixin, CollectionMixin {
+  PaginatedCollectionResponseMixin$Collection();
+
+  factory PaginatedCollectionResponseMixin$Collection.fromJson(
+          Map<String, dynamic> json) =>
+      _$PaginatedCollectionResponseMixin$CollectionFromJson(json);
+
+  @override
+  List<Object> get props => [id, image, name];
+  Map<String, dynamic> toJson() =>
+      _$PaginatedCollectionResponseMixin$CollectionToJson(this);
 }
 
 enum OrderBy {
@@ -853,7 +960,7 @@ class HomeQuery extends GraphQLQuery<Home$Query, JsonSerializable> {
               directives: [],
               selectionSet: SelectionSetNode(selections: [
                 FragmentSpreadNode(
-                    name: NameNode(value: 'PaginatedCategoryResponse'),
+                    name: NameNode(value: 'PaginatedCategoryDetailResponse'),
                     directives: [])
               ]))
         ])),
@@ -958,7 +1065,7 @@ class HomeQuery extends GraphQLQuery<Home$Query, JsonSerializable> {
               ]))
         ])),
     FragmentDefinitionNode(
-        name: NameNode(value: 'PaginatedCategoryResponse'),
+        name: NameNode(value: 'PaginatedCategoryDetailResponse'),
         typeCondition: TypeConditionNode(
             on: NamedTypeNode(
                 name: NameNode(value: 'PaginatedCategoryResponse'),
@@ -1026,4 +1133,262 @@ class HomeQuery extends GraphQLQuery<Home$Query, JsonSerializable> {
   List<Object> get props => [document, operationName];
   @override
   Home$Query parse(Map<String, dynamic> json) => Home$Query.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CategoriesArguments extends JsonSerializable with EquatableMixin {
+  CategoriesArguments({this.skip, this.take});
+
+  @override
+  factory CategoriesArguments.fromJson(Map<String, dynamic> json) =>
+      _$CategoriesArgumentsFromJson(json);
+
+  final int skip;
+
+  final int take;
+
+  @override
+  List<Object> get props => [skip, take];
+  @override
+  Map<String, dynamic> toJson() => _$CategoriesArgumentsToJson(this);
+}
+
+class CategoriesQuery
+    extends GraphQLQuery<Categories$Query, CategoriesArguments> {
+  CategoriesQuery({this.variables});
+
+  @override
+  final DocumentNode document = DocumentNode(definitions: [
+    OperationDefinitionNode(
+        type: OperationType.query,
+        name: NameNode(value: 'Categories'),
+        variableDefinitions: [
+          VariableDefinitionNode(
+              variable: VariableNode(name: NameNode(value: 'skip')),
+              type:
+                  NamedTypeNode(name: NameNode(value: 'Int'), isNonNull: false),
+              defaultValue: DefaultValueNode(value: null),
+              directives: []),
+          VariableDefinitionNode(
+              variable: VariableNode(name: NameNode(value: 'take')),
+              type:
+                  NamedTypeNode(name: NameNode(value: 'Int'), isNonNull: false),
+              defaultValue: DefaultValueNode(value: null),
+              directives: [])
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'categories'),
+              alias: null,
+              arguments: [
+                ArgumentNode(
+                    name: NameNode(value: 'skip'),
+                    value: VariableNode(name: NameNode(value: 'skip'))),
+                ArgumentNode(
+                    name: NameNode(value: 'take'),
+                    value: VariableNode(name: NameNode(value: 'take')))
+              ],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FragmentSpreadNode(
+                    name: NameNode(value: 'PaginatedCategoryResponse'),
+                    directives: [])
+              ]))
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'PaginatedCategoryResponse'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'PaginatedCategoryResponse'),
+                isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'items'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FragmentSpreadNode(
+                    name: NameNode(value: 'Category'), directives: [])
+              ])),
+          FieldNode(
+              name: NameNode(value: 'hasMore'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'total'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null)
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'Category'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'Category'), isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'id'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'name'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null)
+        ]))
+  ]);
+
+  @override
+  final String operationName = 'Categories';
+
+  @override
+  final CategoriesArguments variables;
+
+  @override
+  List<Object> get props => [document, operationName, variables];
+  @override
+  Categories$Query parse(Map<String, dynamic> json) =>
+      Categories$Query.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class CollectionsArguments extends JsonSerializable with EquatableMixin {
+  CollectionsArguments({this.skip, this.take});
+
+  @override
+  factory CollectionsArguments.fromJson(Map<String, dynamic> json) =>
+      _$CollectionsArgumentsFromJson(json);
+
+  final int skip;
+
+  final int take;
+
+  @override
+  List<Object> get props => [skip, take];
+  @override
+  Map<String, dynamic> toJson() => _$CollectionsArgumentsToJson(this);
+}
+
+class CollectionsQuery
+    extends GraphQLQuery<Collections$Query, CollectionsArguments> {
+  CollectionsQuery({this.variables});
+
+  @override
+  final DocumentNode document = DocumentNode(definitions: [
+    OperationDefinitionNode(
+        type: OperationType.query,
+        name: NameNode(value: 'Collections'),
+        variableDefinitions: [
+          VariableDefinitionNode(
+              variable: VariableNode(name: NameNode(value: 'skip')),
+              type:
+                  NamedTypeNode(name: NameNode(value: 'Int'), isNonNull: false),
+              defaultValue: DefaultValueNode(value: null),
+              directives: []),
+          VariableDefinitionNode(
+              variable: VariableNode(name: NameNode(value: 'take')),
+              type:
+                  NamedTypeNode(name: NameNode(value: 'Int'), isNonNull: false),
+              defaultValue: DefaultValueNode(value: null),
+              directives: [])
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'collections'),
+              alias: null,
+              arguments: [
+                ArgumentNode(
+                    name: NameNode(value: 'skip'),
+                    value: VariableNode(name: NameNode(value: 'skip'))),
+                ArgumentNode(
+                    name: NameNode(value: 'take'),
+                    value: VariableNode(name: NameNode(value: 'take')))
+              ],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FragmentSpreadNode(
+                    name: NameNode(value: 'PaginatedCollectionResponse'),
+                    directives: [])
+              ]))
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'PaginatedCollectionResponse'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'PaginatedCollectionResponse'),
+                isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'items'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FragmentSpreadNode(
+                    name: NameNode(value: 'Collection'), directives: [])
+              ])),
+          FieldNode(
+              name: NameNode(value: 'hasMore'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'total'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null)
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'Collection'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'Collection'), isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'id'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'image'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'name'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null)
+        ]))
+  ]);
+
+  @override
+  final String operationName = 'Collections';
+
+  @override
+  final CollectionsArguments variables;
+
+  @override
+  List<Object> get props => [document, operationName, variables];
+  @override
+  Collections$Query parse(Map<String, dynamic> json) =>
+      Collections$Query.fromJson(json);
 }

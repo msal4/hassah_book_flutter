@@ -6,9 +6,22 @@ fragment CategoryDetail on Category {
     }
 }
 
-fragment PaginatedCategoryResponse on PaginatedCategoryResponse {
+fragment PaginatedCategoryDetailResponse on PaginatedCategoryResponse {
     items {
         ...CategoryDetail
+    }
+    hasMore
+    total
+}
+
+fragment Category on Category {
+    id
+    name
+}
+
+fragment PaginatedCategoryResponse on PaginatedCategoryResponse {
+    items {
+        ...Category
     }
     hasMore
     total
