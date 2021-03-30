@@ -98,6 +98,7 @@ class _SearchPageState extends State<SearchPage> {
                         final product = data.products.items[idx - 1];
 
                         return Tooltip(
+                          key: Key(product.id),
                           message: "${product.name} by ${product.author.name}",
                           child: GestureDetector(
                             onTap: () {
