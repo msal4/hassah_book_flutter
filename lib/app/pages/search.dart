@@ -110,7 +110,7 @@ class _SearchPageState extends State<SearchPage> {
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _buildImage(product.image),
+                                  _buildImage(product),
                                   SizedBox(width: kDefaultPadding),
                                   Expanded(child: _buildProductInfo(theme.textTheme, product)),
                                 ],
@@ -199,15 +199,18 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildImage(String url) {
-    return Container(
-      width: kDefaultImageWidth / 2,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-      child: Image.network(
-        url,
-        fit: BoxFit.cover,
-        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+  Widget _buildImage(ProductMixin product) {
+    return Hero(
+      tag: "image-${product.id}",
+      child: Container(
+        width: kDefaultImageWidth / 2,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+        child: Image.network(
+          product.image,
+          fit: BoxFit.cover,
+          frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+        ),
       ),
     );
   }
