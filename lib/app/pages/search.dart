@@ -11,6 +11,7 @@ import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
@@ -32,6 +33,8 @@ class _SearchPageState extends State<SearchPage> {
   String _query = "";
 
   Timer _timer;
+
+  final _heroTagPrefix = generateRandomString();
 
   @override
   void dispose() {
@@ -102,7 +105,10 @@ class _SearchPageState extends State<SearchPage> {
                           message: "${product.name} by ${product.author.name}",
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.of(context).pushNamed(ProductDetailPage.routeName, arguments: product);
+                              Navigator.of(context).pushNamed(
+                                ProductDetailPage.routeName,
+                                arguments: ProductDetailPageArguments(product: product, heroTagPrefix: _heroTagPrefix),
+                              );
                             },
                             child: RoundContainer(
                               color: theme.scaffoldBackgroundColor,
@@ -201,7 +207,7 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _buildImage(ProductMixin product) {
     return Hero(
-      tag: "image-${product.id}",
+      tag: "image-$_heroTagPrefix-${product.id}",
       child: Container(
         width: kDefaultImageWidth / 2,
         clipBehavior: Clip.antiAlias,

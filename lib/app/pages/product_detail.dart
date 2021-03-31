@@ -6,10 +6,22 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 
-class ProductDetailPage extends HookWidget {
-  ProductDetailPage({@required this.product}) : assert(product != null, "product must not be null");
+class ProductDetailPageArguments {
+  const ProductDetailPageArguments({@required this.product, @required this.heroTagPrefix})
+      : assert(product != null, "product is required"),
+        assert(heroTagPrefix != null, "heroTagPrefix is required");
 
   final ProductMixin product;
+  final String heroTagPrefix;
+}
+
+class ProductDetailPage extends HookWidget {
+  ProductDetailPage({@required this.product, @required this.heroTagPrefix})
+      : assert(product != null, "product must not be null"),
+        assert(heroTagPrefix != null, "heroTagPrefix must not be null");
+
+  final ProductMixin product;
+  final String heroTagPrefix;
 
   static const routeName = "/product_detail";
 
@@ -36,7 +48,7 @@ class ProductDetailPage extends HookWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildProductImage(product),
+                        _buildProductImage(product, heroTagPrefix),
                         SizedBox(height: kDefaultPadding),
                         Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
                         SizedBox(height: kDefaultPadding * 2),
@@ -46,7 +58,7 @@ class ProductDetailPage extends HookWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildInfoColumn(title: "Published In", value: data.product.publishedAt.year.toString(), theme: theme),
+                              _buildInfoColumn(title: "Published In", value: data?.product?.publishedAt?.year.toString(), theme: theme),
                               _buildDivider(),
                               _buildInfoColumn(title: "Pages", value: data?.product?.pages.toString(), theme: theme),
                               _buildDivider(),
@@ -140,10 +152,10 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Center _buildProductImage(ProductMixin product) {
+  Center _buildProductImage(ProductMixin product, String heroTagPrefix) {
     return Center(
       child: Hero(
-        tag: "image-${product.id}",
+        tag: "image-$heroTagPrefix-${product.id}",
         child: Container(
           width: 200,
           clipBehavior: Clip.antiAlias,

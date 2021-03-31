@@ -35,7 +35,7 @@ class HomePage extends HookWidget {
         return ListView.separated(
           padding: EdgeInsets.only(top: topSafeAreaPadding, bottom: kDefaultPadding),
           separatorBuilder: (ctx, idx) => SizedBox(height: kDefaultPadding),
-          itemCount: 2,
+          itemCount: home.categories.items.length + 1,
           itemBuilder: (_, index) {
             if (index == 0) {
               return Padding(

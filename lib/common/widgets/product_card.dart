@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/rand.dart';
 
 const kDefaultImageWidth = 150.0;
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends HookWidget {
   const ProductCard({Key key, @required this.product, this.width = kDefaultImageWidth}) : super(key: key);
 
   final ProductMixin product;
@@ -15,6 +17,8 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
 
+    final heroTagPrefix = useMemoized(generateRandomString);
+
     return Tooltip(
       message: "${product.name} by ${product.author.name}",
       child: Material(
@@ -23,7 +27,11 @@ class ProductCard extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () {
-            Navigator.pushNamed(context, ProductDetailPage.routeName, arguments: product);
+            Navigator.pushNamed(
+              context,
+              ProductDetailPage.routeName,
+              arguments: ProductDetailPageArguments(product: product, heroTagPrefix: heroTagPrefix),
+            );
           },
           child: Container(
             width: width,
@@ -31,7 +39,7 @@ class ProductCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Hero(
-                  tag: "image-${product.id}",
+                  tag: "image-$heroTagPrefix-${product.id}",
                   child: Container(
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),

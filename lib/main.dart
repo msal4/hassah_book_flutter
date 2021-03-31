@@ -58,7 +58,8 @@ class _AppState extends State<App> {
               case SearchPage.routeName:
                 return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
               case ProductDetailPage.routeName:
-                return MaterialPageRoute(builder: (context) => ProductDetailPage(product: settings.arguments));
+                final arguments = settings.arguments as ProductDetailPageArguments;
+                return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, heroTagPrefix: arguments.heroTagPrefix));
               default:
                 return null;
             }
