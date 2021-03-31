@@ -21,6 +21,10 @@ mixin ProductMixin {
   ProductMixin$Author author;
   List<ProductMixin$Category> categories;
 }
+mixin CategoryMixin {
+  String id;
+  String name;
+}
 mixin PaginatedAuthorResponseMixin {
   List<PaginatedAuthorResponseMixin$Author> items;
   bool hasMore;
@@ -47,10 +51,6 @@ mixin PaginatedCategoryResponseMixin {
   bool hasMore;
   int total;
 }
-mixin CategoryMixin {
-  String id;
-  String name;
-}
 mixin PaginatedCollectionResponseMixin {
   List<PaginatedCollectionResponseMixin$Collection> items;
   bool hasMore;
@@ -60,6 +60,24 @@ mixin CollectionMixin {
   String id;
   String image;
   String name;
+}
+mixin ProductDetailMixin {
+  String id;
+  String name;
+  String overview;
+  double price;
+  String image;
+  bool isFavorite;
+  String language;
+  @JsonKey(unknownEnumValue: ProductStatus.artemisUnknown)
+  ProductStatus status;
+  int pages;
+  @JsonKey(
+      fromJson: fromGraphQLDateTimeToDartDateTime,
+      toJson: fromDartDateTimeToGraphQLDateTime)
+  DateTime publishedAt;
+  ProductDetailMixin$Author author;
+  List<ProductDetailMixin$Category> categories;
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -123,15 +141,12 @@ class ProductMixin$Author extends JsonSerializable with EquatableMixin {
 }
 
 @JsonSerializable(explicitToJson: true)
-class ProductMixin$Category extends JsonSerializable with EquatableMixin {
+class ProductMixin$Category extends JsonSerializable
+    with EquatableMixin, CategoryMixin {
   ProductMixin$Category();
 
   factory ProductMixin$Category.fromJson(Map<String, dynamic> json) =>
       _$ProductMixin$CategoryFromJson(json);
-
-  String id;
-
-  String name;
 
   @override
   List<Object> get props => [id, name];
@@ -427,11 +442,92 @@ class PaginatedCollectionResponseMixin$Collection extends JsonSerializable
       _$PaginatedCollectionResponseMixin$CollectionToJson(this);
 }
 
+@JsonSerializable(explicitToJson: true)
+class ProductDetail$Query$Product extends JsonSerializable
+    with EquatableMixin, ProductDetailMixin {
+  ProductDetail$Query$Product();
+
+  factory ProductDetail$Query$Product.fromJson(Map<String, dynamic> json) =>
+      _$ProductDetail$Query$ProductFromJson(json);
+
+  @override
+  List<Object> get props => [
+        id,
+        name,
+        overview,
+        price,
+        image,
+        isFavorite,
+        language,
+        status,
+        pages,
+        publishedAt,
+        author,
+        categories
+      ];
+  Map<String, dynamic> toJson() => _$ProductDetail$Query$ProductToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProductDetail$Query extends JsonSerializable with EquatableMixin {
+  ProductDetail$Query();
+
+  factory ProductDetail$Query.fromJson(Map<String, dynamic> json) =>
+      _$ProductDetail$QueryFromJson(json);
+
+  ProductDetail$Query$Product product;
+
+  @override
+  List<Object> get props => [product];
+  Map<String, dynamic> toJson() => _$ProductDetail$QueryToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProductDetailMixin$Author extends JsonSerializable with EquatableMixin {
+  ProductDetailMixin$Author();
+
+  factory ProductDetailMixin$Author.fromJson(Map<String, dynamic> json) =>
+      _$ProductDetailMixin$AuthorFromJson(json);
+
+  String id;
+
+  String name;
+
+  @override
+  List<Object> get props => [id, name];
+  Map<String, dynamic> toJson() => _$ProductDetailMixin$AuthorToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProductDetailMixin$Category extends JsonSerializable
+    with EquatableMixin, CategoryMixin {
+  ProductDetailMixin$Category();
+
+  factory ProductDetailMixin$Category.fromJson(Map<String, dynamic> json) =>
+      _$ProductDetailMixin$CategoryFromJson(json);
+
+  @override
+  List<Object> get props => [id, name];
+  Map<String, dynamic> toJson() => _$ProductDetailMixin$CategoryToJson(this);
+}
+
 enum OrderBy {
   @JsonValue('ASC')
   asc,
   @JsonValue('DESC')
   desc,
+  @JsonValue('ARTEMIS_UNKNOWN')
+  artemisUnknown,
+}
+enum ProductStatus {
+  @JsonValue('Available')
+  available,
+  @JsonValue('ComingSoon')
+  comingSoon,
+  @JsonValue('OnSale')
+  onSale,
+  @JsonValue('SoldOut')
+  soldOut,
   @JsonValue('ARTEMIS_UNKNOWN')
   artemisUnknown,
 }
@@ -544,19 +640,29 @@ class ProductsQuery extends GraphQLQuery<Products$Query, JsonSerializable> {
               arguments: [],
               directives: [],
               selectionSet: SelectionSetNode(selections: [
-                FieldNode(
-                    name: NameNode(value: 'id'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null),
-                FieldNode(
-                    name: NameNode(value: 'name'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null)
+                FragmentSpreadNode(
+                    name: NameNode(value: 'Category'), directives: [])
               ]))
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'Category'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'Category'), isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'id'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'name'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null)
         ]))
   ]);
 
@@ -890,19 +996,29 @@ class SearchQuery extends GraphQLQuery<Search$Query, SearchArguments> {
               arguments: [],
               directives: [],
               selectionSet: SelectionSetNode(selections: [
-                FieldNode(
-                    name: NameNode(value: 'id'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null),
-                FieldNode(
-                    name: NameNode(value: 'name'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null)
+                FragmentSpreadNode(
+                    name: NameNode(value: 'Category'), directives: [])
               ]))
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'Category'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'Category'), isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'id'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'name'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null)
         ]))
   ]);
 
@@ -1050,19 +1166,29 @@ class HomeQuery extends GraphQLQuery<Home$Query, JsonSerializable> {
               arguments: [],
               directives: [],
               selectionSet: SelectionSetNode(selections: [
-                FieldNode(
-                    name: NameNode(value: 'id'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null),
-                FieldNode(
-                    name: NameNode(value: 'name'),
-                    alias: null,
-                    arguments: [],
-                    directives: [],
-                    selectionSet: null)
+                FragmentSpreadNode(
+                    name: NameNode(value: 'Category'), directives: [])
               ]))
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'Category'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'Category'), isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'id'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'name'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null)
         ])),
     FragmentDefinitionNode(
         name: NameNode(value: 'PaginatedCategoryDetailResponse'),
@@ -1391,4 +1517,183 @@ class CollectionsQuery
   @override
   Collections$Query parse(Map<String, dynamic> json) =>
       Collections$Query.fromJson(json);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ProductDetailArguments extends JsonSerializable with EquatableMixin {
+  ProductDetailArguments({@required this.id});
+
+  @override
+  factory ProductDetailArguments.fromJson(Map<String, dynamic> json) =>
+      _$ProductDetailArgumentsFromJson(json);
+
+  final String id;
+
+  @override
+  List<Object> get props => [id];
+  @override
+  Map<String, dynamic> toJson() => _$ProductDetailArgumentsToJson(this);
+}
+
+class ProductDetailQuery
+    extends GraphQLQuery<ProductDetail$Query, ProductDetailArguments> {
+  ProductDetailQuery({this.variables});
+
+  @override
+  final DocumentNode document = DocumentNode(definitions: [
+    OperationDefinitionNode(
+        type: OperationType.query,
+        name: NameNode(value: 'ProductDetail'),
+        variableDefinitions: [
+          VariableDefinitionNode(
+              variable: VariableNode(name: NameNode(value: 'id')),
+              type: NamedTypeNode(name: NameNode(value: 'ID'), isNonNull: true),
+              defaultValue: DefaultValueNode(value: null),
+              directives: [])
+        ],
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'product'),
+              alias: null,
+              arguments: [
+                ArgumentNode(
+                    name: NameNode(value: 'id'),
+                    value: VariableNode(name: NameNode(value: 'id')))
+              ],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FragmentSpreadNode(
+                    name: NameNode(value: 'ProductDetail'), directives: [])
+              ]))
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'ProductDetail'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'Product'), isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'id'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'name'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'overview'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'price'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'image'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'isFavorite'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'language'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'status'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'pages'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'publishedAt'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'author'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FieldNode(
+                    name: NameNode(value: 'id'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null),
+                FieldNode(
+                    name: NameNode(value: 'name'),
+                    alias: null,
+                    arguments: [],
+                    directives: [],
+                    selectionSet: null)
+              ])),
+          FieldNode(
+              name: NameNode(value: 'categories'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: SelectionSetNode(selections: [
+                FragmentSpreadNode(
+                    name: NameNode(value: 'Category'), directives: [])
+              ]))
+        ])),
+    FragmentDefinitionNode(
+        name: NameNode(value: 'Category'),
+        typeCondition: TypeConditionNode(
+            on: NamedTypeNode(
+                name: NameNode(value: 'Category'), isNonNull: false)),
+        directives: [],
+        selectionSet: SelectionSetNode(selections: [
+          FieldNode(
+              name: NameNode(value: 'id'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null),
+          FieldNode(
+              name: NameNode(value: 'name'),
+              alias: null,
+              arguments: [],
+              directives: [],
+              selectionSet: null)
+        ]))
+  ]);
+
+  @override
+  final String operationName = 'ProductDetail';
+
+  @override
+  final ProductDetailArguments variables;
+
+  @override
+  List<Object> get props => [document, operationName, variables];
+  @override
+  ProductDetail$Query parse(Map<String, dynamic> json) =>
+      ProductDetail$Query.fromJson(json);
 }

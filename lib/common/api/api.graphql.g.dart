@@ -471,6 +471,99 @@ Map<String, dynamic> _$PaginatedCollectionResponseMixin$CollectionToJson(
       'name': instance.name,
     };
 
+ProductDetail$Query$Product _$ProductDetail$Query$ProductFromJson(
+    Map<String, dynamic> json) {
+  return ProductDetail$Query$Product()
+    ..id = json['id'] as String
+    ..name = json['name'] as String
+    ..overview = json['overview'] as String
+    ..price = (json['price'] as num)?.toDouble()
+    ..image = json['image'] as String
+    ..isFavorite = json['isFavorite'] as bool
+    ..language = json['language'] as String
+    ..status = _$enumDecodeNullable(_$ProductStatusEnumMap, json['status'],
+        unknownValue: ProductStatus.artemisUnknown)
+    ..pages = json['pages'] as int
+    ..publishedAt =
+        fromGraphQLDateTimeToDartDateTime(json['publishedAt'] as String)
+    ..author = json['author'] == null
+        ? null
+        : ProductDetailMixin$Author.fromJson(
+            json['author'] as Map<String, dynamic>)
+    ..categories = (json['categories'] as List)
+        ?.map((e) => e == null
+            ? null
+            : ProductDetailMixin$Category.fromJson(e as Map<String, dynamic>))
+        ?.toList();
+}
+
+Map<String, dynamic> _$ProductDetail$Query$ProductToJson(
+        ProductDetail$Query$Product instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'overview': instance.overview,
+      'price': instance.price,
+      'image': instance.image,
+      'isFavorite': instance.isFavorite,
+      'language': instance.language,
+      'status': _$ProductStatusEnumMap[instance.status],
+      'pages': instance.pages,
+      'publishedAt': fromDartDateTimeToGraphQLDateTime(instance.publishedAt),
+      'author': instance.author?.toJson(),
+      'categories': instance.categories?.map((e) => e?.toJson())?.toList(),
+    };
+
+const _$ProductStatusEnumMap = {
+  ProductStatus.available: 'Available',
+  ProductStatus.comingSoon: 'ComingSoon',
+  ProductStatus.onSale: 'OnSale',
+  ProductStatus.soldOut: 'SoldOut',
+  ProductStatus.artemisUnknown: 'ARTEMIS_UNKNOWN',
+};
+
+ProductDetail$Query _$ProductDetail$QueryFromJson(Map<String, dynamic> json) {
+  return ProductDetail$Query()
+    ..product = json['product'] == null
+        ? null
+        : ProductDetail$Query$Product.fromJson(
+            json['product'] as Map<String, dynamic>);
+}
+
+Map<String, dynamic> _$ProductDetail$QueryToJson(
+        ProductDetail$Query instance) =>
+    <String, dynamic>{
+      'product': instance.product?.toJson(),
+    };
+
+ProductDetailMixin$Author _$ProductDetailMixin$AuthorFromJson(
+    Map<String, dynamic> json) {
+  return ProductDetailMixin$Author()
+    ..id = json['id'] as String
+    ..name = json['name'] as String;
+}
+
+Map<String, dynamic> _$ProductDetailMixin$AuthorToJson(
+        ProductDetailMixin$Author instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
+ProductDetailMixin$Category _$ProductDetailMixin$CategoryFromJson(
+    Map<String, dynamic> json) {
+  return ProductDetailMixin$Category()
+    ..id = json['id'] as String
+    ..name = json['name'] as String;
+}
+
+Map<String, dynamic> _$ProductDetailMixin$CategoryToJson(
+        ProductDetailMixin$Category instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+    };
+
 AdminLoginArguments _$AdminLoginArgumentsFromJson(Map<String, dynamic> json) {
   return AdminLoginArguments(
     data: json['data'] == null
@@ -531,4 +624,17 @@ Map<String, dynamic> _$CollectionsArgumentsToJson(
     <String, dynamic>{
       'skip': instance.skip,
       'take': instance.take,
+    };
+
+ProductDetailArguments _$ProductDetailArgumentsFromJson(
+    Map<String, dynamic> json) {
+  return ProductDetailArguments(
+    id: json['id'] as String,
+  );
+}
+
+Map<String, dynamic> _$ProductDetailArgumentsToJson(
+        ProductDetailArguments instance) =>
+    <String, dynamic>{
+      'id': instance.id,
     };

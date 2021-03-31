@@ -8,8 +8,27 @@ fragment Product on Product {
         name
     }
     categories {
+        ...Category
+    }
+}
+
+fragment ProductDetail on Product {
+    id
+    name
+    overview
+    price
+    image
+    isFavorite
+    language
+    status
+    pages
+    publishedAt
+    author {
         id
         name
+    }
+    categories {
+        ...Category
     }
 }
 
