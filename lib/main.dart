@@ -36,31 +36,7 @@ const _kGreenColor = Color(0xFF45AE9E);
 class _AppState extends State<App> {
   @override
   Widget build(BuildContext context) {
-    ThemeData theme = ThemeData(
-      primarySwatch: createMaterialColor(_kOrangeColor),
-      accentColor: _kGreenColor,
-      scaffoldBackgroundColor: Colors.white,
-      visualDensity: VisualDensity.adaptivePlatformDensity,
-      fontFamily: "Dubai",
-      splashColor: Colors.transparent,
-      backgroundColor: Color(0xFFF7F7F7),
-    );
-
-    theme = theme.copyWith(
-      appBarTheme: theme.appBarTheme.copyWith(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      tooltipTheme: theme.tooltipTheme.copyWith(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade800,
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-        ),
-      ),
-      highlightColor: Colors.grey.withOpacity(.1),
-      bottomSheetTheme: theme.bottomSheetTheme.copyWith(backgroundColor: Colors.transparent),
-    );
+    final theme = _buildTheme();
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -95,6 +71,34 @@ class _AppState extends State<App> {
           },
         ),
       ),
+    );
+  }
+
+  ThemeData _buildTheme() {
+    ThemeData theme = ThemeData(
+      primarySwatch: createMaterialColor(_kOrangeColor),
+      accentColor: _kGreenColor,
+      scaffoldBackgroundColor: Colors.white,
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+      fontFamily: "Dubai",
+      splashColor: Colors.transparent,
+      backgroundColor: Color(0xFFF7F7F7),
+    );
+
+    return theme.copyWith(
+      appBarTheme: theme.appBarTheme.copyWith(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        elevation: 0,
+        centerTitle: true,
+      ),
+      tooltipTheme: theme.tooltipTheme.copyWith(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade800,
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+        ),
+      ),
+      highlightColor: Colors.grey.withOpacity(.1),
+      bottomSheetTheme: theme.bottomSheetTheme.copyWith(backgroundColor: Colors.transparent),
     );
   }
 }
