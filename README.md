@@ -8,7 +8,7 @@ Generate the graphql api:
 ```bash
 flutter pub run build_runner build
 ```
-Run the app
+Run the app:
 ```bash
 flutter run
 ```
