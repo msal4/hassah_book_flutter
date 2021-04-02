@@ -9,6 +9,7 @@ import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
+import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/pages/profile.dart';
@@ -64,8 +65,10 @@ class _AppState extends State<App> {
                 return null;
             }
           },
+          initialRoute: LoginPage.routeName,
           routes: {
             MainPage.routeName: (context) => MainPage(),
+            LoginPage.routeName: (context) => LoginPage(),
             ProfilePage.routeName: (context) => ProfilePage(),
             PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
             CartPage.routeName: (context) => CartPage(),
