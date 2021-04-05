@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
@@ -17,6 +18,7 @@ import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:provider/provider.dart';
 
 const _kNavBarRadius = 30.0;
 
@@ -47,32 +49,35 @@ class _AppState extends State<App> {
       ),
       child: HassahGraphQLProvider(
         uri: 'http://100.93.34.121:4000/graphql',
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Hassah Book',
-          theme: theme,
-          onGenerateRoute: (settings) {
-            // The reason I'm declaring the routes in two places is because some routes require a custom
-            // transition or arguments. I could've passed the arguments in the `routes` part as well but
-            // I wanted it to be clearer and it's also easier to write this way.
-            switch (settings.name) {
-              case SearchPage.routeName:
-                return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
-              case ProductDetailPage.routeName:
-                final arguments = settings.arguments as ProductDetailPageArguments;
-                return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, heroTagPrefix: arguments.heroTagPrefix));
-              default:
-                return null;
-            }
-          },
-          initialRoute: LoginPage.routeName,
-          routes: {
-            MainPage.routeName: (context) => MainPage(),
-            LoginPage.routeName: (context) => LoginPage(),
-            ProfilePage.routeName: (context) => ProfilePage(),
-            PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
-            CartPage.routeName: (context) => CartPage(),
-          },
+        child: ChangeNotifierProvider(
+          create: (context) => AuthProvider(),
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Hassah Book',
+            theme: theme,
+            onGenerateRoute: (settings) {
+              // The reason I'm declaring the routes in two places is because some routes require a custom
+              // transition or arguments. I could've passed the arguments in the `routes` part as well but
+              // I wanted it to be clearer and it's also easier to write this way.
+              switch (settings.name) {
+                case SearchPage.routeName:
+                  return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
+                case ProductDetailPage.routeName:
+                  final arguments = settings.arguments as ProductDetailPageArguments;
+                  return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, heroTagPrefix: arguments.heroTagPrefix));
+                default:
+                  return null;
+              }
+            },
+            initialRoute: LoginPage.routeName,
+            routes: {
+              MainPage.routeName: (context) => MainPage(),
+              LoginPage.routeName: (context) => LoginPage(),
+              ProfilePage.routeName: (context) => ProfilePage(),
+              PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
+              CartPage.routeName: (context) => CartPage(),
+            },
+          ),
         ),
       ),
     );
@@ -166,6 +171,8 @@ class MainPage extends HookWidget {
     final padding = MediaQuery.of(context).padding;
     final bgColor = Theme.of(context).scaffoldBackgroundColor;
 
+    final isAuthed = context.read<AuthProvider>().isAuthenticated;
+
     return AnimatedOpacity(
       opacity: isVisible ? 1 : 0,
       duration: Duration(milliseconds: 300),
@@ -199,10 +206,12 @@ class MainPage extends HookWidget {
                     Navigator.of(context).pushNamed(ProfilePage.routeName);
                   },
                   tooltip: "Profile",
-                  icon: CircleAvatar(
-                    radius: kAppBarHeight / 2,
-                    backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
-                  ),
+                  icon: isAuthed
+                      ? CircleAvatar(
+                          radius: kAppBarHeight / 2,
+                          backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
+                        )
+                      : Icon(Icons.settings),
                 ),
               ],
             ),

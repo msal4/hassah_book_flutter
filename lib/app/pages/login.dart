@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hassah_book_flutter/main.dart';
+import 'package:provider/provider.dart';
 
 const _kIconSize = 20.0;
 
@@ -98,6 +100,7 @@ class LoginPage extends HookWidget {
                                   if (result.data != null) {
                                     final data = _loginMutation.parse(result.data).login;
                                     await Auth.storeToken(refreshToken: data.refreshToken, accessToken: data.accessToken);
+                                    context.read<AuthProvider>().logout();
                                     Navigator.of(context).pushReplacementNamed(MainPage.routeName);
                                   }
                                 }
