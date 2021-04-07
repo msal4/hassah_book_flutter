@@ -29,8 +29,7 @@ abstract class Auth {
 
   /// Stores the provided tokens. Doesn't store null values.
   /// If you want to remove a token use `removeToken`.
-  static Future<void> storeToken(
-      {String refreshToken, String accessToken}) async {
+  static Future<void> storeToken({String refreshToken, String accessToken}) async {
     final prefs = await _prefsFuture;
     if (refreshToken != null) {
       await prefs.setString(TokenType.Refresh.value, refreshToken);
@@ -64,10 +63,7 @@ abstract class Auth {
 
     if (resp.statusCode == 200) {
       final authResponse = AuthResponse.fromJson(resp.body);
-      await storeToken(
-        refreshToken: authResponse.refreshToken,
-        accessToken: authResponse.accessToken,
-      );
+      await storeToken(refreshToken: authResponse.refreshToken, accessToken: authResponse.accessToken);
 
       return authResponse;
     } else if (resp.statusCode == 401) {

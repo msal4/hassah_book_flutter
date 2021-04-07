@@ -49,36 +49,38 @@ class _AppState extends State<App> {
       ),
       child: HassahGraphQLProvider(
         uri: 'http://100.93.34.121:4000/graphql',
-        child: ChangeNotifierProvider(
-          create: (context) => AuthProvider(),
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Hassah Book',
-            theme: theme,
-            onGenerateRoute: (settings) {
-              // The reason I'm declaring the routes in two places is because some routes require a custom
-              // transition or arguments. I could've passed the arguments in the `routes` part as well but
-              // I wanted it to be clearer and it's also easier to write this way.
-              switch (settings.name) {
-                case SearchPage.routeName:
-                  return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
-                case ProductDetailPage.routeName:
-                  final arguments = settings.arguments as ProductDetailPageArguments;
-                  return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, heroTagPrefix: arguments.heroTagPrefix));
-                default:
-                  return null;
-              }
-            },
-            initialRoute: LoginPage.routeName,
-            routes: {
-              MainPage.routeName: (context) => MainPage(),
-              LoginPage.routeName: (context) => LoginPage(),
-              ProfilePage.routeName: (context) => ProfilePage(),
-              PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
-              CartPage.routeName: (context) => CartPage(),
-            },
-          ),
-        ),
+        builder: (context, client) {
+          return ChangeNotifierProvider(
+            create: (context) => AuthProvider(client: client),
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Hassah Book',
+              theme: theme,
+              onGenerateRoute: (settings) {
+                // The reason I'm declaring the routes in two places is because some routes require a custom
+                // transition or arguments. I could've passed the arguments in the `routes` part as well but
+                // I wanted it to be clearer and it's also easier to write this way.
+                switch (settings.name) {
+                  case SearchPage.routeName:
+                    return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
+                  case ProductDetailPage.routeName:
+                    final arguments = settings.arguments as ProductDetailPageArguments;
+                    return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, heroTagPrefix: arguments.heroTagPrefix));
+                  default:
+                    return null;
+                }
+              },
+              initialRoute: LoginPage.routeName,
+              routes: {
+                MainPage.routeName: (context) => MainPage(),
+                LoginPage.routeName: (context) => LoginPage(),
+                ProfilePage.routeName: (context) => ProfilePage(),
+                PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
+                CartPage.routeName: (context) => CartPage(),
+              },
+            ),
+          );
+        },
       ),
     );
   }

@@ -13,16 +13,13 @@ String uuidFromObject(Object object) {
   return null;
 }
 
-final cache =
-    GraphQLCache(store: HiveStore(), dataIdFromObject: uuidFromObject);
+final cache = GraphQLCache(store: HiveStore(), dataIdFromObject: uuidFromObject);
 
 ValueNotifier<GraphQLClient> clientFor({
   @required String uri,
   String subscriptionUri,
 }) {
-  final authLink = AuthLink(
-      getToken: () => SharedPreferences.getInstance()
-          .then((prefs) => prefs.getString('admin_token')));
+  final authLink = AuthLink(getToken: () => SharedPreferences.getInstance().then((prefs) => prefs.getString('admin_token')));
 
   Link link = authLink.concat(HttpLink(uri));
   if (subscriptionUri != null) {
@@ -49,22 +46,22 @@ ValueNotifier<GraphQLClient> clientFor({
 /// We use the cache for all state management.
 class HassahGraphQLProvider extends StatelessWidget {
   HassahGraphQLProvider({
-    @required this.child,
+    this.child,
+    this.builder,
     @required String uri,
     String subscriptionUri,
-  }) : client = clientFor(
-          uri: uri,
-          subscriptionUri: subscriptionUri,
-        );
+  })  : assert((child == null && builder != null) || (child != null && builder == null), "child or builder must be provided"),
+        client = clientFor(uri: uri, subscriptionUri: subscriptionUri);
 
   final Widget child;
+  final Widget Function(BuildContext, GraphQLClient client) builder;
   final ValueNotifier<GraphQLClient> client;
 
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
       client: client,
-      child: child,
+      child: child ?? builder(context, client.value),
     );
   }
 }
