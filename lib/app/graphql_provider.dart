@@ -15,10 +15,7 @@ String uuidFromObject(Object object) {
 
 final cache = GraphQLCache(store: HiveStore(), dataIdFromObject: uuidFromObject);
 
-ValueNotifier<GraphQLClient> clientFor({
-  @required String uri,
-  String subscriptionUri,
-}) {
+ValueNotifier<GraphQLClient> clientFor({@required String uri, String subscriptionUri}) {
   final authLink = AuthLink(getToken: () => SharedPreferences.getInstance().then((prefs) => prefs.getString('admin_token')));
 
   Link link = authLink.concat(HttpLink(uri));
