@@ -150,7 +150,11 @@ class LoginPage extends HookWidget {
     isLoading.value = true;
     try {
       await context.read<AuthProvider>().login(phone: phone, password: password);
-      Navigator.of(context).pushReplacementNamed(MainPage.routeName);
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        Navigator.of(context).pushReplacementNamed(MainPage.routeName);
+      }
     } on OperationException catch (e) {
       // TODO: handle errors.
     } finally {

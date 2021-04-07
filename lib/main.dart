@@ -171,9 +171,9 @@ class MainPage extends HookWidget {
 
   Widget _buildAppBar(BuildContext context, bool isVisible) {
     final padding = MediaQuery.of(context).padding;
-    final bgColor = Theme.of(context).scaffoldBackgroundColor;
+    final theme = Theme.of(context);
 
-    final isAuthed = context.read<AuthProvider>().isAuthenticated;
+    final isAuthed = context.watch<AuthProvider>().isAuthenticated;
 
     return AnimatedOpacity(
       opacity: isVisible ? 1 : 0,
@@ -185,7 +185,7 @@ class MainPage extends HookWidget {
           padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [bgColor, bgColor.withOpacity(0)],
+              colors: [theme.backgroundColor, theme.backgroundColor.withOpacity(0)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -199,7 +199,7 @@ class MainPage extends HookWidget {
                     Navigator.of(context).pushNamed(CartPage.routeName);
                   },
                   tooltip: "Cart",
-                  icon: SvgPicture.asset("assets/svg/bag.svg"),
+                  icon: SvgPicture.asset("assets/svg/bag.svg", color: Colors.grey.shade800),
                 ),
                 SizedBox(width: kDefaultPadding),
                 IconButton(
@@ -208,12 +208,12 @@ class MainPage extends HookWidget {
                     Navigator.of(context).pushNamed(ProfilePage.routeName);
                   },
                   tooltip: "Profile",
-                  icon: isAuthed
-                      ? CircleAvatar(
-                          radius: kAppBarHeight / 2,
-                          backgroundImage: AssetImage("assets/images/avatar_placeholder.jpeg"),
-                        )
-                      : Icon(Icons.settings),
+                  icon: CircleAvatar(
+                    radius: kAppBarHeight / 2,
+                    child: !isAuthed ? SvgPicture.asset("assets/svg/person.svg", width: 20) : null,
+                    backgroundColor: theme.backgroundColor,
+                    backgroundImage: isAuthed ? AssetImage("assets/images/avatar_placeholder.jpeg") : null,
+                  ),
                 ),
               ],
             ),
