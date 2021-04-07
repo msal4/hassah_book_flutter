@@ -86,7 +86,7 @@ class _AppState extends State<App> {
   }
 
   ThemeData _buildTheme() {
-    ThemeData theme = ThemeData(
+    final theme = ThemeData(
       primarySwatch: createMaterialColor(_kOrangeColor),
       accentColor: _kGreenColor,
       scaffoldBackgroundColor: Colors.white,
