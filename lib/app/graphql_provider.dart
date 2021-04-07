@@ -27,7 +27,7 @@ ValueNotifier<GraphQLClient> clientFor({
       subscriptionUri,
       config: SocketClientConfig(
         autoReconnect: true,
-        inactivityTimeout: Duration(seconds: 30),
+        inactivityTimeout: const Duration(seconds: 30),
       ),
     );
 
@@ -45,12 +45,8 @@ ValueNotifier<GraphQLClient> clientFor({
 /// Wraps the root application with the `graphql_flutter` client.
 /// We use the cache for all state management.
 class HassahGraphQLProvider extends StatelessWidget {
-  HassahGraphQLProvider({
-    this.child,
-    this.builder,
-    @required String uri,
-    String subscriptionUri,
-  })  : assert((child == null && builder != null) || (child != null && builder == null), "child or builder must be provided"),
+  HassahGraphQLProvider({this.child, this.builder, @required String uri, String subscriptionUri})
+      : assert((child == null && builder != null) || (child != null && builder == null), "child or builder must be provided"),
         client = clientFor(uri: uri, subscriptionUri: subscriptionUri);
 
   final Widget child;
