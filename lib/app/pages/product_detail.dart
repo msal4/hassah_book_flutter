@@ -58,11 +58,11 @@ class ProductDetailPage extends HookWidget {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              _buildInfoColumn(title: "Published In", value: data?.product?.publishedAt?.year.toString(), theme: theme),
+                              _buildInfoColumn(title: "Published In", value: data?.product?.publishedAt?.year.toString() ?? "...", theme: theme),
                               _buildDivider(),
-                              _buildInfoColumn(title: "Pages", value: data?.product?.pages.toString(), theme: theme),
+                              _buildInfoColumn(title: "Pages", value: data?.product?.pages.toString() ?? "...", theme: theme),
                               _buildDivider(),
-                              _buildInfoColumn(title: "Language", value: data?.product?.language, theme: theme)
+                              _buildInfoColumn(title: "Language", value: data?.product?.language ?? "...", theme: theme)
                             ],
                           ),
                         ),
