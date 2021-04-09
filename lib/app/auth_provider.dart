@@ -11,8 +11,10 @@ class AuthProvider extends ChangeNotifier {
   final _loginMutation = LoginMutation();
 
   bool _isAuthenticated = false;
-
   bool get isAuthenticated => _isAuthenticated;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
 
   Future<void> signup() {
     // TODO: implement signup.
@@ -20,11 +22,16 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> login({@required String phone, @required String password}) async {
+    _isLoading = true;
+    notifyListeners();
+
     final input = LoginInput(phone: phone, password: password);
 
     final result = await client.mutate(MutationOptions(document: _loginMutation.document, variables: {"data": input}));
     if (result.hasException) {
       _isAuthenticated = false;
+      _isLoading = false;
+      notifyListeners();
       throw result.exception;
     }
 
@@ -32,20 +39,33 @@ class AuthProvider extends ChangeNotifier {
     await Auth.storeToken(accessToken: data.accessToken, refreshToken: data.refreshToken);
 
     _isAuthenticated = true;
+    _isLoading = false;
     notifyListeners();
   }
 
   Future<void> logout() async {
+    _isLoading = true;
+    notifyListeners();
+
     await Auth.removeToken();
+
     _isAuthenticated = false;
+    _isLoading = false;
     notifyListeners();
   }
 
   Future<void> refresh() async {
+    _isLoading = true;
+    notifyListeners();
+
     try {
       await Auth.refreshTokens();
+      _isAuthenticated = true;
+      _isLoading = false;
+      notifyListeners();
     } on AuthException {
       _isAuthenticated = false;
+      _isLoading = false;
       notifyListeners();
     }
   }
