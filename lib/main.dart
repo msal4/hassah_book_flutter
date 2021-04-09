@@ -16,6 +16,7 @@ import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
+import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:provider/provider.dart';
@@ -25,10 +26,16 @@ const _kNavBarRadius = 30.0;
 void main() async {
   await initHiveForFlutter();
 
-  runApp(App());
+  final isAuthenticated = (await Auth.getToken(TokenType.Access)) != null;
+
+  runApp(App(isAuthenticated: isAuthenticated));
 }
 
 class App extends StatefulWidget {
+  const App({@required this.isAuthenticated}) : assert(isAuthenticated != null, "isAuthenticated is required");
+
+  final bool isAuthenticated;
+
   @override
   _AppState createState() => _AppState();
 }
@@ -51,7 +58,7 @@ class _AppState extends State<App> {
         uri: 'http://100.93.34.121:4000/graphql',
         builder: (context, client) {
           return ChangeNotifierProvider(
-            create: (context) => AuthProvider(client: client),
+            create: (context) => AuthProvider(client: client, isAuthenticated: widget.isAuthenticated),
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Hassah Book',
@@ -70,7 +77,7 @@ class _AppState extends State<App> {
                     return null;
                 }
               },
-              initialRoute: LoginPage.routeName,
+              initialRoute: widget.isAuthenticated ? MainPage.routeName : LoginPage.routeName,
               routes: {
                 MainPage.routeName: (context) => MainPage(),
                 LoginPage.routeName: (context) => LoginPage(),
