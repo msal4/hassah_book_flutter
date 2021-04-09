@@ -5,9 +5,9 @@ import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/models/auth_response.dart';
 
 class AuthProvider extends ChangeNotifier {
-  AuthProvider({this.client, bool isAuthenticated = false}) : this._isAuthenticated = isAuthenticated;
+  AuthProvider({@required this.client, bool isAuthenticated = false}) : this._isAuthenticated = isAuthenticated;
 
-  GraphQLClient client;
+  final GraphQLClient client;
 
   final _loginMutation = LoginMutation();
 
