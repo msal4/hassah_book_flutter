@@ -1,28 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hassah_book_flutter/common/auth/auth.dart';
 
 String uuidFromObject(Object object) {
   if (object is Map<String, Object>) {
-    final String typeName = object['__typename'] as String;
-    final String id = object['id'].toString();
+    final typeName = object['__typename'] as String;
+    final id = object['id'].toString();
     if (typeName != null && id != null) {
-      return <String>[typeName, id].join('/');
+      return [typeName, id].join('/');
     }
   }
   return null;
 }
 
-final cache =
-    GraphQLCache(store: HiveStore(), dataIdFromObject: uuidFromObject);
+final cache = GraphQLCache(store: HiveStore(), dataIdFromObject: uuidFromObject);
 
-ValueNotifier<GraphQLClient> clientFor({
-  @required String uri,
-  String subscriptionUri,
-}) {
-  final authLink = AuthLink(
-      getToken: () => SharedPreferences.getInstance()
-          .then((prefs) => prefs.getString('admin_token')));
+ValueNotifier<GraphQLClient> clientFor({@required String uri, String subscriptionUri}) {
+  final authLink = AuthLink(getToken: () async {
+    final token = await Auth.getToken(TokenType.Access);
+    return "Bearer $token";
+  });
 
   Link link = authLink.concat(HttpLink(uri));
   if (subscriptionUri != null) {
@@ -30,7 +27,7 @@ ValueNotifier<GraphQLClient> clientFor({
       subscriptionUri,
       config: SocketClientConfig(
         autoReconnect: true,
-        inactivityTimeout: Duration(seconds: 30),
+        inactivityTimeout: const Duration(seconds: 30),
       ),
     );
 
@@ -48,23 +45,19 @@ ValueNotifier<GraphQLClient> clientFor({
 /// Wraps the root application with the `graphql_flutter` client.
 /// We use the cache for all state management.
 class HassahGraphQLProvider extends StatelessWidget {
-  HassahGraphQLProvider({
-    @required this.child,
-    @required String uri,
-    String subscriptionUri,
-  }) : client = clientFor(
-          uri: uri,
-          subscriptionUri: subscriptionUri,
-        );
+  HassahGraphQLProvider({this.child, this.builder, @required String uri, String subscriptionUri})
+      : assert((child == null && builder != null) || (child != null && builder == null), "child or builder must be provided"),
+        client = clientFor(uri: uri, subscriptionUri: subscriptionUri);
 
   final Widget child;
+  final Widget Function(BuildContext, GraphQLClient client) builder;
   final ValueNotifier<GraphQLClient> client;
 
   @override
   Widget build(BuildContext context) {
     return GraphQLProvider(
       client: client,
-      child: child,
+      child: child ?? builder(context, client.value),
     );
   }
 }

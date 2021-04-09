@@ -1,0 +1,11 @@
+<svg id="Group_85" data-name="Group 85" xmlns="http://www.w3.org/2000/svg" width="72.718" height="60.403" viewBox="0 0 72.718 60.403">
+  <g id="Group_83" data-name="Group 83">
+    <g id="Group_82" data-name="Group 82" transform="translate(1.372)">
+      <path id="Path_29" data-name="Path 29" d="M685.594,279.527l-14.344-31.022a1.617,1.617,0,0,0-1.472-.955H660.5a1.6,1.6,0,0,0-1.591,1.829l.895,6.476H646.5l.888-6.476a1.609,1.609,0,0,0-1.6-1.829h-9.313a1.617,1.617,0,0,0-1.472.955L618.34,286.05l-.285.643h3.652a5.948,5.948,0,0,1,4.282-1.876h16.525l.457-3.308,2.366-17.181h15.637l2.373,17.181.457,3.308h18.348a3.766,3.766,0,0,0,3.44-5.29Z" transform="translate(-618.055 -247.551)" fill="#45ae9e"/>
+    </g>
+    <path id="Path_30" data-name="Path 30" d="M687.235,309.327a1.443,1.443,0,0,0-1.44,1.2c-.508,3.42-3.138,6.034-6.3,6.034h-54.2c-3.52,0-6.383-3.248-6.383-7.238a7.674,7.674,0,0,1,2.1-5.363,5.948,5.948,0,0,1,4.282-1.876h16.525l.457-3.308H625.292a9.036,9.036,0,0,0-7.649,4.541,11.452,11.452,0,0,0-1.657,6.005,11.251,11.251,0,0,0,2.724,7.457,8.775,8.775,0,0,0,6.582,3.089h54.2c4.638,0,8.483-3.837,9.2-8.862a1.473,1.473,0,0,0-1.453-1.684Zm-5.78-7.238a3.72,3.72,0,0,0,3.089-1.617,8.491,8.491,0,0,0-5.051-1.69H662.65l.457,3.308Z" transform="translate(-615.985 -264.823)" fill="#45ae9e"/>
+    <line id="Line_22" data-name="Line 22" x2="54.862" transform="translate(9.08 42.055)" fill="#161615" stroke="#45ae9e" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+    <line id="Line_23" data-name="Line 23" x2="54.862" transform="translate(9.08 46.954)" fill="#161615" stroke="#45ae9e" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2"/>
+  </g>
+  <path id="Icon_awesome-bookmark" data-name="Icon awesome-bookmark" d="M0,13.655V1.28A1.161,1.161,0,0,1,.982,0H6.877a1.161,1.161,0,0,1,.982,1.28V13.655L3.93,10.668Z" transform="translate(18.146 46.748)" fill="#45ae9e"/>
+</svg>
