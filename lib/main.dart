@@ -245,9 +245,9 @@ class MainPage extends HookWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildIcon(name: "home", description: "Home", idx: 0, currentIdx: currentTab),
-            _buildIcon(name: "categories", description: "Categories and Collections", idx: 1, currentIdx: currentTab),
-            _buildIcon(name: "bookmark", description: "Bookmarks", idx: 2, currentIdx: currentTab),
+            _buildIcon(name: "home", description: "Home", idx: 0, currentIdx: currentTab, appBarVisible: appBarVisible),
+            _buildIcon(name: "categories", description: "Categories and Collections", idx: 1, currentIdx: currentTab, appBarVisible: appBarVisible),
+            _buildIcon(name: "bookmark", description: "Bookmarks", idx: 2, currentIdx: currentTab, appBarVisible: appBarVisible),
           ],
         ),
       ),
@@ -259,10 +259,12 @@ class MainPage extends HookWidget {
     @required String description,
     @required int idx,
     @required ValueNotifier<int> currentIdx,
+    @required ValueNotifier<bool> appBarVisible,
   }) {
     return IconButton(
       onPressed: () {
         currentIdx.value = idx;
+        appBarVisible.value = true;
       },
       tooltip: description,
       icon: SvgPicture.asset("assets/svg/$name${idx == currentIdx.value ? "_filled" : ""}.svg"),
