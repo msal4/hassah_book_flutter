@@ -30,12 +30,101 @@ class ProfilePage extends StatelessWidget {
                 ),
                 SizedBox(height: kDefaultPadding),
                 Text("Ahmed Abdul Jabar", style: theme.textTheme.headline6),
-                // TODO: design a simple logout button.
-                ElevatedButton(
-                  onPressed: () {
-                    auth.logout();
-                  },
-                  child: Text("Logout"),
+                SizedBox(height: kDefaultPadding),
+                Material(
+                  color: theme.backgroundColor,
+                  borderRadius: BorderRadius.circular(9999),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () {
+                      showModalBottomSheet<void>(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(kDefaultBorderRadius * 2),
+                                topRight: Radius.circular(kDefaultBorderRadius * 2),
+                              ),
+                              color: theme.scaffoldBackgroundColor,
+                            ),
+                            padding: const EdgeInsets.all(kDefaultPadding),
+                            child: SafeArea(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Text(
+                                    'Authentication is required to order products. Are you sure you want to logout?',
+                                    style: theme.textTheme.subtitle1,
+                                  ),
+                                  SizedBox(height: kDefaultPadding),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 2,
+                                        child: Material(
+                                          color: theme.accentColor,
+                                          borderRadius: BorderRadius.circular(9999),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Ink(
+                                              padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                                              child: Text(
+                                                "CANCEL",
+                                                textAlign: TextAlign.center,
+                                                style: theme.textTheme.button.copyWith(color: Colors.white),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(width: kDefaultPadding),
+                                      Expanded(
+                                        flex: 1,
+                                        child: Material(
+                                          color: theme.backgroundColor,
+                                          borderRadius: BorderRadius.circular(9999),
+                                          clipBehavior: Clip.antiAlias,
+                                          child: InkWell(
+                                            onTap: () {
+                                              auth.logout();
+                                              Navigator.pop(context);
+                                            },
+                                            child: Ink(
+                                              // width: double.maxFinite,
+                                              padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                                              child: Text(
+                                                "YES",
+                                                textAlign: TextAlign.center,
+                                                style: theme.textTheme.button,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: Ink(
+                      width: double.maxFinite,
+                      padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                      child: Text(
+                        "LOGOUT",
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.button,
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(height: kDefaultPadding),
                 ClipRRect(
@@ -76,13 +165,27 @@ class ProfilePage extends StatelessWidget {
             // TODO: design a simple header to lead the user to login or register.
             Column(
               children: [
-                Text("Login To View Profile"),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(LoginPage.routeName);
-                  },
-                  child: Text("Login"),
-                )
+                Text("Login to see your profile", style: theme.textTheme.subtitle1),
+                SizedBox(height: kDefaultPadding),
+                Material(
+                  color: theme.accentColor,
+                  borderRadius: BorderRadius.circular(9999),
+                  clipBehavior: Clip.antiAlias,
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(LoginPage.routeName);
+                    },
+                    child: Ink(
+                      width: double.maxFinite,
+                      padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                      child: Text(
+                        "LOGIN",
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.button.copyWith(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           SizedBox(height: kDefaultPadding),

@@ -104,20 +104,20 @@ class _AppState extends State<App> {
     );
 
     return theme.copyWith(
-      appBarTheme: theme.appBarTheme.copyWith(
-        backgroundColor: theme.scaffoldBackgroundColor,
-        elevation: 0,
-        centerTitle: true,
-      ),
-      tooltipTheme: theme.tooltipTheme.copyWith(
-        decoration: BoxDecoration(
-          color: Colors.grey.shade800,
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+        appBarTheme: theme.appBarTheme.copyWith(
+          backgroundColor: theme.scaffoldBackgroundColor,
+          elevation: 0,
+          centerTitle: true,
         ),
-      ),
-      highlightColor: Colors.grey.withOpacity(.1),
-      bottomSheetTheme: theme.bottomSheetTheme.copyWith(backgroundColor: Colors.transparent),
-    );
+        tooltipTheme: theme.tooltipTheme.copyWith(
+          decoration: BoxDecoration(
+            color: Colors.grey.shade800,
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          ),
+        ),
+        highlightColor: Colors.grey.withOpacity(.1),
+        bottomSheetTheme: theme.bottomSheetTheme.copyWith(backgroundColor: Colors.transparent),
+        textTheme: theme.textTheme.copyWith(button: theme.textTheme.button.copyWith(color: Colors.grey.shade800)));
   }
 }
 
