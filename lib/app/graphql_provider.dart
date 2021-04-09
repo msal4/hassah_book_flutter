@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hassah_book_flutter/common/auth/auth.dart';
 
 String uuidFromObject(Object object) {
   if (object is Map<String, Object>) {
@@ -16,7 +16,10 @@ String uuidFromObject(Object object) {
 final cache = GraphQLCache(store: HiveStore(), dataIdFromObject: uuidFromObject);
 
 ValueNotifier<GraphQLClient> clientFor({@required String uri, String subscriptionUri}) {
-  final authLink = AuthLink(getToken: () => SharedPreferences.getInstance().then((prefs) => prefs.getString('admin_token')));
+  final authLink = AuthLink(getToken: () async {
+    final token = await Auth.getToken(TokenType.Access);
+    return "Bearer $token";
+  });
 
   Link link = authLink.concat(HttpLink(uri));
   if (subscriptionUri != null) {

@@ -123,7 +123,11 @@ class LoginPage extends HookWidget {
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).pushNamed(MainPage.routeName);
+                        if (Navigator.of(context).canPop()) {
+                          Navigator.of(context).pop();
+                        } else {
+                          Navigator.of(context).pushReplacementNamed(MainPage.routeName);
+                        }
                       },
                       child: Ink(
                         width: double.maxFinite,

@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
+import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
+import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
   static const routeName = "/profile";
+
+  final _meQuery = MeQuery();
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +29,32 @@ class ProfilePage extends StatelessWidget {
           if (auth.isAuthenticated)
             Column(
               children: [
-                CircleAvatar(
-                  radius: kAvatarRadius,
-                  backgroundColor: theme.scaffoldBackgroundColor,
-                  backgroundImage: AssetImage("assets/images/product_placeholder.png"),
+                Query(
+                  options: QueryOptions(document: _meQuery.document),
+                  builder: (result, {refetch, fetchMore}) {
+                    if (result.hasException) {
+                      return Retry(message: result.exception.toString(), onRetry: refetch);
+                    }
+
+                    if (result.isLoading) {
+                      return LoadingIndicator();
+                    }
+
+                    final me = _meQuery.parse(result.data).me;
+
+                    return Column(
+                      children: [
+                        CircleAvatar(
+                          radius: kAvatarRadius,
+                          backgroundColor: theme.scaffoldBackgroundColor,
+                          backgroundImage: AssetImage("assets/images/product_placeholder.png"),
+                        ),
+                        SizedBox(height: kDefaultPadding),
+                        Text(me.name, style: theme.textTheme.headline6),
+                      ],
+                    );
+                  },
                 ),
-                SizedBox(height: kDefaultPadding),
-                Text("Ahmed Abdul Jabar", style: theme.textTheme.headline6),
                 SizedBox(height: kDefaultPadding),
                 Material(
                   color: theme.backgroundColor,
