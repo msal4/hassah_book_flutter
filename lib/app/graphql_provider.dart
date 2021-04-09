@@ -21,7 +21,7 @@ ValueNotifier<GraphQLClient> clientFor({@required String uri, String subscriptio
     return "Bearer $token";
   });
 
-  Link link = authLink.concat(HttpLink(uri));
+  Link link = authLink.concat(HttpLink(uri, httpClient: AuthClient()));
   if (subscriptionUri != null) {
     final WebSocketLink websocketLink = WebSocketLink(
       subscriptionUri,
