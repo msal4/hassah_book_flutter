@@ -58,7 +58,11 @@ class _AppState extends State<App> {
         uri: 'http://100.93.34.121:4000/graphql',
         builder: (context, client) {
           return ChangeNotifierProvider(
-            create: (context) => AuthProvider(client: client, isAuthenticated: widget.isAuthenticated),
+            create: (context) {
+              final provider = AuthProvider(client: client, isAuthenticated: widget.isAuthenticated);
+              Auth.provider = provider;
+              return provider;
+            },
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Hassah Book',

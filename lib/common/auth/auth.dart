@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/models/auth_response.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,7 @@ extension on TokenType {
 abstract class Auth {
   static final _prefsFuture = SharedPreferences.getInstance();
   static final _client = Client();
+  static AuthProvider provider;
 
   /// Gets the token of the provided type.
   static Future<String> getToken(TokenType tokenType) async {
@@ -54,6 +56,11 @@ abstract class Auth {
   /// Throws an AuthException if the refresh token is invalidated or expired.
   static Future<AuthResponse> refreshTokens() async {
     final refreshToken = await getToken(TokenType.Refresh);
+    if (refreshToken == null) {
+      await removeToken();
+      throw AuthException();
+    }
+
     // TODO: get the url from the environment or a constant.
     final resp = await _client.post(
       "http://localhost:4000/refresh_token",
@@ -82,28 +89,46 @@ class AuthClient extends BaseClient {
 
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
-    try {
-      final resp = await _client.send(request);
-      debugPrint('AuthClient: status: ${resp.statusCode}');
-      if (resp.statusCode == 401) {
-        try {
-          final authResp = await Auth.refreshTokens();
+    final resp = await _client.send(request);
+    debugPrint('AuthClient: status: ${resp.statusCode}');
+    if (resp.statusCode == 401) {
+      final authResp = await Auth.provider.refresh();
 
-          debugPrint("AuthClient: refreshed tokens");
+      if (authResp != null) {
+        debugPrint("AuthClient: refreshed tokens");
 
-          request.headers["authorization"] = "Bearer ${authResp.accessToken}";
-          return _client.send(request);
-        } on AuthException {
-          debugPrint("AuthClient: failed to refresh tokens");
-        }
+        final req = _copyRequest(request);
+
+        req.headers["authorization"] = "Bearer ${authResp.accessToken}";
+        return _client.send(req);
       }
-
-      return resp;
-    } catch (e) {
-      debugPrint("AuthClient: failed with error: $e");
     }
 
-    return _client.send(request);
+    return resp;
+  }
+
+  BaseRequest _copyRequest(BaseRequest request) {
+    BaseRequest requestCopy;
+
+    if (request is Request) {
+      requestCopy = Request(request.method, request.url)
+        ..encoding = request.encoding
+        ..bodyBytes = request.bodyBytes;
+    } else if (request is MultipartRequest) {
+      requestCopy = MultipartRequest(request.method, request.url)..fields.addAll(request.fields)..files.addAll(request.files);
+    } else if (request is StreamedRequest) {
+      throw Exception('copying streamed requests is not supported');
+    } else {
+      throw Exception('request type is unknown, cannot copy');
+    }
+
+    requestCopy
+      ..persistentConnection = request.persistentConnection
+      ..followRedirects = request.followRedirects
+      ..maxRedirects = request.maxRedirects
+      ..headers.addAll(request.headers);
+
+    return requestCopy;
   }
 
   @override
