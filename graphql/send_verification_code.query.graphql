@@ -1,0 +1,5 @@
+mutation SendVerificationCode($data: SendVerificationCodeInput!) {
+    sendVerificationCode(data: $data) {
+        sessionInfo
+    }
+}

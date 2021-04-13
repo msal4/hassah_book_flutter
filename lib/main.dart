@@ -7,14 +7,17 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
+import 'package:hassah_book_flutter/app/pages/captcha.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
+import 'package:hassah_book_flutter/app/pages/otp.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
+import 'package:hassah_book_flutter/app/pages/signup.dart';
 import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
@@ -74,6 +77,12 @@ class _AppState extends State<App> {
                 switch (settings.name) {
                   case SearchPage.routeName:
                     return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
+                  case CaptchaPage.routeName:
+                    final arguments = settings.arguments as CaptchaPageArguments;
+                    return createRouteWithFadeTransition(builder: (context, _, __) => CaptchaPage(onMessage: arguments.onMessage));
+                  case OTPPage.routeName:
+                    final arguments = settings.arguments as SignupForm;
+                    return MaterialPageRoute(builder: (context) => OTPPage(form: arguments));
                   case ProductDetailPage.routeName:
                     final arguments = settings.arguments as ProductDetailPageArguments;
                     return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, heroTagPrefix: arguments.heroTagPrefix));
@@ -85,6 +94,7 @@ class _AppState extends State<App> {
               routes: {
                 MainPage.routeName: (context) => MainPage(),
                 LoginPage.routeName: (context) => LoginPage(),
+                SignupPage.routeName: (context) => SignupPage(),
                 ProfilePage.routeName: (context) => ProfilePage(),
                 PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
                 CartPage.routeName: (context) => CartPage(),

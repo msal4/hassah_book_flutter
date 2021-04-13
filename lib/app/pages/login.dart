@@ -3,13 +3,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
+import 'package:hassah_book_flutter/app/pages/signup.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hassah_book_flutter/main.dart';
 import 'package:provider/provider.dart';
-
-const _kIconSize = 20.0;
 
 class LoginPage extends HookWidget {
   static const routeName = "/login";
@@ -49,7 +48,7 @@ class LoginPage extends HookWidget {
                       keyboardType: TextInputType.number,
                       style: theme.textTheme.bodyText1.copyWith(color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
-                        icon: SvgPicture.asset("assets/svg/person.svg", width: _kIconSize),
+                        icon: SvgPicture.asset("assets/svg/person.svg", width: kDefaultIconSize),
                         border: InputBorder.none,
                         hintText: "Phone Number",
                       ),
@@ -66,7 +65,7 @@ class LoginPage extends HookWidget {
                       obscureText: true,
                       style: theme.textTheme.bodyText1.copyWith(color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
-                        icon: SvgPicture.asset("assets/svg/key.svg", width: _kIconSize),
+                        icon: SvgPicture.asset("assets/svg/lock.svg", width: kDefaultIconSize),
                         border: InputBorder.none,
                         hintText: "Password",
                       ),
@@ -103,7 +102,9 @@ class LoginPage extends HookWidget {
                   ),
                   SizedBox(height: kDefaultPadding),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.of(context).pushNamed(SignupPage.routeName);
+                    },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
