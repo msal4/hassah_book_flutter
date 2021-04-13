@@ -10,16 +10,49 @@ class AuthProvider extends ChangeNotifier {
   final GraphQLClient client;
 
   final _loginMutation = LoginMutation();
+  final _sendCodeMutation = SendVerificationCodeMutation();
+  final _signupMutation = SignupMutation();
 
   bool _isAuthenticated;
+
   bool get isAuthenticated => _isAuthenticated;
 
   bool _isLoading = false;
+
   bool get isLoading => _isLoading;
 
-  Future<void> signup() {
-    // TODO: implement signup.
-    throw UnimplementedError();
+  /// sendVerificationCode sends a code using the provided phone number and returns the session info to be used when
+  /// verifying the received code.
+  Future<String> sendVerificationCode(SendVerificationCodeInput input) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final result = await client.mutate(MutationOptions(document: _sendCodeMutation.document, variables: {"data": input}));
+    if (result.hasException) {
+      _isLoading = false;
+      notifyListeners();
+      throw result.exception;
+    }
+
+    _isLoading = false;
+    notifyListeners();
+
+    return _sendCodeMutation.parse(result.data).sendVerificationCode.sessionInfo;
+  }
+
+  Future<void> signup(RegisterInput input) async {
+    _isLoading = true;
+    notifyListeners();
+
+    final result = await client.mutate(MutationOptions(document: _signupMutation.document, variables: {"data": input}));
+    if (result.hasException) {
+      _isLoading = false;
+      notifyListeners();
+      throw result.exception;
+    }
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   Future<void> login({@required String phone, @required String password}) async {
