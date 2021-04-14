@@ -41,7 +41,7 @@ class CategoriesPage extends HookWidget {
           },
           child: ListView.separated(
             padding: EdgeInsets.all(kDefaultPadding).copyWith(
-              top: padding.top + kAppBarHeight + kDefaultPadding,
+              top: padding.top + kAppBarHeight,
               bottom: padding.bottom + kDefaultPadding,
             ),
             itemBuilder: (context, idx) {
