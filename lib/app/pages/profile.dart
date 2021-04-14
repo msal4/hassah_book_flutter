@@ -80,7 +80,7 @@ class ProfilePage extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   Text(
-                                    'Authentication is required to order products. Are you sure you want to logout?',
+                                    'Are you sure you want to logout?',
                                     style: theme.textTheme.subtitle1,
                                   ),
                                   SizedBox(height: kDefaultPadding),
