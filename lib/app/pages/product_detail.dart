@@ -5,6 +5,7 @@ import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
 class ProductDetailPageArguments {
   const ProductDetailPageArguments({@required this.product, @required this.heroTagPrefix})
@@ -30,6 +31,7 @@ class ProductDetailPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final padding = MediaQuery.of(context).padding;
     final overviewClipped = useState(true);
 
     return Scaffold(
@@ -37,79 +39,78 @@ class ProductDetailPage extends HookWidget {
         slivers: [
           SliverAppBar(title: Text("Product Details"), floating: true, snap: true),
           SliverToBoxAdapter(
-            child: SafeArea(
-              child: Query(
-                options: QueryOptions(document: _productQuery.document, variables: {"id": product.id}),
-                builder: (result, {fetchMore, refetch}) {
-                  final data = result.data != null ? _productQuery.parse(result.data) : null;
+            child: Query(
+              options: QueryOptions(document: _productQuery.document, variables: {"id": product.id}),
+              builder: (result, {fetchMore, refetch}) {
+                final data = result.data != null ? _productQuery.parse(result.data) : null;
 
-                  return Container(
-                    padding: const EdgeInsets.all(kDefaultPadding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildProductImage(product, heroTagPrefix),
-                        SizedBox(height: kDefaultPadding),
-                        Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
-                        SizedBox(height: kDefaultPadding * 2),
-                        _buildProductHeader(context, product, data?.product),
-                        SizedBox(height: kDefaultPadding),
-                        RoundContainer(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _buildInfoColumn(title: "Published In", value: data?.product?.publishedAt?.year.toString() ?? "...", theme: theme),
-                              _buildDivider(),
-                              _buildInfoColumn(title: "Pages", value: data?.product?.pages.toString() ?? "...", theme: theme),
-                              _buildDivider(),
-                              _buildInfoColumn(title: "Language", value: data?.product?.language ?? "...", theme: theme)
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: kDefaultPadding),
-                        GestureDetector(
-                          onTap: () {
-                            overviewClipped.value = !overviewClipped.value;
-                          },
-                          child: Text(
-                            data?.product?.overview ?? "...",
-                            style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade800),
-                            overflow: overviewClipped.value ? TextOverflow.ellipsis : null,
-                          ),
-                        ),
-                        SizedBox(height: kDefaultPadding),
-                        Row(
+                return Container(
+                  padding: const EdgeInsets.all(kDefaultPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildProductImage(product, heroTagPrefix),
+                      SizedBox(height: kDefaultPadding),
+                      Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
+                      SizedBox(height: kDefaultPadding * 2),
+                      _buildProductHeader(context, product, data?.product),
+                      SizedBox(height: kDefaultPadding),
+                      RoundContainer(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
-                              child: RoundContainer(
-                                child: Row(
-                                  children: [
-                                    Text("QTY"),
-                                    Spacer(),
-                                    Icon(Icons.remove),
-                                    SizedBox(width: kDefaultPadding),
-                                    Text("2", style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
-                                    SizedBox(width: kDefaultPadding),
-                                    Icon(Icons.add),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: kDefaultPadding),
-                            RoundContainer(
-                              color: theme.primaryColor,
-                              child: Text(
-                                "Add to Cart",
-                                style: theme.textTheme.button.copyWith(color: Colors.white),
-                              ),
-                            )
+                            _buildInfoColumn(title: "Published In", value: data?.product?.publishedAt?.year.toString() ?? "...", theme: theme),
+                            _buildDivider(),
+                            _buildInfoColumn(title: "Pages", value: data?.product?.pages.toString() ?? "...", theme: theme),
+                            _buildDivider(),
+                            _buildInfoColumn(title: "Language", value: data?.product?.language ?? "...", theme: theme)
                           ],
                         ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+                      ),
+                      SizedBox(height: kDefaultPadding),
+                      GestureDetector(
+                        onTap: () {
+                          overviewClipped.value = !overviewClipped.value;
+                        },
+                        child: Text(
+                          data?.product?.overview ?? "...",
+                          style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade800),
+                          overflow: overviewClipped.value ? TextOverflow.ellipsis : null,
+                        ),
+                      ),
+                      SizedBox(height: kDefaultPadding),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: RoundContainer(
+                              child: Row(
+                                children: [
+                                  Text("QTY"),
+                                  Spacer(),
+                                  Icon(Icons.remove),
+                                  SizedBox(width: kDefaultPadding),
+                                  Text("2", style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
+                                  SizedBox(width: kDefaultPadding),
+                                  Icon(Icons.add),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: kDefaultPadding),
+                          RoundContainer(
+                            color: theme.primaryColor,
+                            child: Text(
+                              "Add to Cart",
+                              style: theme.textTheme.button.copyWith(color: Colors.white),
+                            ),
+                          )
+                        ],
+                      ),
+                      SizedBox(height: padding.bottom),
+                    ],
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -157,7 +158,7 @@ class ProductDetailPage extends HookWidget {
       child: Hero(
         tag: "image-$heroTagPrefix-${product.id}",
         child: Container(
-          width: 200,
+          width: kDefaultImageWidth,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
