@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
+import 'package:hassah_book_flutter/app/models/cart_item.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/captcha.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
@@ -22,12 +23,16 @@ import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
 const _kNavBarRadius = 30.0;
 
 void main() async {
   await initHiveForFlutter();
+  // Cart Box
+  Hive.registerAdapter(CartItemAdapter());
+  await Hive.openBox<CartItem>(kCartBoxName);
 
   final isAuthenticated = (await Auth.getToken(TokenType.Access)) != null;
 
