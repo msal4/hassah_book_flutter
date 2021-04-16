@@ -30,6 +30,8 @@ class CartPage extends StatelessWidget {
       body: ValueListenableBuilder(
         valueListenable: Hive.box<CartItem>(kCartBoxName).listenable(),
         builder: (BuildContext context, Box<CartItem> box, Widget child) {
+          final items = box.values.toList();
+
           return NestedScrollView(
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
               SliverAppBar(title: Text("Cart"), floating: true, snap: true),
@@ -39,7 +41,10 @@ class CartPage extends StatelessWidget {
                 bottom: kDefaultPadding + padding.bottom + _kBottomSheetMinExtent,
               ),
               itemBuilder: (context, idx) {
+                final item = items[idx];
+
                 return ClipRRect(
+                  key: Key(item.id),
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                   child: Slidable(
                     actionPane: SlidableDrawerActionPane(),
@@ -48,18 +53,25 @@ class CartPage extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          _buildImage(""),
+                          _buildImage(item.image),
                           SizedBox(width: kDefaultPadding),
-                          Expanded(child: _buildProductInfo(theme)),
+                          Expanded(child: _buildProductInfo(theme, item)),
                         ],
                       ),
                     ),
-                    secondaryActions: <Widget>[IconSlideAction(color: Color(0xFFF06F6F), icon: Icons.delete)],
+                    secondaryActions: <Widget>[
+                      IconSlideAction(
+                          color: Color(0xFFF06F6F),
+                          icon: Icons.delete,
+                          onTap: () {
+                            item.delete();
+                          })
+                    ],
                   ),
                 );
               },
               separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-              itemCount: 20,
+              itemCount: items.length,
             ),
           );
         },
@@ -169,23 +181,23 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProductInfo(ThemeData theme) {
+  Widget _buildProductInfo(ThemeData theme, CartItem item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text("This is a Test Name fsdf sd fs", style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
+        Text(item.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
         Text("by John Wick", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
         SizedBox(height: kDefaultPadding / 2),
         Row(
           children: [
             Icon(Icons.remove),
             SizedBox(width: kDefaultPadding),
-            Text("2", style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
+            Text(item.quantity.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
             SizedBox(width: kDefaultPadding),
             Icon(Icons.add),
             Spacer(),
             Text(
-              "\$30.0",
+              "${item.price}",
               style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
             ),
           ],

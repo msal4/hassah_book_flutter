@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/models/cart_item.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
+import 'package:hive/hive.dart';
 
 class ProductDetailPageArguments {
   const ProductDetailPageArguments({@required this.product, @required this.heroTagPrefix})
@@ -33,6 +35,8 @@ class ProductDetailPage extends HookWidget {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
     final overviewClipped = useState(true);
+
+    final cartBox = Hive.box<CartItem>(kCartBoxName);
 
     return Scaffold(
       body: CustomScrollView(
@@ -97,11 +101,17 @@ class ProductDetailPage extends HookWidget {
                             ),
                           ),
                           SizedBox(width: kDefaultPadding),
-                          RoundContainer(
-                            color: theme.primaryColor,
-                            child: Text(
-                              "Add to Cart",
-                              style: theme.textTheme.button.copyWith(color: Colors.white),
+                          GestureDetector(
+                            onTap: () async {
+                              final item = CartItem(id: product.id, name: product.name, image: product.image, quantity: 1, price: product.price);
+                              await cartBox.add(item);
+                            },
+                            child: RoundContainer(
+                              color: theme.primaryColor,
+                              child: Text(
+                                "Add to Cart",
+                                style: theme.textTheme.button.copyWith(color: Colors.white),
+                              ),
                             ),
                           )
                         ],
