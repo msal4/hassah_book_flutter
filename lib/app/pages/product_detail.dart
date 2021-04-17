@@ -65,7 +65,7 @@ class ProductDetailPage extends HookWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProductImage(id, product?.image ?? data.product.image, heroTagPrefix),
+                      _buildProductImage(id ?? product.id, product?.image ?? data.product.image, heroTagPrefix),
                       SizedBox(height: kDefaultPadding),
                       Center(child: Chips(items: data?.product?.categories?.map((e) => e.name)?.toList())),
                       SizedBox(height: kDefaultPadding * 2),
