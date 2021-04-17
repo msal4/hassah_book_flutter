@@ -1,26 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
+import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class ProductDetailPageArguments {
-  const ProductDetailPageArguments({@required this.product, @required this.heroTagPrefix})
-      : assert(product != null, "product is required"),
+  const ProductDetailPageArguments({this.product, this.id, @required this.heroTagPrefix})
+      : assert(product != null || id != null, "a product or an id is required"),
         assert(heroTagPrefix != null, "heroTagPrefix is required");
 
+  final String id;
   final ProductMixin product;
   final String heroTagPrefix;
 }
 
 class ProductDetailPage extends HookWidget {
-  ProductDetailPage({@required this.product, @required this.heroTagPrefix})
-      : assert(product != null, "product must not be null"),
+  ProductDetailPage({this.product, this.id, @required this.heroTagPrefix})
+      : assert(product != null || id != null, "a product or an id is required"),
         assert(heroTagPrefix != null, "heroTagPrefix must not be null");
 
+  final String id;
   final ProductMixin product;
   final String heroTagPrefix;
 
@@ -32,7 +40,10 @@ class ProductDetailPage extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
+
+    final defaultQuantity = Hive.box<CartItem>(kCartBoxName).get(id ?? product.id)?.quantity ?? 1;
     final overviewClipped = useState(true);
+    final quantity = useState(defaultQuantity);
 
     return Scaffold(
       body: CustomScrollView(
@@ -40,8 +51,13 @@ class ProductDetailPage extends HookWidget {
           SliverAppBar(title: Text("Product Details"), floating: true, snap: true),
           SliverToBoxAdapter(
             child: Query(
-              options: QueryOptions(document: _productQuery.document, variables: {"id": product.id}),
+              options: QueryOptions(document: _productQuery.document, variables: {"id": product?.id ?? id}),
               builder: (result, {fetchMore, refetch}) {
+                if (product == null) {
+                  if (result.isLoading) return LoadingIndicator();
+                  if (result.hasException) return Retry(message: result.exception.toString(), onRetry: refetch);
+                }
+
                 final data = result.data != null ? _productQuery.parse(result.data) : null;
 
                 return Container(
@@ -49,11 +65,17 @@ class ProductDetailPage extends HookWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProductImage(product, heroTagPrefix),
+                      _buildProductImage(id, product?.image ?? data.product.image, heroTagPrefix),
                       SizedBox(height: kDefaultPadding),
-                      Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
+                      Center(child: Chips(items: data?.product?.categories?.map((e) => e.name)?.toList())),
                       SizedBox(height: kDefaultPadding * 2),
-                      _buildProductHeader(context, product, data?.product),
+                      _buildProductHeader(
+                        context,
+                        product?.price ?? data.product.price,
+                        product?.name ?? data.product.name,
+                        product?.author ?? data.product.author,
+                        data?.product,
+                      ),
                       SizedBox(height: kDefaultPadding),
                       RoundContainer(
                         child: Row(
@@ -82,26 +104,84 @@ class ProductDetailPage extends HookWidget {
                       Row(
                         children: [
                           Expanded(
+                            flex: 2,
                             child: RoundContainer(
+                              borderRadius: BorderRadius.circular(9999),
                               child: Row(
                                 children: [
                                   Text("QTY"),
                                   Spacer(),
-                                  Icon(Icons.remove),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (quantity.value > 1) {
+                                        quantity.value--;
+                                      }
+                                    },
+                                    child: Icon(Icons.remove),
+                                  ),
                                   SizedBox(width: kDefaultPadding),
-                                  Text("2", style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
+                                  Text(quantity.value.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
                                   SizedBox(width: kDefaultPadding),
-                                  Icon(Icons.add),
+                                  GestureDetector(
+                                    onTap: () {
+                                      quantity.value++;
+                                    },
+                                    child: Icon(Icons.add),
+                                  ),
                                 ],
                               ),
                             ),
                           ),
                           SizedBox(width: kDefaultPadding),
-                          RoundContainer(
-                            color: theme.primaryColor,
-                            child: Text(
-                              "Add to Cart",
-                              style: theme.textTheme.button.copyWith(color: Colors.white),
+                          Expanded(
+                            flex: 1,
+                            child: ValueListenableBuilder<Box<CartItem>>(
+                              valueListenable: Hive.box<CartItem>(kCartBoxName).listenable(),
+                              builder: (context, box, child) {
+                                final inCartItem = box.get(id ?? product.id);
+
+                                if (inCartItem != null && inCartItem.quantity == quantity.value) {
+                                  return GestureDetector(
+                                    onTap: () async {
+                                      Navigator.of(context).pushNamed(CartPage.routeName);
+                                    },
+                                    child: RoundContainer(
+                                      borderRadius: BorderRadius.circular(9999),
+                                      color: theme.accentColor,
+                                      child: Text(
+                                        "Go to Cart",
+                                        style: theme.textTheme.button.copyWith(color: Colors.white),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                return GestureDetector(
+                                  onTap: data != null
+                                      ? () async {
+                                          final item = CartItem(
+                                            id: data.product.id,
+                                            name: data.product.name,
+                                            image: data.product.image,
+                                            quantity: quantity.value,
+                                            price: data.product.price,
+                                            authorName: data.product.author.name,
+                                          );
+                                          await box.put(item.id, item);
+                                        }
+                                      : null,
+                                  child: RoundContainer(
+                                    borderRadius: BorderRadius.circular(9999),
+                                    color: data == null ? Colors.grey.shade800 : theme.primaryColor,
+                                    child: Text(
+                                      "Add to Cart",
+                                      style: theme.textTheme.button.copyWith(color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           )
                         ],
@@ -118,7 +198,7 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Row _buildProductHeader(BuildContext context, ProductMixin product, ProductDetailMixin productDetail) {
+  Row _buildProductHeader(BuildContext context, double price, String name, AuthorMixin author, ProductDetailMixin productDetail) {
     final theme = Theme.of(context);
 
     final isBookmarked = productDetail?.isFavorite ?? false;
@@ -129,9 +209,9 @@ class ProductDetailPage extends HookWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("\$${product.price}", style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor)),
-              Text(product.name, style: theme.textTheme.headline6),
-              Text("by ${product.author.name}", style: theme.textTheme.bodyText2),
+              Text("$price IQD", style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor)),
+              Text(name, style: theme.textTheme.headline6),
+              Text("by ${author.name}", style: theme.textTheme.bodyText2),
             ],
           ),
         ),
@@ -153,10 +233,10 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Center _buildProductImage(ProductMixin product, String heroTagPrefix) {
+  Center _buildProductImage(String id, String image, String heroTagPrefix) {
     return Center(
       child: Hero(
-        tag: "image-$heroTagPrefix-${product.id}",
+        tag: "image-$heroTagPrefix-$id",
         child: Container(
           width: kDefaultImageWidth,
           clipBehavior: Clip.antiAlias,
@@ -164,7 +244,7 @@ class ProductDetailPage extends HookWidget {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
           ),
           child: Image.network(
-            product.image,
+            image,
             fit: BoxFit.cover,
             frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
           ),

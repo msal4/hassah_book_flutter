@@ -34,6 +34,7 @@ class LoginPage extends HookWidget {
                   Column(
                     children: [
                       SvgPicture.asset("assets/svg/icon.svg", width: kAvatarRadius),
+                      SizedBox(height: kDefaultPadding / 2),
                       Text("Hassah Book", style: theme.textTheme.headline6),
                     ],
                   ),
