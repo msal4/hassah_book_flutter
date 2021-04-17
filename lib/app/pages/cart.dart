@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
@@ -62,14 +63,19 @@ class CartPage extends StatelessWidget {
           child: Slidable(
             actionPane: SlidableDrawerActionPane(),
             actionExtentRatio: kSlidableActionExtentRatio,
-            child: RoundContainer(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildImage(item.image),
-                  SizedBox(width: kDefaultPadding),
-                  Expanded(child: _buildProductInfo(context, theme, item)),
-                ],
+            child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushNamed(ProductDetailPage.routeName, arguments: ProductDetailPageArguments(id: item.id, heroTagPrefix: "none"));
+              },
+              child: RoundContainer(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildImage(item.image),
+                    SizedBox(width: kDefaultPadding),
+                    Expanded(child: _buildProductInfo(context, theme, item)),
+                  ],
+                ),
               ),
             ),
             secondaryActions: <Widget>[

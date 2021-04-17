@@ -90,7 +90,7 @@ class _AppState extends State<App> {
                     return MaterialPageRoute(builder: (context) => OTPPage(form: arguments));
                   case ProductDetailPage.routeName:
                     final arguments = settings.arguments as ProductDetailPageArguments;
-                    return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, heroTagPrefix: arguments.heroTagPrefix));
+                    return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, id: arguments.id, heroTagPrefix: arguments.heroTagPrefix));
                   default:
                     return null;
                 }

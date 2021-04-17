@@ -4,8 +4,7 @@ fragment Product on Product {
     price
     image
     author {
-        id
-        name
+        ...Author
     }
     categories {
         ...Category
@@ -24,8 +23,7 @@ fragment ProductDetail on Product {
     pages
     publishedAt
     author {
-        id
-        name
+        ...Author
     }
     categories {
         ...Category

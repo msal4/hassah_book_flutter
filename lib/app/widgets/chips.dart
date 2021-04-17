@@ -8,8 +8,7 @@ const _kMaxNumChips = 3;
 
 class Chips extends HookWidget {
   const Chips({Key key, @required this.items, this.maxNumChips = _kMaxNumChips, this.collapsable = true})
-      : assert(items != null, "items must not be null"),
-        assert(maxNumChips != null, "maxNumChips must not be null"),
+      : assert(maxNumChips != null, "maxNumChips must not be null"),
         super(key: key);
 
   final List<String> items;
@@ -18,7 +17,8 @@ class Chips extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    // remove duplicates
+    if (this.items == null || this.items.isEmpty) return SizedBox();
+
     final items = this.items.fold(<String>[], (List<String> previousList, element) {
       return !previousList.contains(element) ? [...previousList, element] : previousList;
     }).toList();
