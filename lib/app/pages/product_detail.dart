@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class ProductDetailPageArguments {
   const ProductDetailPageArguments({@required this.product, @required this.heroTagPrefix})
@@ -34,9 +36,9 @@ class ProductDetailPage extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
-    final overviewClipped = useState(true);
 
-    final cartBox = Hive.box<CartItem>(kCartBoxName);
+    final overviewClipped = useState(true);
+    final quantity = useState(1);
 
     return Scaffold(
       body: CustomScrollView(
@@ -86,32 +88,82 @@ class ProductDetailPage extends HookWidget {
                       Row(
                         children: [
                           Expanded(
+                            flex: 2,
                             child: RoundContainer(
+                              borderRadius: BorderRadius.circular(9999),
                               child: Row(
                                 children: [
                                   Text("QTY"),
                                   Spacer(),
-                                  Icon(Icons.remove),
+                                  GestureDetector(
+                                    onTap: () {
+                                      if (quantity.value > 1) {
+                                        quantity.value--;
+                                      }
+                                    },
+                                    child: Icon(Icons.remove),
+                                  ),
                                   SizedBox(width: kDefaultPadding),
-                                  Text("2", style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
+                                  Text(quantity.value.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
                                   SizedBox(width: kDefaultPadding),
-                                  Icon(Icons.add),
+                                  GestureDetector(
+                                    onTap: () {
+                                      quantity.value++;
+                                    },
+                                    child: Icon(Icons.add),
+                                  ),
                                 ],
                               ),
                             ),
                           ),
                           SizedBox(width: kDefaultPadding),
-                          GestureDetector(
-                            onTap: () async {
-                              final item = CartItem(id: product.id, name: product.name, image: product.image, quantity: 1, price: product.price);
-                              await cartBox.add(item);
-                            },
-                            child: RoundContainer(
-                              color: theme.primaryColor,
-                              child: Text(
-                                "Add to Cart",
-                                style: theme.textTheme.button.copyWith(color: Colors.white),
-                              ),
+                          Expanded(
+                            flex: 1,
+                            child: ValueListenableBuilder<Box<CartItem>>(
+                              valueListenable: Hive.box<CartItem>(kCartBoxName).listenable(),
+                              builder: (context, box, child) {
+                                final inCartItem = box.get(product.id);
+
+                                if (inCartItem != null && inCartItem.quantity == quantity.value) {
+                                  return GestureDetector(
+                                    onTap: () async {
+                                      Navigator.of(context).pushNamed(CartPage.routeName);
+                                    },
+                                    child: RoundContainer(
+                                      borderRadius: BorderRadius.circular(9999),
+                                      color: theme.accentColor,
+                                      child: Text(
+                                        "Go to Cart",
+                                        style: theme.textTheme.button.copyWith(color: Colors.white),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                return GestureDetector(
+                                  onTap: () async {
+                                    final item = CartItem(
+                                      id: product.id,
+                                      name: product.name,
+                                      image: product.image,
+                                      quantity: quantity.value,
+                                      price: product.price,
+                                      authorName: product.author.name,
+                                    );
+                                    await box.put(item.id, item);
+                                  },
+                                  child: RoundContainer(
+                                    borderRadius: BorderRadius.circular(9999),
+                                    color: theme.primaryColor,
+                                    child: Text(
+                                      "Add to Cart",
+                                      style: theme.textTheme.button.copyWith(color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                );
+                              },
                             ),
                           )
                         ],

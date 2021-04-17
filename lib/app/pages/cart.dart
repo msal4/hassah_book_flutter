@@ -7,6 +7,7 @@ import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
+import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
@@ -18,60 +19,25 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
     final size = MediaQuery.of(context).size;
     // Get the min bottom sheet height fraction.
     final minSheetSize = (padding.bottom + _kBottomSheetMinExtent) / size.height;
     final initialSheetHeight = min(_kBottomSheetMinHeight / size.height, 1.0);
 
-    return Scaffold(
-      bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize),
-      body: ValueListenableBuilder(
+    return UnfocusOnTap(
+      child: ValueListenableBuilder<Box<CartItem>>(
         valueListenable: Hive.box<CartItem>(kCartBoxName).listenable(),
-        builder: (BuildContext context, Box<CartItem> box, Widget child) {
+        builder: (context, box, child) {
           final items = box.values.toList();
 
-          return NestedScrollView(
-            headerSliverBuilder: (context, innerBoxIsScrolled) => [
-              SliverAppBar(title: Text("Cart"), floating: true, snap: true),
-            ],
-            body: ListView.separated(
-              padding: EdgeInsets.all(kDefaultPadding).copyWith(
-                bottom: kDefaultPadding + padding.bottom + _kBottomSheetMinExtent,
-              ),
-              itemBuilder: (context, idx) {
-                final item = items[idx];
-
-                return ClipRRect(
-                  key: Key(item.id),
-                  borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                  child: Slidable(
-                    actionPane: SlidableDrawerActionPane(),
-                    actionExtentRatio: kSlidableActionExtentRatio,
-                    child: RoundContainer(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildImage(item.image),
-                          SizedBox(width: kDefaultPadding),
-                          Expanded(child: _buildProductInfo(theme, item)),
-                        ],
-                      ),
-                    ),
-                    secondaryActions: <Widget>[
-                      IconSlideAction(
-                          color: Color(0xFFF06F6F),
-                          icon: Icons.delete,
-                          onTap: () {
-                            item.delete();
-                          })
-                    ],
-                  ),
-                );
-              },
-              separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-              itemCount: items.length,
+          return Scaffold(
+            bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, box),
+            body: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                SliverAppBar(title: Text("Cart"), floating: true, snap: true),
+              ],
+              body: items.length == 0 ? _buildPlaceholder(context) : _buildItemsList(context, items),
             ),
           );
         },
@@ -79,9 +45,200 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  DraggableScrollableSheet _buildBottomSheet(BuildContext context, double initialSheetHeight, double minSheetSize) {
+  ListView _buildItemsList(BuildContext context, List<CartItem> items) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
+
+    return ListView.separated(
+      padding: EdgeInsets.all(kDefaultPadding).copyWith(
+        bottom: kDefaultPadding + padding.bottom + _kBottomSheetMinExtent,
+      ),
+      itemBuilder: (context, idx) {
+        final item = items[idx];
+
+        return ClipRRect(
+          key: Key(item.id),
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          child: Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: kSlidableActionExtentRatio,
+            child: RoundContainer(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildImage(item.image),
+                  SizedBox(width: kDefaultPadding),
+                  Expanded(child: _buildProductInfo(context, theme, item)),
+                ],
+              ),
+            ),
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                color: Color(0xFFF06F6F),
+                icon: Icons.delete,
+                onTap: () => _deleteItem(context, item),
+              )
+            ],
+          ),
+        );
+      },
+      separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
+      itemCount: items.length,
+    );
+  }
+
+  Widget _buildPlaceholder(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.all(kDefaultPadding),
+      child: Text(
+        "Your cart is empty.",
+        style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.w300),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+
+  Widget _buildProductInfo(BuildContext context, ThemeData theme, CartItem item) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(item.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
+        Text("by ${item.authorName}", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
+        SizedBox(height: kDefaultPadding / 2),
+        Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                if (item.quantity == 1) {
+                  return _deleteItem(context, item);
+                }
+                item.quantity--;
+                item.save();
+              },
+              child: Icon(Icons.remove),
+            ),
+            SizedBox(width: kDefaultPadding),
+            Text(item.quantity.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
+            SizedBox(width: kDefaultPadding),
+            GestureDetector(
+              onTap: () {
+                item.quantity++;
+                item.save();
+              },
+              child: Icon(Icons.add),
+            ),
+            Spacer(),
+            Text(
+              "${item.price * item.quantity} IQD",
+              style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
+            ),
+          ],
+        )
+      ],
+    );
+  }
+
+  Widget _buildImage(String url) {
+    return Container(
+      width: kDefaultImageWidth / 2,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+      child: Image.network(
+        url,
+        fit: BoxFit.cover,
+        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+      ),
+    );
+  }
+
+  void _deleteItem(BuildContext context, CartItem item) {
+    final theme = Theme.of(context);
+
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(kDefaultBorderRadius * 2),
+              topRight: Radius.circular(kDefaultBorderRadius * 2),
+            ),
+            color: theme.scaffoldBackgroundColor,
+          ),
+          padding: const EdgeInsets.all(kDefaultPadding),
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Do you want to remove this item from your cart?',
+                  style: theme.textTheme.subtitle1,
+                ),
+                SizedBox(height: kDefaultPadding),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Material(
+                        color: theme.accentColor,
+                        borderRadius: BorderRadius.circular(9999),
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Ink(
+                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            child: Text(
+                              "CANCEL",
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.button.copyWith(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: kDefaultPadding),
+                    Expanded(
+                      flex: 1,
+                      child: Material(
+                        color: theme.backgroundColor,
+                        borderRadius: BorderRadius.circular(9999),
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () {
+                            item.delete();
+                            Navigator.pop(context);
+                          },
+                          child: Ink(
+                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            child: Text(
+                              "YES",
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.button,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  DraggableScrollableSheet _buildBottomSheet(BuildContext context, double initialSheetHeight, double minSheetSize, Box<CartItem> box) {
+    final theme = Theme.of(context);
+    final padding = MediaQuery.of(context).padding;
+
+    final totalPrice = box.values.fold(0, (acc, item) => acc += item.price * item.quantity);
 
     return DraggableScrollableSheet(
       expand: false,
@@ -112,7 +269,7 @@ class CartPage extends StatelessWidget {
                     children: [
                       Text("Total", style: theme.textTheme.headline6),
                       Spacer(),
-                      Text("\$40.0", style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold)),
+                      Text("$totalPrice IQD", style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold)),
                     ],
                   ),
                   SizedBox(height: kDefaultPadding),
@@ -151,6 +308,7 @@ class CartPage extends StatelessWidget {
                     child: RoundContainer(
                       padding: const EdgeInsets.all(kDefaultPadding),
                       color: theme.accentColor,
+                      borderRadius: BorderRadius.circular(9999),
                       child: Text(
                         "ORDER NOW",
                         textAlign: TextAlign.center,
@@ -178,44 +336,6 @@ class CartPage extends StatelessWidget {
           ),
         );
       },
-    );
-  }
-
-  Widget _buildProductInfo(ThemeData theme, CartItem item) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(item.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by John Wick", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
-        SizedBox(height: kDefaultPadding / 2),
-        Row(
-          children: [
-            Icon(Icons.remove),
-            SizedBox(width: kDefaultPadding),
-            Text(item.quantity.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
-            SizedBox(width: kDefaultPadding),
-            Icon(Icons.add),
-            Spacer(),
-            Text(
-              "${item.price}",
-              style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
-            ),
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _buildImage(String url) {
-    return Container(
-      width: kDefaultImageWidth / 2,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-      child: Image.network(
-        url,
-        fit: BoxFit.cover,
-        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
-      ),
     );
   }
 }
