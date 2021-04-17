@@ -51,29 +51,28 @@ class ProductDetailPage extends HookWidget {
           SliverAppBar(title: Text("Product Details"), floating: true, snap: true),
           SliverToBoxAdapter(
             child: Query(
-              options: QueryOptions(document: _productQuery.document, variables: {"id": product?.id ?? id}),
+              options: QueryOptions(document: _productQuery.document, variables: {"id": id ?? product.id}),
               builder: (result, {fetchMore, refetch}) {
-                if (product == null) {
+                if (this.product == null) {
                   if (result.isLoading) return LoadingIndicator();
                   if (result.hasException) return Retry(message: result.exception.toString(), onRetry: refetch);
                 }
 
                 final data = result.data != null ? _productQuery.parse(result.data) : null;
+                final product = this.product ?? data.product;
 
                 return Container(
                   padding: const EdgeInsets.all(kDefaultPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProductImage(id ?? product.id, product?.image ?? data.product.image, heroTagPrefix),
+                      _buildProductImage(id ?? product.id, product.image, heroTagPrefix),
                       SizedBox(height: kDefaultPadding),
-                      Center(child: Chips(items: data?.product?.categories?.map((e) => e.name)?.toList())),
+                      Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
                       SizedBox(height: kDefaultPadding * 2),
                       _buildProductHeader(
                         context,
-                        product?.price ?? data.product.price,
-                        product?.name ?? data.product.name,
-                        product?.author ?? data.product.author,
+                        product,
                         data?.product,
                       ),
                       SizedBox(height: kDefaultPadding),
@@ -142,9 +141,7 @@ class ProductDetailPage extends HookWidget {
 
                                 if (inCartItem != null && inCartItem.quantity == quantity.value) {
                                   return GestureDetector(
-                                    onTap: () async {
-                                      Navigator.of(context).pushNamed(CartPage.routeName);
-                                    },
+                                    onTap: () => Navigator.of(context).pushNamed(CartPage.routeName),
                                     child: RoundContainer(
                                       borderRadius: BorderRadius.circular(9999),
                                       color: theme.accentColor,
@@ -158,19 +155,7 @@ class ProductDetailPage extends HookWidget {
                                 }
 
                                 return GestureDetector(
-                                  onTap: data != null
-                                      ? () async {
-                                          final item = CartItem(
-                                            id: data.product.id,
-                                            name: data.product.name,
-                                            image: data.product.image,
-                                            quantity: quantity.value,
-                                            price: data.product.price,
-                                            authorName: data.product.author.name,
-                                          );
-                                          await box.put(item.id, item);
-                                        }
-                                      : null,
+                                  onTap: data != null ? () => box.put(data.product.id, CartItem.fromProduct(data.product, quantity.value)) : null,
                                   child: RoundContainer(
                                     borderRadius: BorderRadius.circular(9999),
                                     color: data == null ? Colors.grey.shade800 : theme.primaryColor,
@@ -198,7 +183,7 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Row _buildProductHeader(BuildContext context, double price, String name, AuthorMixin author, ProductDetailMixin productDetail) {
+  Row _buildProductHeader(BuildContext context, ProductMixin product, ProductDetailMixin productDetail) {
     final theme = Theme.of(context);
 
     final isBookmarked = productDetail?.isFavorite ?? false;
@@ -209,9 +194,9 @@ class ProductDetailPage extends HookWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("$price IQD", style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor)),
-              Text(name, style: theme.textTheme.headline6),
-              Text("by ${author.name}", style: theme.textTheme.bodyText2),
+              Text("${product.price} IQD", style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor)),
+              Text(product.name, style: theme.textTheme.headline6),
+              Text("by ${product.author.name}", style: theme.textTheme.bodyText2),
             ],
           ),
         ),

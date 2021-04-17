@@ -12,22 +12,13 @@ fragment Product on Product {
 }
 
 fragment ProductDetail on Product {
-    id
-    name
+    ...Product
     overview
-    price
-    image
     isFavorite
     language
     status
     pages
     publishedAt
-    author {
-        ...Author
-    }
-    categories {
-        ...Category
-    }
 }
 
 fragment PaginatedProductResponse on PaginatedProductResponse {

@@ -1,3 +1,4 @@
+import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 
@@ -13,6 +14,15 @@ class CartItem extends HiveObject {
     @required this.price,
     @required this.authorName,
   });
+
+  CartItem.fromProduct(ProductMixin product, [int quantity = 1]) {
+    id = product.id;
+    name = product.name;
+    image = product.image;
+    price = product.price;
+    authorName = product.author.name;
+    this.quantity = quantity;
+  }
 
   @HiveField(0)
   String id;
