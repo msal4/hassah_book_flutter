@@ -1,3 +1,11 @@
+fragment PaginatedOrderResponse on PaginatedOrderResponse {
+    items {
+        ...Order
+    }
+    hasMore
+    total
+}
+
 fragment Order on Order {
     id
     purchases(take: 1) {
@@ -16,7 +24,7 @@ fragment Order on Order {
 
 fragment OrderDetail on Order {
     id
-    purchases(take: 1) {
+    purchases {
         ...PaginatedPurchaseResponse
     }
     phone
