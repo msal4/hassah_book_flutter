@@ -1,6 +1,22 @@
 fragment Order on Order {
     id
-    purchases {
+    purchases(take: 1) {
+        items {
+            product {
+                image
+            }
+        }
+        hasMore
+        total
+    }
+    phone
+    address
+    status
+}
+
+fragment OrderDetail on Order {
+    id
+    purchases(take: 1) {
         ...PaginatedPurchaseResponse
     }
     phone
@@ -19,7 +35,7 @@ fragment PaginatedPurchaseResponse on PaginatedPurchaseResponse {
 fragment Purchase on Purchase {
     id
     product {
-        id
+        ...Product
     }
     quantity
 }

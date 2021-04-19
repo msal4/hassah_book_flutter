@@ -92,7 +92,7 @@ type Order {
     createdAt: DateTime!
     id: ID!
     phone: String
-    purchases: PaginatedPurchaseResponse!
+    purchases(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedPurchaseResponse!
     status: OrderStatus!
     updatedAt: DateTime!
     user: User!

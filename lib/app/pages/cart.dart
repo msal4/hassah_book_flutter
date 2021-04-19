@@ -25,7 +25,7 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final _orderMutation = OrderMutation();
+  final _orderMutation = PlaceOrderMutation();
 
   final _phoneController = TextEditingController.fromValue(TextEditingValue(text: "07705983835"));
   final _provinceController = TextEditingController.fromValue(TextEditingValue(text: "Baghdad"));

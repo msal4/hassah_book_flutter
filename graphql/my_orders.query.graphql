@@ -1,0 +1,13 @@
+query MyOrders {
+    myOrders {
+        items {
+            id
+            purchases(skip: 1) {
+                items {
+
+                }
+            }
+            status
+        }
+    }
+}
