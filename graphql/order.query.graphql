@@ -1,0 +1,11 @@
+mutation Order($data: PlaceOrderInput!) {
+    placeOrder(data: $data) {
+        id
+        purchases {
+            ...PaginatedPurchaseResponse
+        }
+        phone
+        address
+        status
+    }
+}

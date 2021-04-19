@@ -1,0 +1,25 @@
+fragment Order on Order {
+    id
+    purchases {
+        ...PaginatedPurchaseResponse
+    }
+    phone
+    address
+    status
+}
+
+fragment PaginatedPurchaseResponse on PaginatedPurchaseResponse {
+    items {
+        ...Purchase
+    }
+    hasMore
+    total
+}
+
+fragment Purchase on Purchase {
+    id
+    product {
+        ...Product
+    }
+    quantity
+}
