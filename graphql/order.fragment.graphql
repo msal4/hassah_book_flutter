@@ -19,7 +19,7 @@ fragment PaginatedPurchaseResponse on PaginatedPurchaseResponse {
 fragment Purchase on Purchase {
     id
     product {
-        ...Product
+        id
     }
     quantity
 }
