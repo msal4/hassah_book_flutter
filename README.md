@@ -6,7 +6,7 @@ The mobile/web frontend for Hassah Book
 - Run the development server on port 8080
 - Generate the graphql api:
   ```bash
-  flutter pub run build_runner build
+  make generate
   ```
 - Run the app:
   ```bash
