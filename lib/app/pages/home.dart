@@ -31,6 +31,8 @@ class HomePage extends HookWidget {
         }
 
         final home = _homeQuery.parse(result.data);
+        // Remove empty rows
+        home.categories.items = home.categories.items.where((cat) => cat.products.items.isNotEmpty).toList();
 
         return ListView.separated(
           padding: EdgeInsets.only(top: topSafeAreaPadding, bottom: kDefaultPadding),
