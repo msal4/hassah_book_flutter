@@ -92,6 +92,7 @@ type Order {
     createdAt: DateTime!
     id: ID!
     phone: String
+    province: String!
     purchases(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedPurchaseResponse!
     status: OrderStatus!
     updatedAt: DateTime!
@@ -236,6 +237,7 @@ type User {
     name: String!
     orders(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedOrderResponse!
     phone: String!
+    province: String
     requests(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserRequestResponse!
     tokenVersion: Int!
     updatedAt: DateTime!
@@ -363,7 +365,8 @@ input OrderByMap {
 
 input PlaceOrderInput {
     address: String!
-    phone: String
+    phone: String!
+    province: String!
     purchases: [PurchasePartialInput!]!
 }
 
@@ -377,6 +380,7 @@ input RegisterInput {
     code: String!
     name: String!
     password: String!
+    province: String
     sessionInfo: String!
 }
 

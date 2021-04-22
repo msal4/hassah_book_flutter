@@ -351,7 +351,8 @@ class _CartPageState extends State<CartPage> {
                       GestureDetector(
                         onTap: result.isNotLoading
                             ? () async {
-                                final input = PlaceOrderInput(phone: _phoneController.text, address: _addressController.text, purchases: purchases);
+                                final input =
+                                    PlaceOrderInput(phone: _phoneController.text, province: _provinceController.text, address: _addressController.text, purchases: purchases);
                                 final result = await runMutation({'data': input}).networkResult;
                                 if (result.hasException) {
                                   return;
