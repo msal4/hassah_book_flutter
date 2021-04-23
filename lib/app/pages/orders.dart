@@ -1,101 +1,133 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hassah_book_flutter/app/widgets/chips.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
+import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
-
-const _kBookmarkIconWidth = 20.0;
-const _kBookmarkIconHeight = 35.0;
+import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
 class OrdersPage extends HookWidget {
+  static const routeName = "/orders";
+
+  final _myOrdersQuery = MyOrdersQuery();
+
   @override
   Widget build(BuildContext context) {
     final padding = MediaQuery.of(context).padding;
 
-    return ListView.separated(
-      padding: EdgeInsets.only(
-        top: padding.top + kAppBarHeight,
-        bottom: padding.bottom + kDefaultPadding,
-        left: padding.left + kDefaultPadding,
-        right: padding.right + kDefaultPadding,
+    return Scaffold(
+      appBar: AppBar(title: Text("My Orders")),
+      body: Query(
+        options: QueryOptions(document: _myOrdersQuery.document),
+        builder: (result, {fetchMore, refetch}) {
+          if (result.hasException) {
+            return Retry(
+                message: result.exception.toString(), onRetry: refetch);
+          }
+          if (result.isLoading) {
+            return LoadingIndicator();
+          }
+
+          final orders = _myOrdersQuery.parse(result.data).myOrders;
+
+          return ListView.separated(
+            padding: EdgeInsets.only(
+              bottom: padding.bottom + kDefaultPadding,
+              left: padding.left + kDefaultPadding,
+              right: padding.right + kDefaultPadding,
+            ),
+            itemBuilder: (context, idx) {
+              return _buildOrder(context, orders.items[idx]);
+            },
+            separatorBuilder: (context, idx) =>
+                SizedBox(height: kDefaultPadding),
+            itemCount: orders.items.length,
+          );
+        },
       ),
-      itemBuilder: (context, idx) {
-        // ClipRRect is needed so that the action doesn't animate beyond the bound of the product container.
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-          child: Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: kSlidableActionExtentRatio,
-            child: _buildBookmarkedProduct(context, idx),
-            secondaryActions: <Widget>[IconSlideAction(color: Color(0xFFF06F6F), icon: Icons.delete)],
-          ),
-        );
-      },
-      separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-      itemCount: 20,
     );
   }
 
-  Widget _buildBookmarkedProduct(BuildContext context, int index) {
+  Widget _buildOrder(BuildContext context, OrderMixin order) {
     final theme = Theme.of(context);
+    final more = order.purchases.total - 1;
 
-    return Stack(
-      children: [
-        RoundContainer(
-          padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 2).copyWith(
-            left: kDefaultPadding,
-            right: kDefaultPadding * 2,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return RoundContainer(
+      padding: const EdgeInsets.all(kDefaultPadding),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              _buildImage(""),
-              SizedBox(width: kDefaultPadding),
-              Expanded(child: _buildProductInfo(theme.textTheme)),
+              _buildImage(order.purchases.items[0].product.image),
+              if (more > 0) ...[
+                SizedBox(width: kDefaultPadding),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: kDefaultPadding / 2),
+                  child: Text("+$more", style: theme.textTheme.subtitle1),
+                )
+              ],
             ],
           ),
-        ),
-        Positioned(right: kDefaultPadding / 2, child: _buildBookmarkIcon(theme.accentColor)),
-      ],
-    );
-  }
-
-  Widget _buildProductInfo(TextTheme textTheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("This is a Test Name fsdf sd fs", style: textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by John Wick", style: textTheme.bodyText2, overflow: TextOverflow.ellipsis),
-        SizedBox(height: kDefaultPadding / 2),
-        Chips(items: List<String>.generate(20, (idx) => "item $idx"), collapsable: false)
-      ],
-    );
-  }
-
-  Widget _buildBookmarkIcon(Color color) {
-    return Container(
-      width: _kBookmarkIconWidth,
-      height: _kBookmarkIconHeight,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.only(bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)),
+          SizedBox(width: kDefaultPadding),
+          _buildDivider(),
+          SizedBox(width: kDefaultPadding),
+          Column(
+            children: [
+              Text(
+                "Status",
+                style: theme.textTheme.bodyText1
+                    .copyWith(color: Colors.grey.shade600),
+              ),
+              Text("Pending", style: theme.textTheme.subtitle1),
+            ],
+          ),
+          SizedBox(width: kDefaultPadding),
+          _buildDivider(),
+          SizedBox(width: kDefaultPadding),
+          Column(
+            children: [
+              Text(
+                "Total",
+                style: theme.textTheme.bodyText1
+                    .copyWith(color: Colors.grey.shade600),
+              ),
+              Text("${order.totalPrice} IQD", style: theme.textTheme.subtitle1),
+            ],
+          ),
+        ],
       ),
-      padding: const EdgeInsets.only(top: _kBookmarkIconHeight / 4),
-      child: Icon(Icons.bookmark_rounded, color: Colors.white, size: 15),
     );
   }
 
   Widget _buildImage(String url) {
     return Container(
-      width: kDefaultImageWidth / 2,
+      width: kDefaultImageWidth / 3,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
       child: Image.network(
         url,
         fit: BoxFit.cover,
-        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+        frameBuilder: (ctx, child, _, __) =>
+            Image.asset("assets/images/product_placeholder.png"),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Center(
+      child: Container(
+        height: 30,
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(width: 1, color: Colors.grey),
+          ),
+        ),
       ),
     );
   }

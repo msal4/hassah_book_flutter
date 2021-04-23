@@ -27,9 +27,12 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final _orderMutation = PlaceOrderMutation();
 
-  final _phoneController = TextEditingController.fromValue(TextEditingValue(text: "07705983835"));
-  final _provinceController = TextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
-  final _addressController = TextEditingController.fromValue(TextEditingValue(text: "123 Street"));
+  final _phoneController =
+      TextEditingController.fromValue(TextEditingValue(text: "07705983835"));
+  final _provinceController =
+      TextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
+  final _addressController =
+      TextEditingController.fromValue(TextEditingValue(text: "123 Street"));
 
   @override
   void dispose() {
@@ -45,7 +48,8 @@ class _CartPageState extends State<CartPage> {
     final padding = MediaQuery.of(context).padding;
     final size = MediaQuery.of(context).size;
     // Get the min bottom sheet height fraction.
-    final minSheetSize = (padding.bottom + _kBottomSheetMinExtent) / size.height;
+    final minSheetSize =
+        (padding.bottom + _kBottomSheetMinExtent) / size.height;
     final initialSheetHeight = min(_kBottomSheetMinHeight / size.height, 1.0);
 
     return UnfocusOnTap(
@@ -55,12 +59,15 @@ class _CartPageState extends State<CartPage> {
           final items = box.values.toList();
 
           return Scaffold(
-            bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, box),
+            bottomSheet: _buildBottomSheet(
+                context, initialSheetHeight, minSheetSize, box),
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 SliverAppBar(title: Text("Cart"), floating: true, snap: true),
               ],
-              body: items.length == 0 ? _buildPlaceholder(context) : _buildItemsList(context, items),
+              body: items.length == 0
+                  ? _buildPlaceholder(context)
+                  : _buildItemsList(context, items),
             ),
           );
         },
@@ -87,9 +94,12 @@ class _CartPageState extends State<CartPage> {
             actionExtentRatio: kSlidableActionExtentRatio,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed(ProductDetailPage.routeName, arguments: ProductDetailPageArguments(id: item.id, heroTagPrefix: "none"));
+                Navigator.of(context).pushNamed(ProductDetailPage.routeName,
+                    arguments: ProductDetailPageArguments(
+                        id: item.id, heroTagPrefix: "none"));
               },
               child: RoundContainer(
+                padding: const EdgeInsets.all(kDefaultPadding),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -128,12 +138,15 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  Widget _buildProductInfo(BuildContext context, ThemeData theme, CartItem item) {
+  Widget _buildProductInfo(
+      BuildContext context, ThemeData theme, CartItem item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(item.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by ${item.authorName}", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
+        Text(item.name,
+            style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
+        Text("by ${item.authorName}",
+            style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
         SizedBox(height: kDefaultPadding / 2),
         Row(
           children: [
@@ -148,7 +161,9 @@ class _CartPageState extends State<CartPage> {
               child: Icon(Icons.remove),
             ),
             SizedBox(width: kDefaultPadding),
-            Text(item.quantity.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
+            Text(item.quantity.toString(),
+                style: theme.textTheme.subtitle1.copyWith(
+                    color: theme.accentColor, fontWeight: FontWeight.bold)),
             SizedBox(width: kDefaultPadding),
             GestureDetector(
               onTap: () {
@@ -160,7 +175,8 @@ class _CartPageState extends State<CartPage> {
             Spacer(),
             Text(
               "${item.price * item.quantity} IQD",
-              style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
+              style: theme.textTheme.subtitle1.copyWith(
+                  fontWeight: FontWeight.bold, color: theme.accentColor),
             ),
           ],
         )
@@ -172,11 +188,13 @@ class _CartPageState extends State<CartPage> {
     return Container(
       width: kDefaultImageWidth / 2,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
       child: Image.network(
         url,
         fit: BoxFit.cover,
-        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+        frameBuilder: (ctx, child, _, __) =>
+            Image.asset("assets/images/product_placeholder.png"),
       ),
     );
   }
@@ -219,11 +237,14 @@ class _CartPageState extends State<CartPage> {
                             Navigator.pop(context);
                           },
                           child: Ink(
-                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding),
                             child: Text(
                               "CANCEL",
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.button.copyWith(color: Colors.white),
+                              style: theme.textTheme.button
+                                  .copyWith(color: Colors.white),
                             ),
                           ),
                         ),
@@ -242,7 +263,9 @@ class _CartPageState extends State<CartPage> {
                             Navigator.pop(context);
                           },
                           child: Ink(
-                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding),
                             child: Text(
                               "YES",
                               textAlign: TextAlign.center,
@@ -262,13 +285,18 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  DraggableScrollableSheet _buildBottomSheet(BuildContext context, double initialSheetHeight, double minSheetSize, Box<CartItem> box) {
+  DraggableScrollableSheet _buildBottomSheet(BuildContext context,
+      double initialSheetHeight, double minSheetSize, Box<CartItem> box) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
 
-    final totalPrice = box.values.fold(0, (acc, item) => acc += item.price * item.quantity);
+    final totalPrice =
+        box.values.fold(0, (acc, item) => acc += item.price * item.quantity);
 
-    final purchases = box.values.map((item) => PurchasePartialInput(product: ObjectIdInput(id: item.id), quantity: item.quantity)).toList();
+    final purchases = box.values
+        .map((item) => PurchasePartialInput(
+            product: ObjectIdInput(id: item.id), quantity: item.quantity))
+        .toList();
 
     return DraggableScrollableSheet(
       expand: false,
@@ -285,7 +313,9 @@ class _CartPageState extends State<CartPage> {
                   topLeft: Radius.circular(kDefaultBorderRadius * 2),
                   topRight: Radius.circular(kDefaultBorderRadius * 2),
                 ),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)],
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)
+                ],
               ),
               child: Stack(
                 children: [
@@ -302,19 +332,24 @@ class _CartPageState extends State<CartPage> {
                         children: [
                           Text("Total", style: theme.textTheme.headline6),
                           Spacer(),
-                          Text("$totalPrice IQD", style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold)),
+                          Text("$totalPrice IQD",
+                              style: theme.textTheme.headline6
+                                  .copyWith(fontWeight: FontWeight.bold)),
                         ],
                       ),
                       SizedBox(height: kDefaultPadding),
                       Divider(),
                       SizedBox(height: kDefaultPadding),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius),
                         child: TextField(
                           controller: _phoneController,
                           textInputAction: TextInputAction.next,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding / 1.5),
                             border: InputBorder.none,
                             labelText: "Phone Number",
                             filled: true,
@@ -323,11 +358,14 @@ class _CartPageState extends State<CartPage> {
                       ),
                       SizedBox(height: kDefaultPadding),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius),
                         child: TextField(
                           controller: _provinceController,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding / 1.5),
                             border: InputBorder.none,
                             labelText: "Province",
                             filled: true,
@@ -336,11 +374,14 @@ class _CartPageState extends State<CartPage> {
                       ),
                       SizedBox(height: kDefaultPadding),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius),
                         child: TextField(
                           controller: _addressController,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding / 1.5),
                             border: InputBorder.none,
                             labelText: "Address",
                             filled: true,
@@ -351,27 +392,36 @@ class _CartPageState extends State<CartPage> {
                       GestureDetector(
                         onTap: result.isNotLoading
                             ? () async {
-                                final input =
-                                    PlaceOrderInput(phone: _phoneController.text, province: _provinceController.text, address: _addressController.text, purchases: purchases);
-                                final result = await runMutation({'data': input}).networkResult;
+                                final input = PlaceOrderInput(
+                                    phone: _phoneController.text,
+                                    province: _provinceController.text,
+                                    address: _addressController.text,
+                                    purchases: purchases);
+                                final result =
+                                    await runMutation({'data': input})
+                                        .networkResult;
                                 if (result.hasException) {
                                   return;
                                 }
                                 if (result.isConcrete) {
                                   debugPrint(result.data.toString());
                                   Navigator.of(context).pop();
-                                  Navigator.of(context).pushNamed(ProfilePage.routeName);
+                                  Navigator.of(context)
+                                      .pushNamed(ProfilePage.routeName);
                                 }
                               }
                             : null,
                         child: RoundContainer(
                           padding: const EdgeInsets.all(kDefaultPadding),
-                          color: result.isLoading ? Colors.grey.shade800 : theme.accentColor,
+                          color: result.isLoading
+                              ? Colors.grey.shade800
+                              : theme.accentColor,
                           borderRadius: BorderRadius.circular(9999),
                           child: Text(
                             "ORDER NOW",
                             textAlign: TextAlign.center,
-                            style: theme.textTheme.button.copyWith(color: Colors.white),
+                            style: theme.textTheme.button
+                                .copyWith(color: Colors.white),
                           ),
                         ),
                       )
@@ -384,7 +434,8 @@ class _CartPageState extends State<CartPage> {
                         margin: const EdgeInsets.only(top: kDefaultPadding),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade500,
-                          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                          borderRadius:
+                              BorderRadius.circular(kDefaultBorderRadius),
                         ),
                         width: 40,
                         height: 4,

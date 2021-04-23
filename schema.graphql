@@ -95,6 +95,7 @@ type Order {
     province: String!
     purchases(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedPurchaseResponse!
     status: OrderStatus!
+    totalPrice: Float!
     updatedAt: DateTime!
     user: User!
 }
