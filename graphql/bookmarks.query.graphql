@@ -1,0 +1,5 @@
+query Bookmarks($skip: Int, $take: Int) {
+    bookmarks: favorites(skip: $skip, take: $take) {
+        ...PaginatedBookmarkResponse
+    }
+}

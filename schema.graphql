@@ -54,7 +54,7 @@ type LoginResponse {
 }
 
 type Mutation {
-    addFavorite(productId: String!): Boolean!
+    addFavorite(productId: ID!): Boolean!
     adminDelete(id: ID!): Boolean!
     adminLogin(data: AdminLoginInput!): LoginResponse!
     adminRegister(data: AdminRegisterInput!): Admin!
@@ -71,8 +71,8 @@ type Mutation {
     login(data: LoginInput!): LoginResponse!
     placeOrder(data: PlaceOrderInput!): Order!
     register(data: RegisterInput!): User!
-    removeFavorite(favoriteId: String!): Boolean!
-    removeFavoriteByProductId(productId: String!): Boolean!
+    removeFavorite(favoriteId: ID!): Boolean!
+    removeFavoriteByProductId(productId: ID!): Boolean!
     removeRequest(requestId: String!): Boolean!
     sendVerificationCode(data: SendVerificationCodeInput!): SessionInfo!
     updateAuthor(data: UpdateAuthorInput!): Boolean!
@@ -210,6 +210,7 @@ type Query {
     category(id: ID!): Category
     collection(id: ID!): Collection
     collections(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedCollectionResponse!
+    favorites(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedFavoriteResponse!
     me: User!
     myOrders(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedOrderResponse!
     myRequests(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserRequestResponse!

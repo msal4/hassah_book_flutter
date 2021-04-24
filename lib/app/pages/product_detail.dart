@@ -61,6 +61,8 @@ class ProductDetailPage extends HookWidget {
                 final data = result.data != null ? _productQuery.parse(result.data) : null;
                 final product = this.product ?? data.product;
 
+                debugPrint(data?.product?.isFavorite?.toString());
+
                 return Container(
                   padding: const EdgeInsets.all(kDefaultPadding),
                   child: Column(
@@ -70,11 +72,7 @@ class ProductDetailPage extends HookWidget {
                       SizedBox(height: kDefaultPadding),
                       Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
                       SizedBox(height: kDefaultPadding * 2),
-                      _buildProductHeader(
-                        context,
-                        product,
-                        data?.product,
-                      ),
+                      _buildProductHeader(context, product, data?.product, refetch),
                       SizedBox(height: kDefaultPadding),
                       RoundContainer(
                         child: Row(
@@ -183,7 +181,7 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Row _buildProductHeader(BuildContext context, ProductMixin product, ProductDetailMixin productDetail) {
+  Row _buildProductHeader(BuildContext context, ProductMixin product, ProductDetailMixin productDetail, VoidCallback refetch) {
     final theme = Theme.of(context);
 
     final isBookmarked = productDetail?.isFavorite ?? false;
@@ -201,19 +199,12 @@ class ProductDetailPage extends HookWidget {
           ),
         ),
         SizedBox(width: kDefaultPadding),
-        IconButton(
-          padding: const EdgeInsets.all(0),
-          onPressed: () {},
-          icon: Container(
-            padding: const EdgeInsets.all(kDefaultPadding / 2),
-            decoration: BoxDecoration(color: isBookmarked ? theme.accentColor : theme.backgroundColor, borderRadius: BorderRadius.circular(9999)),
-            child: Icon(
-              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-              color: isBookmarked ? Colors.white : Colors.grey.shade800,
-              size: 20,
-            ),
-          ),
-        )
+        if (productDetail != null)
+          Bookmark(
+            product: productDetail,
+            bookmarked: isBookmarked,
+            onChange: (value) => refetch(),
+          )
       ],
     );
   }
@@ -257,6 +248,67 @@ class ProductDetailPage extends HookWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class Bookmark extends StatefulWidget {
+  Bookmark({Key key, @required this.product, @required this.bookmarked, @required this.onChange})
+      : assert(bookmarked != null),
+        assert(product != null),
+        assert(onChange != null),
+        super(key: key);
+
+  final bool bookmarked;
+  final ProductDetailMixin product;
+  final void Function(bool value) onChange;
+
+  @override
+  _BookmarkState createState() => _BookmarkState();
+}
+
+class _BookmarkState extends State<Bookmark> {
+  final _addBookmarkMutation = AddBookmarkMutation();
+
+  final _removeBookmarkMutation = RemoveBookmarkByProductIdMutation();
+
+  ProductDetailMixin get product => widget.product;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return GraphQLConsumer(
+      builder: (GraphQLClient client) {
+        return IconButton(
+          padding: const EdgeInsets.all(0),
+          onPressed: () async {
+            final dynamic mutation = product.isFavorite ? _removeBookmarkMutation : _addBookmarkMutation;
+
+            setState(() {
+              product.isFavorite = !product.isFavorite;
+            });
+
+            final result = await client.mutate(MutationOptions(document: mutation.document, variables: {"productId": (product as dynamic).id}));
+            if (result.isConcrete && !result.hasException) {
+              setState(() {
+                product.isFavorite = mutation is AddBookmarkMutation;
+              });
+            }
+
+            widget.onChange(product.isFavorite);
+          },
+          icon: Container(
+            padding: const EdgeInsets.all(kDefaultPadding / 2),
+            decoration: BoxDecoration(color: product.isFavorite ? theme.accentColor : theme.backgroundColor, borderRadius: BorderRadius.circular(9999)),
+            child: Icon(
+              product.isFavorite ? Icons.bookmark : Icons.bookmark_border,
+              color: product.isFavorite ? Colors.white : Colors.grey.shade800,
+              size: 20,
+            ),
+          ),
+        );
+      },
     );
   }
 }
