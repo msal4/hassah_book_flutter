@@ -59,7 +59,7 @@ type Mutation {
     adminLogin(data: AdminLoginInput!): LoginResponse!
     adminRegister(data: AdminRegisterInput!): Admin!
     adminUpdate(data: AdminUpdateInput!): Boolean!
-    cancelOrder(orderId: String!): Boolean!
+    cancelOrder(orderId: ID!): Boolean!
     createAuthor(data: CreateAuthorInput!, imageFile: Upload!): Author!
     createCategory(data: CreateCategoryInput!): Category!
     createCollection(data: CreateCollectionInput!): Collection!

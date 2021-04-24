@@ -8,6 +8,27 @@ import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
+extension on OrderStatus {
+  String get value {
+    switch (this) {
+      case OrderStatus.pending:
+        return "Pending";
+      case OrderStatus.processed:
+        return "Processed";
+      case OrderStatus.delivering:
+        return "Delivering";
+      case OrderStatus.delivered:
+        return "Delivered";
+      case OrderStatus.canceled:
+        return "Canceled";
+      case OrderStatus.failed:
+        return "Failed";
+      default:
+        return "Unknown";
+    }
+  }
+}
+
 class OrdersPage extends HookWidget {
   static const routeName = "/orders";
 
@@ -23,8 +44,7 @@ class OrdersPage extends HookWidget {
         options: QueryOptions(document: _myOrdersQuery.document),
         builder: (result, {fetchMore, refetch}) {
           if (result.hasException) {
-            return Retry(
-                message: result.exception.toString(), onRetry: refetch);
+            return Retry(message: result.exception.toString(), onRetry: refetch);
           }
           if (result.isLoading) {
             return LoadingIndicator();
@@ -39,10 +59,10 @@ class OrdersPage extends HookWidget {
               right: padding.right + kDefaultPadding,
             ),
             itemBuilder: (context, idx) {
-              return _buildOrder(context, orders.items[idx]);
+              final order = orders.items[idx];
+              return _buildOrder(context, order: order, morePurchasesCount: order.purchases.total - 1, productImage: order.purchases.items[0].product.image);
             },
-            separatorBuilder: (context, idx) =>
-                SizedBox(height: kDefaultPadding),
+            separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
             itemCount: orders.items.length,
           );
         },
@@ -50,9 +70,8 @@ class OrdersPage extends HookWidget {
     );
   }
 
-  Widget _buildOrder(BuildContext context, OrderMixin order) {
+  Widget _buildOrder(BuildContext context, {@required OrderMixin order, @required int morePurchasesCount, @required String productImage}) {
     final theme = Theme.of(context);
-    final more = order.purchases.total - 1;
 
     return RoundContainer(
       padding: const EdgeInsets.all(kDefaultPadding),
@@ -63,12 +82,12 @@ class OrdersPage extends HookWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              _buildImage(order.purchases.items[0].product.image),
-              if (more > 0) ...[
+              _buildImage(productImage),
+              if (morePurchasesCount > 0) ...[
                 SizedBox(width: kDefaultPadding),
                 Padding(
                   padding: const EdgeInsets.only(bottom: kDefaultPadding / 2),
-                  child: Text("+$more", style: theme.textTheme.subtitle1),
+                  child: Text("+$morePurchasesCount", style: theme.textTheme.subtitle1),
                 )
               ],
             ],
@@ -80,10 +99,9 @@ class OrdersPage extends HookWidget {
             children: [
               Text(
                 "Status",
-                style: theme.textTheme.bodyText1
-                    .copyWith(color: Colors.grey.shade600),
+                style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
               ),
-              Text("Pending", style: theme.textTheme.subtitle1),
+              Text(order.status.value, style: theme.textTheme.subtitle1),
             ],
           ),
           SizedBox(width: kDefaultPadding),
@@ -93,8 +111,7 @@ class OrdersPage extends HookWidget {
             children: [
               Text(
                 "Total",
-                style: theme.textTheme.bodyText1
-                    .copyWith(color: Colors.grey.shade600),
+                style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
               ),
               Text("${order.totalPrice} IQD", style: theme.textTheme.subtitle1),
             ],
@@ -108,13 +125,11 @@ class OrdersPage extends HookWidget {
     return Container(
       width: kDefaultImageWidth / 3,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
       child: Image.network(
         url,
         fit: BoxFit.cover,
-        frameBuilder: (ctx, child, _, __) =>
-            Image.asset("assets/images/product_placeholder.png"),
+        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
       ),
     );
   }
