@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/pages/order_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
@@ -73,50 +74,55 @@ class OrdersPage extends HookWidget {
   Widget _buildOrder(BuildContext context, {@required OrderMixin order, @required int morePurchasesCount, @required String productImage}) {
     final theme = Theme.of(context);
 
-    return RoundContainer(
-      padding: const EdgeInsets.all(kDefaultPadding),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              _buildImage(productImage),
-              if (morePurchasesCount > 0) ...[
-                SizedBox(width: kDefaultPadding),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: kDefaultPadding / 2),
-                  child: Text("+$morePurchasesCount", style: theme.textTheme.subtitle1),
-                )
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, OrderDetailPage.routeName, arguments: OrderDetailPageArguments(orderId: order.id));
+      },
+      child: RoundContainer(
+        padding: const EdgeInsets.all(kDefaultPadding),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                _buildImage(productImage),
+                if (morePurchasesCount > 0) ...[
+                  SizedBox(width: kDefaultPadding),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: kDefaultPadding / 2),
+                    child: Text("+$morePurchasesCount", style: theme.textTheme.subtitle1),
+                  )
+                ],
               ],
-            ],
-          ),
-          SizedBox(width: kDefaultPadding),
-          _buildDivider(),
-          SizedBox(width: kDefaultPadding),
-          Column(
-            children: [
-              Text(
-                "Status",
-                style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
-              ),
-              Text(order.status.value, style: theme.textTheme.subtitle1),
-            ],
-          ),
-          SizedBox(width: kDefaultPadding),
-          _buildDivider(),
-          SizedBox(width: kDefaultPadding),
-          Column(
-            children: [
-              Text(
-                "Total",
-                style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
-              ),
-              Text("${order.totalPrice} IQD", style: theme.textTheme.subtitle1),
-            ],
-          ),
-        ],
+            ),
+            SizedBox(width: kDefaultPadding),
+            _buildDivider(),
+            SizedBox(width: kDefaultPadding),
+            Column(
+              children: [
+                Text(
+                  "Status",
+                  style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
+                ),
+                Text(order.status.value, style: theme.textTheme.subtitle1),
+              ],
+            ),
+            SizedBox(width: kDefaultPadding),
+            _buildDivider(),
+            SizedBox(width: kDefaultPadding),
+            Column(
+              children: [
+                Text(
+                  "Total",
+                  style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
+                ),
+                Text("${order.totalPrice} IQD", style: theme.textTheme.subtitle1),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

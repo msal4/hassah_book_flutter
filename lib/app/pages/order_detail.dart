@@ -38,29 +38,39 @@ class OrderDetailPage extends StatelessWidget {
     final initialSheetHeight = min(_kBottomSheetMinHeight / size.height, 1.0);
 
     return UnfocusOnTap(
-      child: Query(
-        options: QueryOptions(document: _orderQuery.document, variables: {"id": orderId}),
-        builder: (result, {refetch, fetchMore}) {
-          if (result.hasException) {
-            return Retry(message: result.exception.toString(), onRetry: refetch);
-          }
+      child: Scaffold(
+        body: Query(
+          options: QueryOptions(document: _orderQuery.document, variables: {"id": orderId}),
+          builder: (result, {refetch, fetchMore}) {
+            const appBarTitle = Text("Order Details");
 
-          if (result.isLoading) {
-            return LoadingIndicator();
-          }
+            if (result.hasException) {
+              return Scaffold(
+                appBar: AppBar(title: appBarTitle),
+                body: Retry(message: result.exception.toString(), onRetry: refetch),
+              );
+            }
 
-          final order = _orderQuery.parse(result.data).order;
+            if (result.isLoading) {
+              return Scaffold(
+                appBar: AppBar(title: appBarTitle),
+                body: LoadingIndicator(),
+              );
+            }
 
-          return Scaffold(
-            bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, order),
-            body: NestedScrollView(
-              headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                SliverAppBar(title: Text("Cart"), floating: true, snap: true),
-              ],
-              body: _buildPurchasesList(context, order.purchases.items),
-            ),
-          );
-        },
+            final order = _orderQuery.parse(result.data).order;
+
+            return Scaffold(
+              bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, order),
+              body: NestedScrollView(
+                headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                  SliverAppBar(title: appBarTitle, floating: true, snap: true),
+                ],
+                body: _buildPurchasesList(context, order.purchases.items),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -100,12 +110,18 @@ class OrderDetailPage extends StatelessWidget {
         Text(item.product.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
         Text("by ${item.product.author.name}", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
         SizedBox(height: kDefaultPadding / 2),
-        Text(
-          "${item.product.price * item.quantity} IQD",
-          style: theme.textTheme.subtitle1.copyWith(
-            fontWeight: FontWeight.bold,
-            color: theme.accentColor,
-          ),
+        Row(
+          children: [
+            Text("${item.quantity} items"),
+            Spacer(),
+            Text(
+              "${item.product.price * item.quantity} IQD",
+              style: theme.textTheme.subtitle1.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.accentColor,
+              ),
+            ),
+          ],
         )
       ],
     );
