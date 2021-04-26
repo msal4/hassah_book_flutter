@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
@@ -12,6 +13,7 @@ import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailPageArguments {
   const ProductDetailPageArguments({this.product, this.id, @required this.heroTagPrefix})
@@ -255,32 +257,28 @@ class Bookmark extends StatefulWidget {
 }
 
 class _BookmarkState extends State<Bookmark> {
-  final _addBookmarkMutation = AddBookmarkMutation();
-
-  final _removeBookmarkMutation = RemoveBookmarkMutation();
-
   ProductDetailMixin get product => widget.product;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final bookmarks = context.read<BookmarksProvider>();
 
     return GraphQLConsumer(
       builder: (GraphQLClient client) {
         return IconButton(
           padding: const EdgeInsets.all(0),
           onPressed: () async {
-            final dynamic mutation = product.isFavorite ? _removeBookmarkMutation : _addBookmarkMutation;
-
             setState(() {
               product.isFavorite = !product.isFavorite;
             });
 
-            final result = await client.mutate(MutationOptions(document: mutation.document, variables: {"productId": (product as dynamic).id}));
-            if (result.isConcrete && !result.hasException) {
-              setState(() {
-                product.isFavorite = mutation is AddBookmarkMutation;
-              });
+            final productId = (product as dynamic).id;
+
+            if (product.isFavorite) {
+              await bookmarks.removeBookmark(productId);
+            } else {
+              await bookmarks.addBookmark(productId);
             }
           },
           icon: Container(
