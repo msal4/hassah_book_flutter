@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/product_details_card.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
-class BookmarksPage extends HookWidget {
+class BookmarksPage extends StatelessWidget {
   final _bookmarksQuery = BookmarksQuery();
   final _removeBookmarkMutation = RemoveBookmarkMutation();
 
@@ -31,7 +32,18 @@ class BookmarksPage extends HookWidget {
         // Remove empty rows
         return RefreshIndicator(
           onRefresh: refetch,
-          child: _buildBookmarksList(context, bookmarks, refetch),
+          child: PaginationHandler(
+              enabled: !result.isLoading && bookmarks.items.length != bookmarks.total,
+              fetchMore: () {
+                final options = FetchMoreOptions(
+                  document: _bookmarksQuery.document,
+                  updateQuery: (oldData, newData) => updatePaginatedResponse(oldData, newData, "bookmarks"),
+                  variables: {"skip": bookmarks.items.length},
+                );
+
+                fetchMore(options);
+              },
+              child: _buildBookmarksList(context, bookmarks, refetch)),
         );
       },
     );
@@ -58,7 +70,7 @@ class BookmarksPage extends HookWidget {
     );
   }
 
-  Widget _buildItem(BookmarkMixin bookmark, Future<QueryResult> refetch()) {
+  Widget _buildItem(BookmarkMixin bookmark, Future<void> Function() refetch) {
     // ClipRRect is needed so that the action doesn't animate beyond the bound of the product container.
     return ClipRRect(
       borderRadius: BorderRadius.circular(kDefaultBorderRadius),
@@ -86,10 +98,8 @@ class BookmarksPage extends HookWidget {
   }
 
   Future<void> _removeBookmark(GraphQLClient client, String productId, Future<void> Function() refetch) async {
-    final res = await client.mutate(MutationOptions(document: _removeBookmarkMutation.document, variables: {'productId': productId}));
-    debugPrint(res.data?.toString());
-    debugPrint(res.exception?.toString());
-    await refetch();
+    await client.mutate(MutationOptions(document: _removeBookmarkMutation.document, variables: {'productId': productId}));
+    return await refetch();
   }
 
   Widget _buildPlaceholder(BuildContext context) {

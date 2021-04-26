@@ -69,6 +69,7 @@ class ProductDetailsCard extends HookWidget {
                         collapsable: false,
                         backgroundColor: theme.scaffoldBackgroundColor,
                         textColor: theme.textTheme.bodyText1.color,
+                        maxNumChips: 2,
                       )
                     ],
                   ),
