@@ -1,5 +1,5 @@
 query Bookmarks($skip: Int, $take: Int) {
-    bookmarks: favorites(skip: $skip, take: $take) {
+    bookmarks: favorites(skip: $skip, take: $take, order: [{field: "createdAt", order: DESC}]) {
         ...PaginatedBookmarkResponse
     }
 }
