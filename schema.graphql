@@ -377,7 +377,6 @@ input RegisterInput {
     code: String!
     name: String!
     password: String!
-    province: String
     sessionInfo: String!
 }
 
