@@ -1,3 +1,0 @@
-mutation RemoveBookmarkByProductId($productId: ID!) {
-   removeBookmarkByProductId: removeFavoriteByProductId(productId: $productId)
-}

@@ -182,8 +182,6 @@ class ProductDetailPage extends HookWidget {
   Row _buildProductHeader(BuildContext context, ProductMixin product, ProductDetailMixin productDetail, VoidCallback refetch) {
     final theme = Theme.of(context);
 
-    final isBookmarked = productDetail?.isFavorite ?? false;
-
     return Row(
       children: [
         Expanded(
@@ -259,7 +257,7 @@ class Bookmark extends StatefulWidget {
 class _BookmarkState extends State<Bookmark> {
   final _addBookmarkMutation = AddBookmarkMutation();
 
-  final _removeBookmarkMutation = RemoveBookmarkByProductIdMutation();
+  final _removeBookmarkMutation = RemoveBookmarkMutation();
 
   ProductDetailMixin get product => widget.product;
 
