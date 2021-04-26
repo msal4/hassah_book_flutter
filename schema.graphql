@@ -59,7 +59,7 @@ type Mutation {
     adminLogin(data: AdminLoginInput!): LoginResponse!
     adminRegister(data: AdminRegisterInput!): Admin!
     adminUpdate(data: AdminUpdateInput!): Boolean!
-    cancelOrder(orderId: ID!): Boolean!
+    cancelOrder(orderId: String!): Boolean!
     createAuthor(data: CreateAuthorInput!, imageFile: Upload!): Author!
     createCategory(data: CreateCategoryInput!): Category!
     createCollection(data: CreateCollectionInput!): Collection!
@@ -91,10 +91,8 @@ type Order {
     createdAt: DateTime!
     id: ID!
     phone: String
-    province: String!
-    purchases(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedPurchaseResponse!
+    purchases: PaginatedPurchaseResponse!
     status: OrderStatus!
-    totalPrice: Float!
     updatedAt: DateTime!
     user: User!
 }
@@ -238,7 +236,6 @@ type User {
     name: String!
     orders(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedOrderResponse!
     phone: String!
-    province: String
     requests(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserRequestResponse!
     tokenVersion: Int!
     updatedAt: DateTime!
@@ -366,8 +363,7 @@ input OrderByMap {
 
 input PlaceOrderInput {
     address: String!
-    phone: String!
-    province: String!
+    phone: String
     purchases: [PurchasePartialInput!]!
 }
 
