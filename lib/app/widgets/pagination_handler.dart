@@ -1,33 +1,48 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-const _kFetchMoreThreshold = 100.0;
+const _kDefaultFetchMoreThreshold = 100.0;
 
-/// PaginationHandler is a widget that handles pagination if the provided child is scrollable.
-/// Make sure to disable the widget when the pagination is not needed anymore using the `enabled` option.
+/// PaginationHandler is a widget that handles pagination if the provided [child] is scrollable or has a scrollable in it's tree.
+///
+/// Make sure to disable the widget when the pagination is not needed anymore using the [enabled] option.
 class PaginationHandler extends StatelessWidget {
   PaginationHandler({
     @required this.child,
-    this.bottomThreshold = _kFetchMoreThreshold,
-    this.enabled = true,
     @required this.fetchMore,
-  }) : assert(child != null, "child is required");
+    this.bottomThreshold = _kDefaultFetchMoreThreshold,
+    this.axis = Axis.vertical,
+    this.enabled = true,
+  })  : assert(child != null, "child is required"),
+        assert(fetchMore != null),
+        assert(bottomThreshold != null),
+        assert(axis != null),
+        assert(enabled != null);
 
+  // The widget that is a scrollable or has a scrollable descendant.
   final Widget child;
+
+  /// Called when the [bottomThreshold] is exceeded.
+  final VoidCallback fetchMore;
 
   /// The distance from the bottom on which to load more data if its exceeded.
   final double bottomThreshold;
 
+  /// The scroll direction.
+  final Axis axis;
+
   /// Enables pagination handler.
   final bool enabled;
 
-  /// Called when the threshold is exceeded.
-  final VoidCallback fetchMore;
-
   @override
   Widget build(BuildContext context) {
+    if (!enabled) return child;
+
     return NotificationListener<ScrollNotification>(
       onNotification: (scrollNotification) {
-        if (scrollNotification is ScrollUpdateNotification && enabled && scrollNotification.metrics.pixels + _kFetchMoreThreshold >= scrollNotification.metrics.maxScrollExtent) {
+        if (enabled &&
+            scrollNotification is ScrollUpdateNotification &&
+            scrollNotification.metrics.axis == axis &&
+            scrollNotification.metrics.pixels + _kDefaultFetchMoreThreshold >= scrollNotification.metrics.maxScrollExtent) {
           fetchMore();
         }
         return false;
