@@ -52,30 +52,36 @@ class BookmarksPage extends HookWidget {
         if (bookmarks.items.length == 0) return _buildPlaceholder(context);
 
         final bookmark = bookmarks.items[idx];
-        // ClipRRect is needed so that the action doesn't animate beyond the bound of the product container.
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-          child: GraphQLConsumer(builder: (client) {
-            return Slidable(
-              actionPane: SlidableDrawerActionPane(),
-              actionExtentRatio: kSlidableActionExtentRatio,
-              child: ProductDetailsCard(
-                product: bookmark.product,
-                isBookmarked: true,
-                onBookmarkTap: () => _removeBookmark(client, bookmark.product.id, refetch),
-              ),
-              secondaryActions: <Widget>[
-                IconSlideAction(
-                  onTap: () => _removeBookmark(client, bookmark.product.id, refetch),
-                  color: kDangerColor,
-                  iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
-                )
-              ],
-            );
-          }),
-        );
+        return _buildItem(bookmark, refetch);
       },
       separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
+    );
+  }
+
+  Widget _buildItem(BookmarkMixin bookmark, Future<QueryResult> refetch()) {
+    // ClipRRect is needed so that the action doesn't animate beyond the bound of the product container.
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      child: GraphQLConsumer(
+        builder: (client) {
+          return Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: kSlidableActionExtentRatio,
+            child: ProductDetailsCard(
+              product: bookmark.product,
+              isBookmarked: true,
+              onBookmarkTap: () => _removeBookmark(client, bookmark.product.id, refetch),
+            ),
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                onTap: () => _removeBookmark(client, bookmark.product.id, refetch),
+                color: kDangerColor,
+                iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
+              )
+            ],
+          );
+        },
+      ),
     );
   }
 
