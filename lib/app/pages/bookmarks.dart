@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/widgets/product_details_card.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
@@ -46,6 +47,7 @@ class BookmarksPage extends HookWidget {
         left: padding.left + kDefaultPadding,
         right: padding.right + kDefaultPadding,
       ),
+      itemCount: bookmarks.items.length == 0 ? 1 : bookmarks.items.length,
       itemBuilder: (context, idx) {
         if (bookmarks.items.length == 0) return _buildPlaceholder(context);
 
@@ -64,11 +66,9 @@ class BookmarksPage extends HookWidget {
               ),
               secondaryActions: <Widget>[
                 IconSlideAction(
-                  onTap: () {
-                    _removeBookmark(client, bookmark.product.id, refetch);
-                  },
-                  color: Color(0xFFF06F6F),
-                  icon: Icons.delete,
+                  onTap: () => _removeBookmark(client, bookmark.product.id, refetch),
+                  color: kDangerColor,
+                  iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
                 )
               ],
             );
@@ -76,7 +76,6 @@ class BookmarksPage extends HookWidget {
         );
       },
       separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-      itemCount: bookmarks.items.length == 0 ? 1 : bookmarks.items.length,
     );
   }
 
