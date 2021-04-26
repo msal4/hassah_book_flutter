@@ -36,10 +36,7 @@ class ProductDetailsCard extends HookWidget {
             Navigator.pushNamed(context, ProductDetailPage.routeName, arguments: ProductDetailPageArguments(product: product, heroTagPrefix: heroTagPrefix));
           },
           child: RoundContainer(
-            padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 2).copyWith(
-              left: kDefaultPadding,
-              right: kDefaultPadding * 2,
-            ),
+            padding: const EdgeInsets.all(kDefaultPadding),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
