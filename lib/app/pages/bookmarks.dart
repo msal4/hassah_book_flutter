@@ -31,8 +31,6 @@ class BookmarksPage extends HookWidget {
           return LoadingIndicator();
         }
 
-        debugPrint(result.data.toString());
-
         final bookmarks = _bookmarksQuery.parse(result.data).bookmarks;
 
         // Remove empty rows

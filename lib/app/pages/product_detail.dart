@@ -61,8 +61,6 @@ class ProductDetailPage extends HookWidget {
                 final data = result.data != null ? _productQuery.parse(result.data) : null;
                 final product = this.product ?? data.product;
 
-                debugPrint(data?.product?.isFavorite?.toString());
-
                 return Container(
                   padding: const EdgeInsets.all(kDefaultPadding),
                   child: Column(
@@ -199,12 +197,7 @@ class ProductDetailPage extends HookWidget {
           ),
         ),
         SizedBox(width: kDefaultPadding),
-        if (productDetail != null)
-          Bookmark(
-            product: productDetail,
-            bookmarked: isBookmarked,
-            onChange: (value) => refetch(),
-          )
+        if (productDetail != null) Bookmark(product: productDetail)
       ],
     );
   }
@@ -253,15 +246,11 @@ class ProductDetailPage extends HookWidget {
 }
 
 class Bookmark extends StatefulWidget {
-  Bookmark({Key key, @required this.product, @required this.bookmarked, @required this.onChange})
-      : assert(bookmarked != null),
-        assert(product != null),
-        assert(onChange != null),
+  const Bookmark({Key key, @required this.product})
+      : assert(product != null),
         super(key: key);
 
-  final bool bookmarked;
   final ProductDetailMixin product;
-  final void Function(bool value) onChange;
 
   @override
   _BookmarkState createState() => _BookmarkState();
@@ -295,8 +284,6 @@ class _BookmarkState extends State<Bookmark> {
                 product.isFavorite = mutation is AddBookmarkMutation;
               });
             }
-
-            widget.onChange(product.isFavorite);
           },
           icon: Container(
             padding: const EdgeInsets.all(kDefaultPadding / 2),
