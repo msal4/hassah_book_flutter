@@ -4,9 +4,7 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 
 class BookmarksProvider extends ChangeNotifier {
-  BookmarksProvider({@required this.client}) {
-    getBookmarks();
-  }
+  BookmarksProvider({@required this.client}) : assert(client != null);
 
   final GraphQLClient client;
 
@@ -35,7 +33,7 @@ class BookmarksProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _options = QueryOptions(document: _bookmarksQuery.document);
+    _options = QueryOptions(document: _bookmarksQuery.document, fetchPolicy: FetchPolicy.noCache);
 
     _result = await client.query(_options);
     debugPrint(_result.toString());
@@ -69,7 +67,8 @@ class BookmarksProvider extends ChangeNotifier {
   }
 
   Future<void> addBookmark(String productId) async {
-    await client.mutate(MutationOptions(document: _addBookmarkMutation.document, variables: {"productId": productId}));
+    final res = await client.mutate(MutationOptions(document: _addBookmarkMutation.document, variables: {"productId": productId}));
+    debugPrint(res.toString());
     await getBookmarks();
   }
 

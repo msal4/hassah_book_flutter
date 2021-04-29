@@ -269,13 +269,15 @@ class _BookmarkState extends State<Bookmark> {
         return IconButton(
           padding: const EdgeInsets.all(0),
           onPressed: () async {
+            final isFavorite = product.isFavorite;
+
             setState(() {
-              product.isFavorite = !product.isFavorite;
+              product.isFavorite = !isFavorite;
             });
 
             final productId = (product as dynamic).id;
 
-            if (product.isFavorite) {
+            if (isFavorite) {
               await bookmarks.removeBookmark(productId);
             } else {
               await bookmarks.addBookmark(productId);
