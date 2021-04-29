@@ -33,7 +33,7 @@ class BookmarksProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _options = QueryOptions(document: _bookmarksQuery.document, fetchPolicy: FetchPolicy.noCache);
+    _options = QueryOptions(document: _bookmarksQuery.document, fetchPolicy: FetchPolicy.cacheAndNetwork);
 
     _result = await client.query(_options);
     debugPrint(_result.toString());

@@ -21,11 +21,16 @@ class BookmarksPage extends HookWidget {
     final exception = bookmarks.exception;
     final data = bookmarks.bookmarks;
 
+    useEffect(() {
+      bookmarks.getBookmarks();
+      return;
+    }, []);
+
     if (hasException) {
       return Retry(message: exception.toString(), onRetry: bookmarks.getBookmarks);
     }
 
-    if (isLoading || data == null) {
+    if (isLoading && data == null) {
       return LoadingIndicator();
     }
 
