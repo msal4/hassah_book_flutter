@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
+import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
@@ -263,12 +265,18 @@ class _BookmarkState extends State<Bookmark> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bookmarks = context.read<BookmarksProvider>();
+    final auth = context.watch<AuthProvider>();
 
     return GraphQLConsumer(
       builder: (GraphQLClient client) {
         return IconButton(
           padding: const EdgeInsets.all(0),
           onPressed: () async {
+            if (!auth.isAuthenticated) {
+              Navigator.pushNamed(context, LoginPage.routeName);
+              return;
+            }
+
             final isFavorite = product.isFavorite;
 
             setState(() {
