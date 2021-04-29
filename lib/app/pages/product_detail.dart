@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/auth_provider.dart';
+import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
+import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
@@ -12,6 +15,7 @@ import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailPageArguments {
   const ProductDetailPageArguments({this.product, this.id, @required this.heroTagPrefix})
@@ -70,11 +74,7 @@ class ProductDetailPage extends HookWidget {
                       SizedBox(height: kDefaultPadding),
                       Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
                       SizedBox(height: kDefaultPadding * 2),
-                      _buildProductHeader(
-                        context,
-                        product,
-                        data?.product,
-                      ),
+                      _buildProductHeader(context, product, data?.product, refetch),
                       SizedBox(height: kDefaultPadding),
                       RoundContainer(
                         child: Row(
@@ -183,10 +183,8 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Row _buildProductHeader(BuildContext context, ProductMixin product, ProductDetailMixin productDetail) {
+  Row _buildProductHeader(BuildContext context, ProductMixin product, ProductDetailMixin productDetail, VoidCallback refetch) {
     final theme = Theme.of(context);
-
-    final isBookmarked = productDetail?.isFavorite ?? false;
 
     return Row(
       children: [
@@ -201,19 +199,7 @@ class ProductDetailPage extends HookWidget {
           ),
         ),
         SizedBox(width: kDefaultPadding),
-        IconButton(
-          padding: const EdgeInsets.all(0),
-          onPressed: () {},
-          icon: Container(
-            padding: const EdgeInsets.all(kDefaultPadding / 2),
-            decoration: BoxDecoration(color: isBookmarked ? theme.accentColor : theme.backgroundColor, borderRadius: BorderRadius.circular(9999)),
-            child: Icon(
-              isBookmarked ? Icons.bookmark : Icons.bookmark_border,
-              color: isBookmarked ? Colors.white : Colors.grey.shade800,
-              size: 20,
-            ),
-          ),
-        )
+        if (productDetail != null) Bookmark(product: productDetail)
       ],
     );
   }
@@ -257,6 +243,65 @@ class ProductDetailPage extends HookWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class Bookmark extends StatefulWidget {
+  const Bookmark({Key key, @required this.product})
+      : assert(product != null),
+        super(key: key);
+
+  final ProductDetailMixin product;
+
+  @override
+  _BookmarkState createState() => _BookmarkState();
+}
+
+class _BookmarkState extends State<Bookmark> {
+  ProductDetailMixin get product => widget.product;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bookmarks = context.read<BookmarksProvider>();
+    final auth = context.watch<AuthProvider>();
+
+    return GraphQLConsumer(
+      builder: (GraphQLClient client) {
+        return IconButton(
+          padding: const EdgeInsets.all(0),
+          onPressed: () async {
+            if (!auth.isAuthenticated) {
+              Navigator.pushNamed(context, LoginPage.routeName);
+              return;
+            }
+
+            final isFavorite = product.isFavorite;
+
+            setState(() {
+              product.isFavorite = !isFavorite;
+            });
+
+            final productId = (product as dynamic).id;
+
+            if (isFavorite) {
+              await bookmarks.removeBookmark(productId);
+            } else {
+              await bookmarks.addBookmark(productId);
+            }
+          },
+          icon: Container(
+            padding: const EdgeInsets.all(kDefaultPadding / 2),
+            decoration: BoxDecoration(color: product.isFavorite ? theme.accentColor : theme.backgroundColor, borderRadius: BorderRadius.circular(9999)),
+            child: Icon(
+              product.isFavorite ? Icons.bookmark : Icons.bookmark_border,
+              color: product.isFavorite ? Colors.white : Colors.grey.shade800,
+              size: 20,
+            ),
+          ),
+        );
+      },
     );
   }
 }

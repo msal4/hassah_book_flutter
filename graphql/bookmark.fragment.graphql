@@ -1,0 +1,15 @@
+fragment Bookmark on Favorite {
+    id
+    product {
+        ...Product
+    }
+    createdAt
+}
+
+fragment PaginatedBookmarkResponse on PaginatedFavoriteResponse {
+    items {
+        ...Bookmark
+    }
+    hasMore
+    total
+}

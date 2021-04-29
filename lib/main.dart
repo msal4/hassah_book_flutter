@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
+import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
@@ -67,12 +68,17 @@ class _AppState extends State<App> {
       child: HassahGraphQLProvider(
         uri: 'http://100.93.34.121:4000/graphql',
         builder: (context, client) {
-          return ChangeNotifierProvider(
-            create: (context) {
-              final provider = AuthProvider(client: client, isAuthenticated: widget.isAuthenticated);
-              Auth.provider = provider;
-              return provider;
-            },
+          return MultiProvider(
+            providers: [
+              ChangeNotifierProvider(
+                create: (context) {
+                  final provider = AuthProvider(client: client, isAuthenticated: widget.isAuthenticated);
+                  Auth.provider = provider;
+                  return provider;
+                },
+              ),
+              ChangeNotifierProvider(create: (context) => BookmarksProvider(client: client)),
+            ],
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
               title: 'Hassah Book',

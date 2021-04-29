@@ -1,0 +1,3 @@
+mutation AddBookmark($productId: ID!) {
+   addBookmark: addFavorite(productId: $productId)
+}

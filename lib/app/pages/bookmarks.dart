@@ -1,18 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:hassah_book_flutter/app/widgets/chips.dart';
-import 'package:hassah_book_flutter/app/widgets/round_container.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/auth_provider.dart';
+import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
+import 'package:hassah_book_flutter/app/pages/login.dart';
+import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
+import 'package:hassah_book_flutter/app/widgets/product_details_card.dart';
+import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
-import 'package:hassah_book_flutter/common/widgets/product_card.dart';
-
-const _kBookmarkIconWidth = 20.0;
-const _kBookmarkIconHeight = 35.0;
+import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
+import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:provider/provider.dart';
 
 class BookmarksPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
+    final bookmarks = context.watch<BookmarksProvider>();
+    final auth = context.watch<AuthProvider>();
+    final theme = Theme.of(context);
+
+    final isLoading = bookmarks.isLoading;
+    final hasException = bookmarks.hasException;
+    final exception = bookmarks.exception;
+    final data = bookmarks.bookmarks;
+
+    useEffect(() {
+      if (auth.isAuthenticated) bookmarks.getBookmarks();
+      return;
+    }, [auth.isAuthenticated]);
+
+    if (!auth.isAuthenticated) {
+      return Padding(
+        padding: const EdgeInsets.all(kDefaultPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Login to see your bookmarks", style: theme.textTheme.subtitle1),
+            SizedBox(height: kDefaultPadding),
+            Material(
+              color: theme.accentColor,
+              borderRadius: BorderRadius.circular(9999),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).pushNamed(LoginPage.routeName);
+                },
+                child: Ink(
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                  child: Text(
+                    "LOGIN",
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.button.copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (hasException) {
+      return Retry(message: exception.toString(), onRetry: bookmarks.getBookmarks);
+    }
+
+    if (isLoading && data == null) {
+      return LoadingIndicator();
+    }
+
+    return RefreshIndicator(
+      onRefresh: bookmarks.getBookmarks,
+      child: PaginationHandler(
+        enabled: !isLoading && data.items.length != data.total,
+        fetchMore: bookmarks.fetchMore,
+        child: _buildBookmarksList(context, bookmarks),
+      ),
+    );
+  }
+
+  Widget _buildBookmarksList(BuildContext context, BookmarksProvider bookmarks) {
     final padding = MediaQuery.of(context).padding;
+    final items = bookmarks.bookmarks.items;
 
     return ListView.separated(
       padding: EdgeInsets.only(
@@ -21,82 +93,50 @@ class BookmarksPage extends HookWidget {
         left: padding.left + kDefaultPadding,
         right: padding.right + kDefaultPadding,
       ),
+      itemCount: items.length == 0 ? 1 : items.length,
       itemBuilder: (context, idx) {
-        // ClipRRect is needed so that the action doesn't animate beyond the bound of the product container.
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-          child: Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: kSlidableActionExtentRatio,
-            child: _buildBookmarkedProduct(context, idx),
-            secondaryActions: <Widget>[IconSlideAction(color: Color(0xFFF06F6F), icon: Icons.delete)],
-          ),
-        );
+        if (items.length == 0) return _buildPlaceholder(context);
+
+        return _buildItem(items[idx], bookmarks);
       },
       separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-      itemCount: 20,
     );
   }
 
-  Widget _buildBookmarkedProduct(BuildContext context, int index) {
+  Widget _buildItem(BookmarkMixin bookmark, BookmarksProvider bookmarks) {
+    // ClipRRect is needed so that the action doesn't animate beyond the bound of the product container.
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      child: GraphQLConsumer(
+        builder: (client) {
+          return Slidable(
+            actionPane: SlidableDrawerActionPane(),
+            actionExtentRatio: kSlidableActionExtentRatio,
+            child: ProductDetailsCard(
+              product: bookmark.product,
+              isBookmarked: true,
+              onBookmarkTap: () => bookmarks.removeBookmark(bookmark.product.id),
+            ),
+            secondaryActions: <Widget>[
+              IconSlideAction(
+                onTap: () => bookmarks.removeBookmark(bookmark.product.id),
+                color: kDangerColor,
+                iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
+              )
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Stack(
-      children: [
-        RoundContainer(
-          padding: const EdgeInsets.symmetric(vertical: kDefaultPadding / 2).copyWith(
-            left: kDefaultPadding,
-            right: kDefaultPadding * 2,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildImage(""),
-              SizedBox(width: kDefaultPadding),
-              Expanded(child: _buildProductInfo(theme.textTheme)),
-            ],
-          ),
-        ),
-        Positioned(right: kDefaultPadding / 2, child: _buildBookmarkIcon(theme.accentColor)),
-      ],
-    );
-  }
-
-  Widget _buildProductInfo(TextTheme textTheme) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("This is a Test Name fsdf sd fs", style: textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by John Wick", style: textTheme.bodyText2, overflow: TextOverflow.ellipsis),
-        SizedBox(height: kDefaultPadding / 2),
-        Chips(items: List<String>.generate(20, (idx) => "item $idx"), collapsable: false)
-      ],
-    );
-  }
-
-  Widget _buildBookmarkIcon(Color color) {
-    return Container(
-      width: _kBookmarkIconWidth,
-      height: _kBookmarkIconHeight,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.only(bottomRight: Radius.circular(5), bottomLeft: Radius.circular(5)),
-      ),
-      padding: const EdgeInsets.only(top: _kBookmarkIconHeight / 4),
-      child: Icon(Icons.bookmark_rounded, color: Colors.white, size: 15),
-    );
-  }
-
-  Widget _buildImage(String url) {
-    return Container(
-      width: kDefaultImageWidth / 2,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-      child: Image.network(
-        url,
-        fit: BoxFit.cover,
-        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
-      ),
+    return Text(
+      "You don't have any bookmarks.",
+      style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.w300),
+      textAlign: TextAlign.center,
     );
   }
 }
