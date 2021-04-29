@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/pages/profile.dart';
@@ -81,7 +82,7 @@ class CartPage extends StatelessWidget {
             secondaryActions: <Widget>[
               IconSlideAction(
                 color: Color(0xFFF06F6F),
-                icon: Icons.delete,
+                iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
                 onTap: () => _deleteItem(context, item),
               )
             ],
