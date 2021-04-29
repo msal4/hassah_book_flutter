@@ -3,7 +3,9 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
+import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/product_details_card.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
@@ -16,15 +18,51 @@ class BookmarksPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final bookmarks = context.watch<BookmarksProvider>();
+    final auth = context.watch<AuthProvider>();
+    final theme = Theme.of(context);
+
     final isLoading = bookmarks.isLoading;
     final hasException = bookmarks.hasException;
     final exception = bookmarks.exception;
     final data = bookmarks.bookmarks;
 
     useEffect(() {
-      bookmarks.getBookmarks();
+      if (auth.isAuthenticated) bookmarks.getBookmarks();
       return;
-    }, []);
+    }, [auth.isAuthenticated]);
+
+    if (!auth.isAuthenticated) {
+      return Padding(
+        padding: const EdgeInsets.all(kDefaultPadding),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text("Login to see your bookmarks", style: theme.textTheme.subtitle1),
+            SizedBox(height: kDefaultPadding),
+            Material(
+              color: theme.accentColor,
+              borderRadius: BorderRadius.circular(9999),
+              clipBehavior: Clip.antiAlias,
+              child: InkWell(
+                onTap: () {
+                  Navigator.of(context).pushNamed(LoginPage.routeName);
+                },
+                child: Ink(
+                  width: double.maxFinite,
+                  padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                  child: Text(
+                    "LOGIN",
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.button.copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
 
     if (hasException) {
       return Retry(message: exception.toString(), onRetry: bookmarks.getBookmarks);
