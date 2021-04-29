@@ -1,17 +1,26 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 
 const _kBottomSheetMinExtent = 20.0;
-const _kBottomSheetMinHeight = 550.0;
+const _kBottomSheetMinHeight = 350.0;
+
+const _kStatusIconLineThickness = 4.0;
+const _kCircleIconRadius = 25.0;
+
+final _kGreenStatusColor = Colors.greenAccent.shade700;
+final _kPendingStatusColor = Colors.yellow.shade700;
 
 class OrderDetailPageArguments {
   const OrderDetailPageArguments({@required this.orderId}) : assert(orderId != null);
@@ -33,6 +42,7 @@ class OrderDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final padding = MediaQuery.of(context).padding;
     final size = MediaQuery.of(context).size;
+
     // Get the min bottom sheet height fraction.
     final minSheetSize = (padding.bottom + _kBottomSheetMinExtent) / size.height;
     final initialSheetHeight = min(_kBottomSheetMinHeight / size.height, 1.0);
@@ -76,67 +86,15 @@ class OrderDetailPage extends StatelessWidget {
   }
 
   ListView _buildPurchasesList(BuildContext context, List<PurchaseMixin> items) {
-    final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
 
     return ListView.separated(
       padding: EdgeInsets.all(kDefaultPadding).copyWith(
         bottom: kDefaultPadding + padding.bottom + _kBottomSheetMinExtent,
       ),
-      itemBuilder: (context, idx) {
-        final item = items[idx];
-
-        return RoundContainer(
-          padding: const EdgeInsets.all(kDefaultPadding),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildImage(item.product.image),
-              SizedBox(width: kDefaultPadding),
-              Expanded(child: _buildProductInfo(context, theme, item)),
-            ],
-          ),
-        );
-      },
+      itemBuilder: (context, idx) => PurchaseCard(purchase: items[idx]),
       separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
       itemCount: items.length,
-    );
-  }
-
-  Widget _buildProductInfo(BuildContext context, ThemeData theme, PurchaseMixin item) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(item.product.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by ${item.product.author.name}", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
-        SizedBox(height: kDefaultPadding / 2),
-        Row(
-          children: [
-            Text("${item.quantity} items"),
-            Spacer(),
-            Text(
-              "${item.product.price * item.quantity} IQD",
-              style: theme.textTheme.subtitle1.copyWith(
-                fontWeight: FontWeight.bold,
-                color: theme.accentColor,
-              ),
-            ),
-          ],
-        )
-      ],
-    );
-  }
-
-  Widget _buildImage(String url) {
-    return Container(
-      width: kDefaultImageWidth / 2,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-      child: Image.network(
-        url,
-        fit: BoxFit.cover,
-        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
-      ),
     );
   }
 
@@ -154,7 +112,7 @@ class OrderDetailPage extends StatelessWidget {
           builder: (runMutation, result) {
             return Container(
               decoration: BoxDecoration(
-                color: theme.scaffoldBackgroundColor,
+                color: theme.backgroundColor,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(kDefaultBorderRadius * 2),
                   topRight: Radius.circular(kDefaultBorderRadius * 2),
@@ -178,37 +136,72 @@ class OrderDetailPage extends StatelessWidget {
                           Spacer(),
                           Text(
                             "${order.totalPrice} IQD",
-                            style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold),
+                            style: theme.textTheme.headline6,
                           ),
                         ],
                       ),
-                      SizedBox(height: kDefaultPadding),
-                      Divider(),
-                      SizedBox(height: kDefaultPadding),
-                      GestureDetector(
-                        onTap: result.isNotLoading
-                            ? () async {
-                                final result = await runMutation({"id": orderId}).networkResult;
-
-                                if (result.hasException) {
-                                  return;
-                                }
-                                if (result.isConcrete) {
-                                  debugPrint(result.data.toString());
-                                }
-                              }
-                            : null,
-                        child: RoundContainer(
-                          padding: const EdgeInsets.all(kDefaultPadding),
-                          color: result.isLoading ? Colors.grey.shade800 : theme.accentColor,
-                          borderRadius: BorderRadius.circular(9999),
-                          child: Text(
-                            "ORDER NOW",
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.button.copyWith(color: Colors.white),
+                      SizedBox(height: kDefaultPadding * 2),
+                      Row(
+                        children: [
+                          CircleAvatar(
+                            radius: _kCircleIconRadius,
+                            backgroundColor: _kPendingStatusColor,
+                            foregroundColor: Colors.white,
+                            child: Icon(Icons.check_box),
                           ),
-                        ),
-                      )
+                          Expanded(
+                            child: Container(
+                              height: _kStatusIconLineThickness,
+                              color: _kPendingStatusColor,
+                            ),
+                          ),
+                          CircleAvatar(
+                            radius: _kCircleIconRadius,
+                            backgroundColor: _kGreenStatusColor,
+                            foregroundColor: Colors.white,
+                            child: Icon(Icons.check_box),
+                          ),
+                          Expanded(
+                            child: Container(
+                              height: _kStatusIconLineThickness,
+                              color: _kGreenStatusColor,
+                            ),
+                          ),
+                          CircleAvatar(
+                            radius: _kCircleIconRadius,
+                            backgroundColor: _kGreenStatusColor,
+                            foregroundColor: Colors.white,
+                            child: Icon(Icons.check_box),
+                          ),
+                          Expanded(
+                            child: Container(
+                              height: _kStatusIconLineThickness,
+                              color: _kGreenStatusColor,
+                            ),
+                          ),
+                          CircleAvatar(
+                            radius: _kCircleIconRadius,
+                            backgroundColor: _kGreenStatusColor,
+                            foregroundColor: Colors.white,
+                            child: Icon(Icons.check_box),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: kDefaultPadding * 2),
+                      if (order.status == OrderStatus.pending)
+                        GestureDetector(
+                          onTap: result.isNotLoading ? () => _cancelOrder(runMutation) : null,
+                          child: RoundContainer(
+                            padding: const EdgeInsets.all(kDefaultPadding),
+                            color: result.isLoading ? Colors.grey.shade600 : theme.scaffoldBackgroundColor,
+                            borderRadius: BorderRadius.circular(9999),
+                            child: Text(
+                              "CANCEL",
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.button.copyWith(color: result.isLoading ? Colors.grey.shade200 : Colors.grey.shade800),
+                            ),
+                          ),
+                        )
                     ],
                   ),
                   Align(
@@ -231,6 +224,92 @@ class OrderDetailPage extends StatelessWidget {
           },
         );
       },
+    );
+  }
+
+  _cancelOrder(MultiSourceResult Function(Map<String, dynamic>, {Object optimisticResult}) runMutation) async {
+    final result = await runMutation({"id": orderId}).networkResult;
+
+    if (result.hasException) {
+      return;
+    }
+    if (result.isConcrete) {
+      debugPrint(result.data.toString());
+    }
+  }
+}
+
+class PurchaseCard extends HookWidget {
+  const PurchaseCard({@required this.purchase}) : assert(purchase != null);
+
+  final PurchaseMixin purchase;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final heroTagPrefix = useMemoized(generateRandomString);
+
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          ProductDetailPage.routeName,
+          arguments: ProductDetailPageArguments(heroTagPrefix: heroTagPrefix, product: purchase.product),
+        );
+      },
+      child: RoundContainer(
+        padding: const EdgeInsets.all(kDefaultPadding),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildImage(heroTagPrefix),
+            const SizedBox(width: kDefaultPadding),
+            Expanded(
+              child: _buildProductInfo(theme, purchase),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildImage(String heroTagPrefix) {
+    return Hero(
+      tag: "image-$heroTagPrefix-${purchase.product.id}",
+      child: Container(
+        width: kDefaultImageWidth / 2,
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+        child: Image.network(
+          purchase.product.image,
+          fit: BoxFit.cover,
+          frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildProductInfo(ThemeData theme, PurchaseMixin item) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(item.product.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
+        Text("by ${item.product.author.name}", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
+        SizedBox(height: kDefaultPadding / 2),
+        Row(
+          children: [
+            Text("${item.quantity} items"),
+            Spacer(),
+            Text(
+              "${item.product.price * item.quantity} IQD",
+              style: theme.textTheme.subtitle1.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.accentColor,
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 }

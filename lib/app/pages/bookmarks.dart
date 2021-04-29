@@ -75,7 +75,7 @@ class BookmarksPage extends HookWidget {
     return RefreshIndicator(
       onRefresh: bookmarks.getBookmarks,
       child: PaginationHandler(
-        enabled: !isLoading && data.items.length != data.total,
+        enabled: !isLoading && data?.items?.length != data?.total,
         fetchMore: bookmarks.fetchMore,
         child: _buildBookmarksList(context, bookmarks),
       ),
@@ -84,7 +84,7 @@ class BookmarksPage extends HookWidget {
 
   Widget _buildBookmarksList(BuildContext context, BookmarksProvider bookmarks) {
     final padding = MediaQuery.of(context).padding;
-    final items = bookmarks.bookmarks.items;
+    final items = bookmarks.bookmarks?.items ?? [];
 
     return ListView.separated(
       padding: EdgeInsets.only(
