@@ -36,7 +36,7 @@ class BookmarksProvider extends ChangeNotifier {
     _options = QueryOptions(document: _bookmarksQuery.document, fetchPolicy: FetchPolicy.cacheAndNetwork);
 
     _result = await client.query(_options);
-    debugPrint(_result.toString());
+
     if (_result.hasException) {
       _exception = _result.exception;
       _hasException = true;
@@ -67,8 +67,7 @@ class BookmarksProvider extends ChangeNotifier {
   }
 
   Future<void> addBookmark(String productId) async {
-    final res = await client.mutate(MutationOptions(document: _addBookmarkMutation.document, variables: {"productId": productId}));
-    debugPrint(res.toString());
+    await client.mutate(MutationOptions(document: _addBookmarkMutation.document, variables: {"productId": productId}));
     await getBookmarks();
   }
 
