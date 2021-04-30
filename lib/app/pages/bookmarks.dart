@@ -27,7 +27,7 @@ class BookmarksPage extends HookWidget {
     final data = bookmarks.bookmarks;
 
     useEffect(() {
-      if (auth.isAuthenticated) bookmarks.getBookmarks();
+      if (auth.isAuthenticated) Future.microtask(bookmarks.getBookmarks);
       return;
     }, [auth.isAuthenticated]);
 
