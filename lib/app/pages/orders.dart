@@ -2,33 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/pages/order_detail.dart';
+import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/order.dart';
+import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
-
-extension on OrderStatus {
-  String get value {
-    switch (this) {
-      case OrderStatus.pending:
-        return "Pending";
-      case OrderStatus.processed:
-        return "Processed";
-      case OrderStatus.delivering:
-        return "Delivering";
-      case OrderStatus.delivered:
-        return "Delivered";
-      case OrderStatus.canceled:
-        return "Canceled";
-      case OrderStatus.failed:
-        return "Failed";
-      default:
-        return "Unknown";
-    }
-  }
-}
 
 class OrdersPage extends HookWidget {
   static const routeName = "/orders";
@@ -47,24 +29,40 @@ class OrdersPage extends HookWidget {
           if (result.hasException) {
             return Retry(message: result.exception.toString(), onRetry: refetch);
           }
-          if (result.isLoading) {
+          if (result.isLoading && result.data == null) {
             return LoadingIndicator();
           }
 
           final orders = _myOrdersQuery.parse(result.data).myOrders;
 
-          return ListView.separated(
-            padding: EdgeInsets.only(
-              bottom: padding.bottom + kDefaultPadding,
-              left: padding.left + kDefaultPadding,
-              right: padding.right + kDefaultPadding,
+          return RefreshIndicator(
+            onRefresh: refetch,
+            child: PaginationHandler(
+              enabled: !result.isLoading && orders.items.length < orders.total,
+              fetchMore: () {
+                final options = FetchMoreOptions(
+                  document: _myOrdersQuery.document,
+                  updateQuery: (oldData, newData) => updatePaginatedResponse(oldData, newData, "myOrders"),
+                  variables: {"skip": orders.items.length},
+                );
+
+                fetchMore(options);
+              },
+              child: ListView.separated(
+                padding: EdgeInsets.only(
+                  top: kDefaultPadding,
+                  bottom: padding.bottom + kDefaultPadding,
+                  left: padding.left + kDefaultPadding,
+                  right: padding.right + kDefaultPadding,
+                ),
+                itemBuilder: (context, idx) {
+                  final order = orders.items[idx];
+                  return _buildOrder(context, order: order, morePurchasesCount: order.purchases.total - 1, productImage: order.purchases.items[0].product.image);
+                },
+                separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
+                itemCount: orders.items.length,
+              ),
             ),
-            itemBuilder: (context, idx) {
-              final order = orders.items[idx];
-              return _buildOrder(context, order: order, morePurchasesCount: order.purchases.total - 1, productImage: order.purchases.items[0].product.image);
-            },
-            separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-            itemCount: orders.items.length,
           );
         },
       ),
@@ -106,7 +104,7 @@ class OrdersPage extends HookWidget {
                   "Status",
                   style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
                 ),
-                Text(order.status.value, style: theme.textTheme.subtitle1),
+                Text(humanizeOrderStatus(order.status), style: theme.textTheme.subtitle1),
               ],
             ),
             SizedBox(width: kDefaultPadding),

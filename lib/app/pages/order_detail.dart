@@ -7,14 +7,16 @@ import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
+import 'package:intl/intl.dart';
 
 const _kBottomSheetMinExtent = 20.0;
-const _kBottomSheetMinHeight = 350.0;
+const _kBottomSheetMinHeight = 460.0;
 
 const _kStatusIconLineThickness = 4.0;
 const _kCircleIconRadius = 25.0;
@@ -71,7 +73,7 @@ class OrderDetailPage extends StatelessWidget {
             final order = _orderQuery.parse(result.data).order;
 
             return Scaffold(
-              bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, order),
+              bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, order, refetch),
               body: NestedScrollView(
                 headerSliverBuilder: (context, innerBoxIsScrolled) => [
                   SliverAppBar(title: appBarTitle, floating: true, snap: true),
@@ -98,7 +100,7 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  DraggableScrollableSheet _buildBottomSheet(BuildContext context, double initialSheetHeight, double minSheetSize, OrderMixin order) {
+  DraggableScrollableSheet _buildBottomSheet(BuildContext context, double initialSheetHeight, double minSheetSize, OrderMixin order, Future<QueryResult> Function() refetch) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
 
@@ -109,13 +111,13 @@ class OrderDetailPage extends StatelessWidget {
       builder: (BuildContext context, ScrollController scrollController) {
         return Mutation(
           options: MutationOptions(document: _cancelOrderMutation.document, variables: {"id": orderId}),
-          builder: (runMutation, result) {
+          builder: (runMutation, result, {refresh}) {
             return Container(
               decoration: BoxDecoration(
                 color: theme.backgroundColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(kDefaultBorderRadius * 2),
-                  topRight: Radius.circular(kDefaultBorderRadius * 2),
+                borderRadius: const BorderRadius.only(
+                  topLeft: const Radius.circular(kDefaultBorderRadius * 2),
+                  topRight: const Radius.circular(kDefaultBorderRadius * 2),
                 ),
                 boxShadow: [BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)],
               ),
@@ -133,14 +135,11 @@ class OrderDetailPage extends StatelessWidget {
                       Row(
                         children: [
                           Text("Total", style: theme.textTheme.headline6),
-                          Spacer(),
-                          Text(
-                            "${order.totalPrice} IQD",
-                            style: theme.textTheme.headline6,
-                          ),
+                          const Spacer(),
+                          Text("${order.totalPrice} IQD", style: theme.textTheme.headline6),
                         ],
                       ),
-                      SizedBox(height: kDefaultPadding * 2),
+                      const SizedBox(height: kDefaultPadding * 2),
                       Row(
                         children: [
                           CircleAvatar(
@@ -187,10 +186,46 @@ class OrderDetailPage extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: kDefaultPadding * 2),
+                      const SizedBox(height: kDefaultPadding * 2),
+                      RoundContainer(
+                        color: theme.scaffoldBackgroundColor,
+                        padding: const EdgeInsets.all(kDefaultPadding),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Status",
+                                  style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(humanizeOrderStatus(order.status), style: theme.textTheme.subtitle1, textAlign: TextAlign.center),
+                              ],
+                            ),
+                            SizedBox(width: kDefaultPadding),
+                            _buildDivider(),
+                            SizedBox(width: kDefaultPadding),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Ordered On",
+                                  style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(DateFormat.yMEd().format(order.createdAt.toLocal()), style: theme.textTheme.subtitle1, textAlign: TextAlign.center),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: kDefaultPadding * 2),
                       if (order.status == OrderStatus.pending)
                         GestureDetector(
-                          onTap: result.isNotLoading ? () => _cancelOrder(runMutation) : null,
+                          onTap: result.isNotLoading ? () => _cancelOrder(context, runMutation, refetch) : null,
                           child: RoundContainer(
                             padding: const EdgeInsets.all(kDefaultPadding),
                             color: result.isLoading ? Colors.grey.shade600 : theme.scaffoldBackgroundColor,
@@ -227,15 +262,112 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  _cancelOrder(MultiSourceResult Function(Map<String, dynamic>, {Object optimisticResult}) runMutation) async {
-    final result = await runMutation({"id": orderId}).networkResult;
+  Future<void> _cancelOrder(
+    BuildContext context,
+    MultiSourceResult Function(Map<String, dynamic>, {Object optimisticResult}) runMutation,
+    Future<QueryResult> Function() refetch,
+  ) async {
+    final theme = Theme.of(context);
 
-    if (result.hasException) {
-      return;
-    }
-    if (result.isConcrete) {
-      debugPrint(result.data.toString());
-    }
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(kDefaultBorderRadius * 2),
+              topRight: Radius.circular(kDefaultBorderRadius * 2),
+            ),
+            color: theme.scaffoldBackgroundColor,
+          ),
+          padding: const EdgeInsets.all(kDefaultPadding),
+          child: SafeArea(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  'Are you sure you want to cancel this order?',
+                  style: theme.textTheme.subtitle1,
+                ),
+                SizedBox(height: kDefaultPadding),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Material(
+                        color: theme.accentColor,
+                        borderRadius: BorderRadius.circular(9999),
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Ink(
+                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            child: Text(
+                              "NO",
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.button.copyWith(color: Colors.white),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: kDefaultPadding),
+                    Expanded(
+                      flex: 1,
+                      child: Material(
+                        color: theme.backgroundColor,
+                        borderRadius: BorderRadius.circular(9999),
+                        clipBehavior: Clip.antiAlias,
+                        child: InkWell(
+                          onTap: () async {
+                            final result = await runMutation({"id": orderId}).networkResult;
+
+                            if (result.hasException) {
+                              refetch();
+                              Navigator.pop(context);
+                              return;
+                            }
+                            if (result.isConcrete) {
+                              debugPrint(result.data.toString());
+                            }
+                            refetch();
+                            Navigator.pop(context);
+                          },
+                          child: Ink(
+                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            child: Text(
+                              "YES",
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.button,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildDivider() {
+    return Center(
+      child: Container(
+        height: 30,
+        decoration: BoxDecoration(
+          border: Border(
+            left: BorderSide(width: 1, color: Colors.grey),
+          ),
+        ),
+      ),
+    );
   }
 }
 
