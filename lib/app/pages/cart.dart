@@ -365,13 +365,15 @@ class _CartPageState extends State<CartPage> {
                                 }
                                 if (result.isConcrete) {
                                   debugPrint(result.data.toString());
+                                  box.clear();
+                                  Navigator.pop(context);
                                   Navigator.of(context).pushNamed(OrdersPage.routeName);
                                 }
                               }
                             : null,
                         child: RoundContainer(
                           padding: const EdgeInsets.all(kDefaultPadding),
-                          color: result.isLoading ? Colors.grey.shade800 : theme.accentColor,
+                          color: box.isEmpty || result.isLoading ? Colors.grey.shade800 : theme.accentColor,
                           borderRadius: BorderRadius.circular(9999),
                           child: Text(
                             "ORDER NOW",
