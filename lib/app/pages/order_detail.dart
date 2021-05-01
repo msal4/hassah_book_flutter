@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
@@ -23,6 +24,26 @@ const _kCircleIconRadius = 25.0;
 
 final _kGreenStatusColor = Colors.greenAccent.shade700;
 final _kPendingStatusColor = Colors.yellow.shade700;
+final _kDefaultStatusColor = Colors.grey.shade800;
+
+const _kQueryPollInterval = Duration(seconds: 1);
+
+class OrderStatusInfo {
+  const OrderStatusInfo([this.status = OrderStatus.pending]) : assert(status != null);
+
+  final OrderStatus status;
+
+  int get index => _indexes[status];
+
+  final _indexes = const {
+    OrderStatus.canceled: -2,
+    OrderStatus.failed: -1,
+    OrderStatus.pending: 0,
+    OrderStatus.processed: 1,
+    OrderStatus.delivering: 2,
+    OrderStatus.delivered: 3,
+  };
+}
 
 class OrderDetailPageArguments {
   const OrderDetailPageArguments({@required this.orderId}) : assert(orderId != null);
@@ -52,7 +73,7 @@ class OrderDetailPage extends StatelessWidget {
     return UnfocusOnTap(
       child: Scaffold(
         body: Query(
-          options: QueryOptions(document: _orderQuery.document, variables: {"id": orderId}),
+          options: QueryOptions(document: _orderQuery.document, variables: {"id": orderId}, pollInterval: _kQueryPollInterval),
           builder: (result, {refetch, fetchMore}) {
             const appBarTitle = Text("Order Details");
 
@@ -104,6 +125,8 @@ class OrderDetailPage extends StatelessWidget {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
 
+    final currentStatusInfo = OrderStatusInfo(order.status);
+
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: initialSheetHeight,
@@ -142,48 +165,10 @@ class OrderDetailPage extends StatelessWidget {
                       const SizedBox(height: kDefaultPadding * 2),
                       Row(
                         children: [
-                          CircleAvatar(
-                            radius: _kCircleIconRadius,
-                            backgroundColor: _kPendingStatusColor,
-                            foregroundColor: Colors.white,
-                            child: Icon(Icons.check_box),
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: _kStatusIconLineThickness,
-                              color: _kPendingStatusColor,
-                            ),
-                          ),
-                          CircleAvatar(
-                            radius: _kCircleIconRadius,
-                            backgroundColor: _kGreenStatusColor,
-                            foregroundColor: Colors.white,
-                            child: Icon(Icons.check_box),
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: _kStatusIconLineThickness,
-                              color: _kGreenStatusColor,
-                            ),
-                          ),
-                          CircleAvatar(
-                            radius: _kCircleIconRadius,
-                            backgroundColor: _kGreenStatusColor,
-                            foregroundColor: Colors.white,
-                            child: Icon(Icons.check_box),
-                          ),
-                          Expanded(
-                            child: Container(
-                              height: _kStatusIconLineThickness,
-                              color: _kGreenStatusColor,
-                            ),
-                          ),
-                          CircleAvatar(
-                            radius: _kCircleIconRadius,
-                            backgroundColor: _kGreenStatusColor,
-                            foregroundColor: Colors.white,
-                            child: Icon(Icons.check_box),
-                          ),
+                          ..._buildIconLine("pending", OrderStatusInfo(), currentStatusInfo, false),
+                          ..._buildIconLine("processed", OrderStatusInfo(OrderStatus.processed), currentStatusInfo),
+                          ..._buildIconLine("car", OrderStatusInfo(OrderStatus.delivering), currentStatusInfo),
+                          ..._buildIconLine("delivered", OrderStatusInfo(OrderStatus.delivered), currentStatusInfo),
                         ],
                       ),
                       const SizedBox(height: kDefaultPadding * 2),
@@ -239,26 +224,71 @@ class OrderDetailPage extends StatelessWidget {
                         )
                     ],
                   ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: IgnorePointer(
-                      child: Container(
-                        margin: const EdgeInsets.only(top: kDefaultPadding),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade500,
-                          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                        ),
-                        width: 40,
-                        height: 4,
-                      ),
-                    ),
-                  ),
+                  _buildSwipeIndicator(),
                 ],
               ),
             );
           },
         );
       },
+    );
+  }
+
+  Align _buildSwipeIndicator() {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: IgnorePointer(
+        child: Container(
+          margin: const EdgeInsets.only(top: kDefaultPadding),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade500,
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          ),
+          width: 40,
+          height: 4,
+        ),
+      ),
+    );
+  }
+
+  Color _getColorByStatus(OrderStatusInfo status, OrderStatusInfo currentStatus) {
+    if (currentStatus.status == OrderStatus.failed) {
+      return kDangerColor;
+    }
+
+    if (status.status == OrderStatus.pending && currentStatus.status == OrderStatus.pending) {
+      return _kPendingStatusColor;
+    } else if (status.index <= currentStatus.index) {
+      return _kGreenStatusColor;
+    } else {
+      return _kDefaultStatusColor;
+    }
+  }
+
+  List<Widget> _buildIconLine(String iconName, OrderStatusInfo status, OrderStatusInfo currentStatusInfo, [hasLine = true]) {
+    final color = _getColorByStatus(status, currentStatusInfo);
+
+    return [
+      if (hasLine) _buildLine(color),
+      _buildIcon(iconName, color),
+    ];
+  }
+
+  Expanded _buildLine(Color color) {
+    return Expanded(
+      child: Container(
+        height: _kStatusIconLineThickness,
+        color: color,
+      ),
+    );
+  }
+
+  CircleAvatar _buildIcon(String name, Color color) {
+    return CircleAvatar(
+      radius: _kCircleIconRadius,
+      backgroundColor: color,
+      foregroundColor: Colors.white,
+      child: SvgPicture.asset("assets/svg/$name.svg"),
     );
   }
 
