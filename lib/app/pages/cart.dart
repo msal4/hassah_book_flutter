@@ -351,7 +351,7 @@ class _CartPageState extends State<CartPage> {
                       ),
                       SizedBox(height: kDefaultPadding),
                       GestureDetector(
-                        onTap: result.isNotLoading
+                        onTap: box.isNotEmpty && result.isNotLoading
                             ? () async {
                                 final input = PlaceOrderInput(
                                   phone: _phoneController.text,
