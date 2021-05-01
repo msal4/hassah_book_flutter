@@ -42,6 +42,7 @@ class BookmarksProvider extends ChangeNotifier {
       _hasException = true;
       _isLoading = false;
       notifyListeners();
+      return;
     }
 
     _bookmarks = _bookmarksQuery.parse(_result.data).bookmarks;
