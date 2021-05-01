@@ -71,39 +71,37 @@ class OrderDetailPage extends StatelessWidget {
     final initialSheetHeight = min(_kBottomSheetMinHeight / size.height, 1.0);
 
     return UnfocusOnTap(
-      child: Scaffold(
-        body: Query(
-          options: QueryOptions(document: _orderQuery.document, variables: {"id": orderId}, pollInterval: _kQueryPollInterval),
-          builder: (result, {refetch, fetchMore}) {
-            const appBarTitle = Text("Order Details");
+      child: Query(
+        options: QueryOptions(document: _orderQuery.document, variables: {"id": orderId}, pollInterval: _kQueryPollInterval),
+        builder: (result, {refetch, fetchMore}) {
+          const appBarTitle = Text("Order Details");
 
-            if (result.hasException) {
-              return Scaffold(
-                appBar: AppBar(title: appBarTitle),
-                body: Retry(message: result.exception.toString(), onRetry: refetch),
-              );
-            }
-
-            if (result.isLoading) {
-              return Scaffold(
-                appBar: AppBar(title: appBarTitle),
-                body: LoadingIndicator(),
-              );
-            }
-
-            final order = _orderQuery.parse(result.data).order;
-
+          if (result.hasException) {
             return Scaffold(
-              bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, order, refetch),
-              body: NestedScrollView(
-                headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                  SliverAppBar(title: appBarTitle, floating: true, snap: true),
-                ],
-                body: _buildPurchasesList(context, order.purchases.items),
-              ),
+              appBar: AppBar(title: appBarTitle),
+              body: Retry(message: result.exception.toString(), onRetry: refetch),
             );
-          },
-        ),
+          }
+
+          if (result.isLoading) {
+            return Scaffold(
+              appBar: AppBar(title: appBarTitle),
+              body: LoadingIndicator(),
+            );
+          }
+
+          final order = _orderQuery.parse(result.data).order;
+
+          return Scaffold(
+            bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, order, refetch),
+            body: NestedScrollView(
+              headerSliverBuilder: (context, innerBoxIsScrolled) => [
+                SliverAppBar(title: appBarTitle, floating: true, snap: true),
+              ],
+              body: _buildPurchasesList(context, order.purchases.items),
+            ),
+          );
+        },
       ),
     );
   }
