@@ -5,8 +5,8 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
-import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
@@ -104,7 +104,7 @@ class _CartPageState extends State<CartPage> {
             ),
             secondaryActions: <Widget>[
               IconSlideAction(
-                color: Color(0xFFF06F6F),
+                color: kDangerColor,
                 iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
                 onTap: () => _deleteItem(context, item),
               )
@@ -365,8 +365,7 @@ class _CartPageState extends State<CartPage> {
                                 }
                                 if (result.isConcrete) {
                                   debugPrint(result.data.toString());
-                                  Navigator.of(context).pop();
-                                  Navigator.of(context).pushNamed(ProfilePage.routeName);
+                                  Navigator.of(context).pushNamed(OrdersPage.routeName);
                                 }
                               }
                             : null,
