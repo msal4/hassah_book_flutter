@@ -26,7 +26,7 @@ final _kGreenStatusColor = Colors.greenAccent.shade700;
 final _kPendingStatusColor = Colors.yellow.shade700;
 final _kDefaultStatusColor = Colors.grey.shade800;
 
-const _kQueryPollInterval = Duration(seconds: 1);
+const _kQueryPollInterval = Duration(seconds: 10);
 
 class OrderStatusInfo {
   const OrderStatusInfo([this.status = OrderStatus.pending]) : assert(status != null);
