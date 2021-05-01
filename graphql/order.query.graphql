@@ -1,0 +1,8 @@
+query Order($id: ID!, $skip: Int, $take: Int) {
+    order(id: $id) {
+        ...Order
+        purchases(skip: $skip, take: $take) {
+            ...PaginatedPurchaseResponse
+        }
+    }
+}

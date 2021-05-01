@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
+import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
@@ -173,6 +174,9 @@ class ProfilePage extends StatelessWidget {
                 ClipRRect(
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                   child: ListTile(
+                    onTap: () {
+                      Navigator.of(context).pushNamed(OrdersPage.routeName);
+                    },
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
                     tileColor: theme.backgroundColor,
                     contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),

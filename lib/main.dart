@@ -14,6 +14,8 @@ import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
+import 'package:hassah_book_flutter/app/pages/order_detail.dart';
+import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/otp.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
@@ -97,6 +99,9 @@ class _AppState extends State<App> {
                   case ProductDetailPage.routeName:
                     final arguments = settings.arguments as ProductDetailPageArguments;
                     return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, id: arguments.id, heroTagPrefix: arguments.heroTagPrefix));
+                  case OrderDetailPage.routeName:
+                    final arguments = settings.arguments as OrderDetailPageArguments;
+                    return MaterialPageRoute(builder: (context) => OrderDetailPage(orderId: arguments.orderId));
                   default:
                     return null;
                 }
@@ -108,6 +113,7 @@ class _AppState extends State<App> {
                 SignupPage.routeName: (context) => SignupPage(),
                 ProfilePage.routeName: (context) => ProfilePage(),
                 PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
+                OrdersPage.routeName: (context) => OrdersPage(),
                 CartPage.routeName: (context) => CartPage(),
               },
             ),

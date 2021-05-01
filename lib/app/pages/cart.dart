@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
-import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
+import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
@@ -14,10 +16,30 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 const _kBottomSheetMinExtent = 20.0;
-const _kBottomSheetMinHeight = 450.0;
+const _kBottomSheetMinHeight = 550.0;
 
-class CartPage extends StatelessWidget {
+class CartPage extends StatefulWidget {
   static const routeName = "/cart";
+
+  @override
+  _CartPageState createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
+  final _orderMutation = PlaceOrderMutation();
+
+  final _phoneController = TextEditingController.fromValue(TextEditingValue(text: "07705983835"));
+  final _provinceController = TextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
+  final _addressController = TextEditingController.fromValue(TextEditingValue(text: "123 Street"));
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _provinceController.dispose();
+    _addressController.dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +91,7 @@ class CartPage extends StatelessWidget {
                 Navigator.of(context).pushNamed(ProductDetailPage.routeName, arguments: ProductDetailPageArguments(id: item.id, heroTagPrefix: "none"));
               },
               child: RoundContainer(
+                padding: const EdgeInsets.all(kDefaultPadding),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -81,7 +104,7 @@ class CartPage extends StatelessWidget {
             ),
             secondaryActions: <Widget>[
               IconSlideAction(
-                color: Color(0xFFF06F6F),
+                color: kDangerColor,
                 iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
                 onTap: () => _deleteItem(context, item),
               )
@@ -139,7 +162,7 @@ class CartPage extends StatelessWidget {
             Spacer(),
             Text(
               "${item.price * item.quantity} IQD",
-              style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
+              style: theme.textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
             ),
           ],
         )
@@ -247,100 +270,138 @@ class CartPage extends StatelessWidget {
 
     final totalPrice = box.values.fold(0, (acc, item) => acc += item.price * item.quantity);
 
+    final purchases = box.values.map((item) => PurchasePartialInput(product: ObjectIdInput(id: item.id), quantity: item.quantity)).toList();
+
     return DraggableScrollableSheet(
       expand: false,
       initialChildSize: initialSheetHeight,
       minChildSize: minSheetSize,
       builder: (BuildContext context, ScrollController scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: theme.scaffoldBackgroundColor,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(kDefaultBorderRadius * 2),
-              topRight: Radius.circular(kDefaultBorderRadius * 2),
-            ),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)],
-          ),
-          child: Stack(
-            children: [
-              ListView(
-                padding: EdgeInsets.only(
-                  top: padding.top + kDefaultPadding,
-                  bottom: padding.bottom + kDefaultPadding,
-                  left: padding.left + kDefaultPadding,
-                  right: padding.right + kDefaultPadding,
+        return Mutation(
+          options: MutationOptions(document: _orderMutation.document),
+          builder: (runMutation, result) {
+            return Container(
+              decoration: BoxDecoration(
+                color: theme.scaffoldBackgroundColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(kDefaultBorderRadius * 2),
+                  topRight: Radius.circular(kDefaultBorderRadius * 2),
                 ),
-                controller: scrollController,
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)],
+              ),
+              child: Stack(
                 children: [
-                  Row(
+                  ListView(
+                    padding: EdgeInsets.only(
+                      top: padding.top + kDefaultPadding,
+                      bottom: padding.bottom + kDefaultPadding,
+                      left: padding.left + kDefaultPadding,
+                      right: padding.right + kDefaultPadding,
+                    ),
+                    controller: scrollController,
                     children: [
-                      Text("Total", style: theme.textTheme.headline6),
-                      Spacer(),
-                      Text("$totalPrice IQD", style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold)),
+                      Row(
+                        children: [
+                          Text("Total", style: theme.textTheme.headline6),
+                          Spacer(),
+                          Text("$totalPrice IQD", style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      SizedBox(height: kDefaultPadding),
+                      Divider(),
+                      SizedBox(height: kDefaultPadding),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        child: TextField(
+                          controller: _phoneController,
+                          textInputAction: TextInputAction.next,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            border: InputBorder.none,
+                            labelText: "Phone Number",
+                            filled: true,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: kDefaultPadding),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        child: TextField(
+                          controller: _provinceController,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            border: InputBorder.none,
+                            labelText: "Province",
+                            filled: true,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: kDefaultPadding),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        child: TextField(
+                          controller: _addressController,
+                          decoration: InputDecoration(
+                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            border: InputBorder.none,
+                            labelText: "Address",
+                            filled: true,
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: kDefaultPadding),
+                      GestureDetector(
+                        onTap: result.isNotLoading
+                            ? () async {
+                                final input = PlaceOrderInput(
+                                  phone: _phoneController.text,
+                                  province: _provinceController.text,
+                                  address: _addressController.text,
+                                  purchases: purchases,
+                                );
+                                final result = await runMutation({'data': input}).networkResult;
+                                if (result.hasException) {
+                                  return;
+                                }
+                                if (result.isConcrete) {
+                                  debugPrint(result.data.toString());
+                                  box.clear();
+                                  Navigator.pop(context);
+                                  Navigator.of(context).pushNamed(OrdersPage.routeName);
+                                }
+                              }
+                            : null,
+                        child: RoundContainer(
+                          padding: const EdgeInsets.all(kDefaultPadding),
+                          color: box.isEmpty || result.isLoading ? Colors.grey.shade800 : theme.accentColor,
+                          borderRadius: BorderRadius.circular(9999),
+                          child: Text(
+                            "ORDER NOW",
+                            textAlign: TextAlign.center,
+                            style: theme.textTheme.button.copyWith(color: Colors.white),
+                          ),
+                        ),
+                      )
                     ],
                   ),
-                  SizedBox(height: kDefaultPadding),
-                  Divider(),
-                  SizedBox(height: kDefaultPadding),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                    child: TextField(
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
-                        border: InputBorder.none,
-                        labelText: "Phone Number",
-                        filled: true,
+                  Align(
+                    alignment: Alignment.topCenter,
+                    child: IgnorePointer(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: kDefaultPadding),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade500,
+                          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        ),
+                        width: 40,
+                        height: 4,
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
-                        border: InputBorder.none,
-                        labelText: "Address",
-                        filled: true,
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: kDefaultPadding),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).pushNamed(ProfilePage.routeName);
-                    },
-                    child: RoundContainer(
-                      padding: const EdgeInsets.all(kDefaultPadding),
-                      color: theme.accentColor,
-                      borderRadius: BorderRadius.circular(9999),
-                      child: Text(
-                        "ORDER NOW",
-                        textAlign: TextAlign.center,
-                        style: theme.textTheme.button.copyWith(color: Colors.white),
-                      ),
-                    ),
-                  )
                 ],
               ),
-              Align(
-                alignment: Alignment.topCenter,
-                child: IgnorePointer(
-                  child: Container(
-                    margin: const EdgeInsets.only(top: kDefaultPadding),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade500,
-                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                    ),
-                    width: 40,
-                    height: 4,
-                  ),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         );
       },
     );

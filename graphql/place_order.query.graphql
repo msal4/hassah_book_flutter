@@ -1,0 +1,5 @@
+mutation PlaceOrder($data: PlaceOrderInput!) {
+    placeOrder(data: $data) {
+        id
+    }
+}

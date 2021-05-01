@@ -1,0 +1,5 @@
+query MyOrders($skip: Int, $take: Int) {
+    myOrders(skip: $skip, take: $take, order: [{field: "createdAt", order: DESC}]) {
+        ...PaginatedOrderResponse
+    }
+}
