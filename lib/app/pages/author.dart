@@ -112,7 +112,7 @@ class AuthorPage extends HookWidget {
                           textAlign: TextAlign.center,
                           style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.w500),
                         ),
-                        if (currentProduct.value?.categories?.isNotEmpty) const SizedBox(height: kDefaultPadding),
+                        if (currentProduct.value?.categories?.isNotEmpty ?? false) const SizedBox(height: kDefaultPadding),
                         Chips(items: currentProduct.value?.categories?.map((e) => e.name)?.toList()),
                         const SizedBox(height: kDefaultPadding),
                         GestureDetector(
