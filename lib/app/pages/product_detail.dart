@@ -4,6 +4,7 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/author.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
@@ -71,11 +72,11 @@ class ProductDetailPage extends HookWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildProductImage(id ?? product.id, product.image, heroTagPrefix),
-                      SizedBox(height: kDefaultPadding),
+                      const SizedBox(height: kDefaultPadding),
                       Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
                       SizedBox(height: kDefaultPadding * 2),
                       _buildProductHeader(context, product, data?.product, refetch),
-                      SizedBox(height: kDefaultPadding),
+                      const SizedBox(height: kDefaultPadding),
                       RoundContainer(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -96,10 +97,11 @@ class ProductDetailPage extends HookWidget {
                         child: Text(
                           data?.product?.overview ?? "...",
                           style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade800),
+                          maxLines: overviewClipped.value ? 2 : null,
                           overflow: overviewClipped.value ? TextOverflow.ellipsis : null,
                         ),
                       ),
-                      SizedBox(height: kDefaultPadding),
+                      const SizedBox(height: kDefaultPadding),
                       Row(
                         children: [
                           Expanded(
@@ -118,9 +120,9 @@ class ProductDetailPage extends HookWidget {
                                     },
                                     child: Icon(Icons.remove),
                                   ),
-                                  SizedBox(width: kDefaultPadding),
+                                  const SizedBox(width: kDefaultPadding),
                                   Text(quantity.value.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
-                                  SizedBox(width: kDefaultPadding),
+                                  const SizedBox(width: kDefaultPadding),
                                   GestureDetector(
                                     onTap: () {
                                       quantity.value++;
@@ -131,7 +133,7 @@ class ProductDetailPage extends HookWidget {
                               ),
                             ),
                           ),
-                          SizedBox(width: kDefaultPadding),
+                          const SizedBox(width: kDefaultPadding),
                           Expanded(
                             flex: 1,
                             child: ValueListenableBuilder<Box<CartItem>>(
@@ -192,13 +194,32 @@ class ProductDetailPage extends HookWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("${product.price} IQD", style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor)),
-              Text(product.name, style: theme.textTheme.headline6),
-              Text("by ${product.author.name}", style: theme.textTheme.bodyText2),
+              Text(
+                "${product.price} IQD",
+                style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
+              ),
+              Text(
+                product.name,
+                style: theme.textTheme.headline6,
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, AuthorPage.routeName, arguments: AuthorPageArguments(id: product.author.id));
+                },
+                child: RichText(
+                  text: TextSpan(children: [
+                    TextSpan(text: "by ", style: theme.textTheme.bodyText1),
+                    TextSpan(
+                      text: product.author.name,
+                      style: theme.textTheme.bodyText1.copyWith(color: theme.accentColor),
+                    ),
+                  ]),
+                ),
+              ),
             ],
           ),
         ),
-        SizedBox(width: kDefaultPadding),
+        const SizedBox(width: kDefaultPadding),
         if (productDetail != null) Bookmark(product: productDetail)
       ],
     );

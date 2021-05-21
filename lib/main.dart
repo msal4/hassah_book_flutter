@@ -8,6 +8,7 @@ import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/author.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/captcha.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
@@ -102,6 +103,9 @@ class _AppState extends State<App> {
                   case OrderDetailPage.routeName:
                     final arguments = settings.arguments as OrderDetailPageArguments;
                     return MaterialPageRoute(builder: (context) => OrderDetailPage(orderId: arguments.orderId));
+                  case AuthorPage.routeName:
+                    final arguments = settings.arguments as AuthorPageArguments;
+                    return MaterialPageRoute(builder: (context) => AuthorPage(id: arguments.id));
                   default:
                     return null;
                 }

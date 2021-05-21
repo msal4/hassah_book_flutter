@@ -1,0 +1,8 @@
+query Author($id: ID!, $searchQuery: String, $skip: Int, $take: Int, $order: [OrderByMap!]) {
+    author(id: $id) {
+        ...Author,
+        products(searchQuery: $searchQuery, skip: $skip, take: $take, order: $order) {
+            ...PaginatedProductResponse
+        }
+    }
+}
