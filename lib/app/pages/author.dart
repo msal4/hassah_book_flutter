@@ -76,7 +76,7 @@ class AuthorPage extends HookWidget {
                 const SizedBox(height: kDefaultPadding),
                 CarouselSlider(
                   options: CarouselOptions(
-                    height: 320.0,
+                    height: 250.0,
                     viewportFraction: .5,
                     enlargeCenterPage: true,
                     enableInfiniteScroll: false,
