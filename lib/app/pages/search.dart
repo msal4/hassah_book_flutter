@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/pages/author.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
@@ -164,31 +165,36 @@ class _SearchPageState extends State<SearchPage> {
         itemBuilder: (context, idx) {
           return _buildAuthor(theme, authors[idx]);
         },
-        separatorBuilder: (_, __) => SizedBox(width: kDefaultPadding),
+        separatorBuilder: (_, __) => const SizedBox(width: kDefaultPadding),
         itemCount: authors.length,
       ),
     );
   }
 
   Widget _buildAuthor(ThemeData theme, AuthorMixin author) {
-    return Container(
-      width: _kAuthorRadius * 2,
-      child: Column(
-        children: [
-          CircleAvatar(
-            radius: _kAuthorRadius,
-            backgroundColor: theme.backgroundColor,
-            backgroundImage: AssetImage("assets/images/product_placeholder.png"),
-            foregroundImage: NetworkImage(author.image),
-          ),
-          SizedBox(height: 5),
-          Text(
-            author.name,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
-          ),
-        ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushNamed(context, AuthorPage.routeName, arguments: AuthorPageArguments(id: author.id));
+      },
+      child: Container(
+        width: _kAuthorRadius * 2,
+        child: Column(
+          children: [
+            CircleAvatar(
+              radius: _kAuthorRadius,
+              backgroundColor: theme.backgroundColor,
+              backgroundImage: const AssetImage("assets/images/product_placeholder.png"),
+              foregroundImage: NetworkImage(author.image),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              author.name,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
       ),
     );
   }

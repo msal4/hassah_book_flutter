@@ -103,6 +103,9 @@ class _AppState extends State<App> {
                   case OrderDetailPage.routeName:
                     final arguments = settings.arguments as OrderDetailPageArguments;
                     return MaterialPageRoute(builder: (context) => OrderDetailPage(orderId: arguments.orderId));
+                  case AuthorPage.routeName:
+                    final arguments = settings.arguments as AuthorPageArguments;
+                    return MaterialPageRoute(builder: (context) => AuthorPage(id: arguments.id));
                   default:
                     return null;
                 }
@@ -116,7 +119,6 @@ class _AppState extends State<App> {
                 PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
                 OrdersPage.routeName: (context) => OrdersPage(),
                 CartPage.routeName: (context) => CartPage(),
-                AuthorPage.routeName: (context) => AuthorPage(),
               },
             ),
           );
