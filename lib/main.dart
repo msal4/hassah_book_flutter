@@ -8,6 +8,7 @@ import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
 import 'package:hassah_book_flutter/app/graphql_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/author.dart';
 import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/captcha.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
@@ -115,6 +116,7 @@ class _AppState extends State<App> {
                 PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
                 OrdersPage.routeName: (context) => OrdersPage(),
                 CartPage.routeName: (context) => CartPage(),
+                AuthorPage.routeName: (context) => AuthorPage(),
               },
             ),
           );
