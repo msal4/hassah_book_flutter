@@ -42,12 +42,14 @@ class AuthorPage extends HookWidget {
         body: Query(
           options: QueryOptions(document: _authorQuery.document, variables: {"id": id}),
           builder: (result, {fetchMore, refetch}) {
-            if (result.isLoading) {
-              return LoadingIndicator();
-            }
+            if (result.data == null) {
+              if (result.isLoading) {
+                return LoadingIndicator();
+              }
 
-            if (result.hasException) {
-              return Retry(message: result.exception.toString(), onRetry: refetch);
+              if (result.hasException) {
+                return Retry(message: result.exception.toString(), onRetry: refetch);
+              }
             }
 
             final author = _authorQuery.parse(result.data).author;
@@ -81,8 +83,20 @@ class AuthorPage extends HookWidget {
                     enlargeCenterPage: true,
                     enableInfiniteScroll: false,
                     onPageChanged: (idx, reason) {
+                      final products = author.products.items;
+
                       overviewClipped.value = true;
-                      currentProduct.value = author.products.items[idx];
+                      currentProduct.value = products[idx];
+
+                      if (idx + 1 == products.length && idx + 1 < author.products.total) {
+                        final options = FetchMoreOptions(
+                          document: _authorQuery.document,
+                          updateQuery: (oldData, newData) => _updatePaginatedResponse(oldData, newData),
+                          variables: {"skip": products.length},
+                        );
+
+                        fetchMore(options);
+                      }
                     },
                   ),
                   items: author.products.items.map((product) {
@@ -134,6 +148,11 @@ class AuthorPage extends HookWidget {
         ),
       ),
     );
+  }
+
+  Map<String, dynamic> _updatePaginatedResponse(Map<String, dynamic> oldData, Map<String, dynamic> newData) {
+    newData["author"]["products"]["items"] = [...oldData["author"]["products"]["items"], ...newData["author"]["products"]["items"]];
+    return newData;
   }
 }
 

@@ -12,6 +12,7 @@ import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
@@ -86,7 +87,7 @@ class _SearchPageState extends State<SearchPage> {
                     fetchMore: () {
                       final options = FetchMoreOptions(
                         document: _searchQuery.document,
-                        updateQuery: _updatePaginatedQuery,
+                        updateQuery: (oldData, newData) => updatePaginatedResponse(oldData, newData, "products"),
                         variables: {"searchQuery": _query, "skip": data.products.items.length},
                       );
 
@@ -137,17 +138,6 @@ class _SearchPageState extends State<SearchPage> {
         ),
       ),
     );
-  }
-
-  Map<String, dynamic> _updatePaginatedQuery(oldData, newData) {
-    final oldDataParsed = _searchQuery.parse(oldData);
-    final newDataParsed = _searchQuery.parse(newData);
-
-    final items = [...oldDataParsed.products.items, ...newDataParsed.products.items];
-
-    newDataParsed.products.items = items;
-
-    return newDataParsed.toJson();
   }
 
   Widget _buildAuthorsRow(BuildContext context, List<AuthorMixin> authors) {
