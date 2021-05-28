@@ -11,7 +11,6 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
-import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:provider/provider.dart';
 
@@ -193,13 +192,14 @@ class _OrdersList extends HookWidget {
 
   Widget _buildImage(String url) {
     return Container(
-      width: kDefaultImageWidth / 3,
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-      child: Image.network(
-        url,
+      child: FadeInImage.assetNetwork(
+        placeholder: "assets/images/product_placeholder.png",
+        image: url,
         fit: BoxFit.cover,
-        frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+        width: kSmallProductImageWidth / 1.5,
+        height: kSmallProductImageHeight / 1.5,
       ),
     );
   }

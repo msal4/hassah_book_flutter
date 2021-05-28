@@ -11,7 +11,6 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
-import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:intl/intl.dart';
@@ -437,13 +436,14 @@ class PurchaseCard extends HookWidget {
     return Hero(
       tag: "image-$heroTagPrefix-${purchase.product.id}",
       child: Container(
-        width: kDefaultImageWidth / 2,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-        child: Image.network(
-          purchase.product.image,
+        child: FadeInImage.assetNetwork(
+          placeholder: "assets/images/product_placeholder.png",
+          image: purchase.product.image,
           fit: BoxFit.cover,
-          frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+          width: kSmallProductImageWidth,
+          height: kSmallProductImageHeight,
         ),
       ),
     );
