@@ -8,7 +8,6 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
-import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
 const kImageWidth = kDefaultImageWidth * 1.2;
@@ -36,6 +35,7 @@ class AuthorPage extends HookWidget {
     final theme = Theme.of(context);
 
     final currentProduct = useState<ProductMixin>(null);
+    final authorOverviewClipped = useState(true);
     final overviewClipped = useState(true);
 
     return Scaffold(
@@ -78,6 +78,19 @@ class AuthorPage extends HookWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.w500),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    authorOverviewClipped.value = !authorOverviewClipped.value;
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                    child: Text(
+                      author.overview,
+                      overflow: authorOverviewClipped.value ? TextOverflow.ellipsis : null,
+                      // textAlign: TextAlign.center,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: kDefaultPadding),
                 CarouselSlider(
