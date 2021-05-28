@@ -5,8 +5,6 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 
-const kDefaultImageWidth = 150.0;
-
 class ProductCard extends HookWidget {
   const ProductCard({Key key, @required this.product, this.width = kDefaultImageWidth}) : super(key: key);
 
@@ -43,10 +41,12 @@ class ProductCard extends HookWidget {
                   child: Container(
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-                    child: Image.network(
-                      product.image,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: "assets/images/product_placeholder.png",
+                      image: product.image,
                       fit: BoxFit.cover,
-                      frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+                      width: width,
+                      height: kDefaultImageHeight,
                     ),
                   ),
                 ),

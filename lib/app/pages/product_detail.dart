@@ -235,10 +235,12 @@ class ProductDetailPage extends HookWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
           ),
-          child: Image.network(
-            image,
+          child: FadeInImage.assetNetwork(
+            placeholder: "assets/images/product_placeholder.png",
+            image: image,
             fit: BoxFit.cover,
-            frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+            height: kDefaultImageHeight,
+            width: kDefaultImageWidth,
           ),
         ),
       ),

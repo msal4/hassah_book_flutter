@@ -15,7 +15,6 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
-import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
 const _kDebounceDuration = 500;
@@ -208,10 +207,12 @@ class _SearchPageState extends State<SearchPage> {
         width: kDefaultImageWidth / 2,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-        child: Image.network(
-          product.image,
+        child: FadeInImage.assetNetwork(
+          placeholder: "assets/images/product_placeholder.png",
+          image: product.image,
           fit: BoxFit.cover,
-          frameBuilder: (ctx, child, _, __) => Image.asset("assets/images/product_placeholder.png"),
+          width: kSmallProductImageWidth,
+          height: kSmallProductImageHeight,
         ),
       ),
     );

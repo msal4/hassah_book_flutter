@@ -8,3 +8,9 @@ const kSlidableActionExtentRatio = .25;
 const kDefaultIconSize = 20.0;
 const kCartBoxName = "cartStore";
 const kDangerColor = Color(0xFFF06F6F);
+
+const kDefaultImageWidth = 140.0;
+const kDefaultImageHeight = 220.0;
+
+const kSmallProductImageWidth = kDefaultImageWidth / 2;
+const kSmallProductImageHeight = kDefaultImageHeight / 2;
