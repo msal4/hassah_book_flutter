@@ -1,11 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/models/auth_response.dart';
 
+const _kTokenRefreshPeriod = Duration(minutes: 3);
+
 class AuthProvider extends ChangeNotifier {
-  AuthProvider({@required this.client, bool isAuthenticated = false}) : this._isAuthenticated = isAuthenticated;
+  AuthProvider({@required this.client, bool isAuthenticated = false}) : this._isAuthenticated = isAuthenticated {
+    refresh().then((resp) {
+      if (_isAuthenticated) {
+        _initTimer();
+      }
+    });
+  }
 
   final GraphQLClient client;
 
@@ -20,6 +30,22 @@ class AuthProvider extends ChangeNotifier {
   bool _isLoading = false;
 
   bool get isLoading => _isLoading;
+
+  Timer _timer;
+
+  void _initTimer() {
+    if (!(_timer?.isActive ?? false)) {
+      _timer = Timer.periodic(_kTokenRefreshPeriod, (timer) {
+        refresh();
+      });
+    }
+  }
+
+  void _cancelTimer() {
+    if (_timer?.isActive ?? false) {
+      _timer.cancel();
+    }
+  }
 
   /// sendVerificationCode sends a code using the provided phone number and returns the session info to be used when
   /// verifying the received code.
@@ -56,6 +82,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> login({@required String phone, @required String password}) async {
+    _initTimer();
     _isLoading = true;
     notifyListeners();
 
@@ -78,6 +105,8 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    _cancelTimer();
+
     _isLoading = true;
     notifyListeners();
 
@@ -104,5 +133,11 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
     }
     return null;
+  }
+
+  @override
+  void dispose() {
+    _cancelTimer();
+    super.dispose();
   }
 }
