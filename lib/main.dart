@@ -272,8 +272,7 @@ class MainPage extends HookWidget {
       clipBehavior: Clip.antiAlias,
       padding: EdgeInsets.all(kDefaultPadding).copyWith(bottom: kDefaultPadding / 2),
       decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
-        borderRadius: BorderRadius.only(topLeft: Radius.circular(_kNavBarRadius), topRight: Radius.circular(_kNavBarRadius)),
+        color: theme.backgroundColor,
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: SafeArea(
