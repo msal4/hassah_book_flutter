@@ -30,8 +30,6 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
-const _kNavBarRadius = 30.0;
-
 void main() async {
   await initHiveForFlutter();
   // Cart Box
