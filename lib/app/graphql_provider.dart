@@ -16,9 +16,9 @@ String uuidFromObject(Object object) {
 final cache = GraphQLCache(store: HiveStore(), dataIdFromObject: uuidFromObject);
 
 ValueNotifier<GraphQLClient> clientFor({@required String uri, String subscriptionUri}) {
-  final authLink = AuthLink(getToken: () async {
-    final token = await Auth.getToken(TokenType.Access);
-    return "Bearer $token";
+  final authLink = AuthLink(getToken: () {
+    final token = Auth.getToken(TokenType.Access);
+    return token != null ? "Bearer $token" : "";
   });
 
   Link link = authLink.concat(HttpLink(uri, httpClient: AuthClient()));

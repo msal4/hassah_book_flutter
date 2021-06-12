@@ -34,9 +34,11 @@ void main() async {
   await initHiveForFlutter();
   // Cart Box
   Hive.registerAdapter(CartItemAdapter());
+
+  await Hive.openBox(kAuthBoxName);
   await Hive.openBox<CartItem>(kCartBoxName);
 
-  final isAuthenticated = (await Auth.getToken(TokenType.Access)) != null;
+  final isAuthenticated = Auth.getToken(TokenType.Access) != null;
 
   runApp(App(isAuthenticated: isAuthenticated));
 }

@@ -8,7 +8,7 @@ class RootPage extends HookWidget {
   static const routeName = "/";
 
   Future<void> _initAuth(BuildContext context) async {
-    final refreshToken = await Auth.getToken(TokenType.Refresh);
+    final refreshToken = Auth.getToken(TokenType.Refresh);
     if (refreshToken == null) {
       return _goToLogin(context);
     }
@@ -19,8 +19,7 @@ class RootPage extends HookWidget {
     }
   }
 
-  void _goToLogin(BuildContext context) =>
-      Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
+  void _goToLogin(BuildContext context) => Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
 
   @override
   Widget build(BuildContext context) {

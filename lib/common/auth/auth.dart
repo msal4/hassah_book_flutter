@@ -2,9 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
+import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/models/auth_response.dart';
+import 'package:hive/hive.dart';
 import 'package:http/http.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 enum TokenType { Refresh, Access }
 
@@ -19,43 +20,39 @@ extension on TokenType {
 }
 
 abstract class Auth {
-  static final _prefsFuture = SharedPreferences.getInstance();
+  static final _box = Hive.box(kAuthBoxName);
   static final _client = Client();
   static AuthProvider provider;
 
   /// Gets the token of the provided type.
-  static Future<String> getToken(TokenType tokenType) async {
-    final prefs = await _prefsFuture;
-    return prefs.getString(tokenType.value);
+  static String getToken(TokenType tokenType) {
+    return _box.get(tokenType.value);
   }
 
   /// Stores the provided tokens. Doesn't store null values.
   /// If you want to remove a token use `removeToken`.
   static Future<void> storeToken({String refreshToken, String accessToken}) async {
-    final prefs = await _prefsFuture;
     if (refreshToken != null) {
-      await prefs.setString(TokenType.Refresh.value, refreshToken);
+      await _box.put(TokenType.Refresh.value, refreshToken);
     }
     if (accessToken != null) {
-      await prefs.setString(TokenType.Access.value, accessToken);
+      await _box.put(TokenType.Access.value, accessToken);
     }
   }
 
   /// Removes all stored tokens if no token type is provided.
   static Future<void> removeToken([TokenType tokenType]) async {
-    final prefs = await _prefsFuture;
     if (tokenType == null) {
-      await prefs.remove(TokenType.Refresh.value);
-      await prefs.remove(TokenType.Access.value);
+      await _box.deleteAll([TokenType.Refresh.value, TokenType.Access.value]);
       return;
     }
-    return await prefs.remove(tokenType.value);
+    return await _box.delete(tokenType.value);
   }
 
   /// Sends a refresh request to the auth endpoint.
   /// Throws an AuthException if the refresh token is invalidated or expired.
   static Future<AuthResponse> refreshTokens() async {
-    final refreshToken = await getToken(TokenType.Refresh);
+    final refreshToken = getToken(TokenType.Refresh);
     if (refreshToken == null) {
       await removeToken();
       throw AuthException();

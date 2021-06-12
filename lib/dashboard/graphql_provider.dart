@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hive/hive.dart';
 
 ValueNotifier<GraphQLClient> clientFor({
   @required String uri,
   String subscriptionUri,
 }) {
   final httpLink = HttpLink(uri, httpClient: AuthClient());
+  final box = Hive.box(kAuthBoxName);
 
   final authLink = AuthLink(
     getToken: () async {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('admin_access_token');
+      final token = box.get('admin_access_token');
       return token != null ? 'Bearer $token' : '';
     },
   );
