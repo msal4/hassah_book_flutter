@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -27,6 +28,7 @@ import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 
@@ -82,8 +84,12 @@ class _AppState extends State<App> {
             ],
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
-              title: 'Hassah Book',
+              onGenerateTitle: (context) {
+                return context.loc.appTitle;
+              },
               theme: theme,
+              localizationsDelegates: AppLocalizations.localizationsDelegates,
+              supportedLocales: AppLocalizations.supportedLocales,
               onGenerateRoute: (settings) {
                 // The reason I'm declaring the routes in two places is because some routes require a custom
                 // transition or arguments. I could've passed the arguments in the `routes` part as well but
