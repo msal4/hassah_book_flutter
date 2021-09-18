@@ -37,7 +37,6 @@ class AuthorPage extends HookWidget {
     final currentProduct = useState<ProductMixin>(null);
     final authorOverviewClipped = useState(true);
     final overviewClipped = useState(true);
-
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [

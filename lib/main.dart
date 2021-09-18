@@ -67,7 +67,7 @@ class _AppState extends State<App> {
         statusBarIconBrightness: Brightness.dark,
       ),
       child: HassahGraphQLProvider(
-        uri: 'http://100.93.34.121:4000/graphql',
+        uri: 'http://localhost:4000/graphql',
         builder: (context, client) {
           return MultiProvider(
             providers: [
