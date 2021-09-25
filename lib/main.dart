@@ -46,18 +46,30 @@ void main() async {
 }
 
 class App extends StatefulWidget {
-  const App({@required this.isAuthenticated}) : assert(isAuthenticated != null, "isAuthenticated is required");
+  const App({@required this.isAuthenticated})
+      : assert(isAuthenticated != null, "isAuthenticated is required");
 
   final bool isAuthenticated;
 
   @override
   _AppState createState() => _AppState();
+
+  static _AppState of(BuildContext context) =>
+      context.findAncestorStateOfType<_AppState>();
 }
 
 const _kOrangeColor = Color(0xFFFA784A);
 const _kGreenColor = Color(0xFF45AE9E);
 
 class _AppState extends State<App> {
+  Locale _locale;
+
+  setLocale(Locale locale) {
+    setState(() {
+      _locale = locale;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = _buildTheme();
@@ -69,18 +81,20 @@ class _AppState extends State<App> {
         statusBarIconBrightness: Brightness.dark,
       ),
       child: HassahGraphQLProvider(
-        uri: 'http://100.93.34.121:4000/graphql',
+        uri: 'http://localhost:4000/graphql',
         builder: (context, client) {
           return MultiProvider(
             providers: [
               ChangeNotifierProvider(
                 create: (context) {
-                  final provider = AuthProvider(client: client, isAuthenticated: widget.isAuthenticated);
+                  final provider = AuthProvider(
+                      client: client, isAuthenticated: widget.isAuthenticated);
                   Auth.provider = provider;
                   return provider;
                 },
               ),
-              ChangeNotifierProvider(create: (context) => BookmarksProvider(client: client)),
+              ChangeNotifierProvider(
+                  create: (context) => BookmarksProvider(client: client)),
             ],
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
@@ -88,6 +102,7 @@ class _AppState extends State<App> {
                 return context.loc.appTitle;
               },
               theme: theme,
+              locale: _locale,
               localizationsDelegates: AppLocalizations.localizationsDelegates,
               supportedLocales: AppLocalizations.supportedLocales,
               onGenerateRoute: (settings) {
@@ -96,33 +111,50 @@ class _AppState extends State<App> {
                 // I wanted it to be clearer and it's also easier to write this way.
                 switch (settings.name) {
                   case SearchPage.routeName:
-                    return createRouteWithFadeTransition(builder: (context, _, __) => SearchPage());
+                    return createRouteWithFadeTransition(
+                        builder: (context, _, __) => SearchPage());
                   case CaptchaPage.routeName:
-                    final arguments = settings.arguments as CaptchaPageArguments;
-                    return createRouteWithFadeTransition(builder: (context, _, __) => CaptchaPage(onMessage: arguments.onMessage));
+                    final arguments =
+                        settings.arguments as CaptchaPageArguments;
+                    return createRouteWithFadeTransition(
+                        builder: (context, _, __) =>
+                            CaptchaPage(onMessage: arguments.onMessage));
                   case OTPPage.routeName:
                     final arguments = settings.arguments as SignupForm;
-                    return MaterialPageRoute(builder: (context) => OTPPage(form: arguments));
+                    return MaterialPageRoute(
+                        builder: (context) => OTPPage(form: arguments));
                   case ProductDetailPage.routeName:
-                    final arguments = settings.arguments as ProductDetailPageArguments;
-                    return MaterialPageRoute(builder: (context) => ProductDetailPage(product: arguments.product, id: arguments.id, heroTagPrefix: arguments.heroTagPrefix));
+                    final arguments =
+                        settings.arguments as ProductDetailPageArguments;
+                    return MaterialPageRoute(
+                        builder: (context) => ProductDetailPage(
+                            product: arguments.product,
+                            id: arguments.id,
+                            heroTagPrefix: arguments.heroTagPrefix));
                   case OrderDetailPage.routeName:
-                    final arguments = settings.arguments as OrderDetailPageArguments;
-                    return MaterialPageRoute(builder: (context) => OrderDetailPage(orderId: arguments.orderId));
+                    final arguments =
+                        settings.arguments as OrderDetailPageArguments;
+                    return MaterialPageRoute(
+                        builder: (context) =>
+                            OrderDetailPage(orderId: arguments.orderId));
                   case AuthorPage.routeName:
                     final arguments = settings.arguments as AuthorPageArguments;
-                    return MaterialPageRoute(builder: (context) => AuthorPage(id: arguments.id));
+                    return MaterialPageRoute(
+                        builder: (context) => AuthorPage(id: arguments.id));
                   default:
                     return null;
                 }
               },
-              initialRoute: widget.isAuthenticated ? MainPage.routeName : LoginPage.routeName,
+              initialRoute: widget.isAuthenticated
+                  ? MainPage.routeName
+                  : LoginPage.routeName,
               routes: {
                 MainPage.routeName: (context) => MainPage(),
                 LoginPage.routeName: (context) => LoginPage(),
                 SignupPage.routeName: (context) => SignupPage(),
                 ProfilePage.routeName: (context) => ProfilePage(),
-                PersonalInformationPage.routeName: (context) => PersonalInformationPage(),
+                PersonalInformationPage.routeName: (context) =>
+                    PersonalInformationPage(),
                 OrdersPage.routeName: (context) => OrdersPage(),
                 CartPage.routeName: (context) => CartPage(),
               },
@@ -157,8 +189,11 @@ class _AppState extends State<App> {
           ),
         ),
         highlightColor: Colors.grey.withOpacity(.1),
-        bottomSheetTheme: theme.bottomSheetTheme.copyWith(backgroundColor: Colors.transparent),
-        textTheme: theme.textTheme.copyWith(button: theme.textTheme.button.copyWith(color: Colors.grey.shade800)));
+        bottomSheetTheme: theme.bottomSheetTheme
+            .copyWith(backgroundColor: Colors.transparent),
+        textTheme: theme.textTheme.copyWith(
+            button:
+                theme.textTheme.button.copyWith(color: Colors.grey.shade800)));
   }
 }
 
@@ -179,11 +214,13 @@ class MainPage extends HookWidget {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        bottomNavigationBar: _buildBottomNavigationBar(context, currentTab, appBarVisible),
+        bottomNavigationBar:
+            _buildBottomNavigationBar(context, currentTab, appBarVisible),
         body: Stack(
           children: [
             NotificationListener<ScrollNotification>(
-              onNotification: (notification) => _onScrollNotification(notification, appBarVisible),
+              onNotification: (notification) =>
+                  _onScrollNotification(notification, appBarVisible),
               child: IndexedStack(
                 index: currentTab.value,
                 children: [HomePage(), CategoriesPage(), BookmarksPage()],
@@ -196,7 +233,8 @@ class MainPage extends HookWidget {
     );
   }
 
-  bool _onScrollNotification(ScrollNotification notification, ValueNotifier<bool> appBarVisible) {
+  bool _onScrollNotification(
+      ScrollNotification notification, ValueNotifier<bool> appBarVisible) {
     if (notification.metrics.axis != Axis.vertical) return true;
 
     // when the scroll has settled on the scroll extent then always show the app bar.
@@ -207,8 +245,10 @@ class MainPage extends HookWidget {
 
     // only hide/show the app bar if the user is scrolling to ignore the scroll animation as
     // it causes issues when switching between tabs.
-    if (notification is ScrollUpdateNotification && notification.dragDetails != null) {
-      if (notification.scrollDelta > _kMinVelocityToHideAppBar && notification.metrics.pixels > kAppBarHeight / 2) {
+    if (notification is ScrollUpdateNotification &&
+        notification.dragDetails != null) {
+      if (notification.scrollDelta > _kMinVelocityToHideAppBar &&
+          notification.metrics.pixels > kAppBarHeight / 2) {
         appBarVisible.value = false;
       } else if (notification.scrollDelta < _kMaxVelocityToShowAdapter) {
         appBarVisible.value = true;
@@ -230,10 +270,14 @@ class MainPage extends HookWidget {
         ignoring: !isVisible,
         child: Container(
           height: kAppBarHeight + padding.top,
-          padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding),
+          padding: const EdgeInsets.symmetric(
+              horizontal: kDefaultPadding, vertical: kDefaultPadding),
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [theme.backgroundColor, theme.backgroundColor.withOpacity(0)],
+              colors: [
+                theme.backgroundColor,
+                theme.backgroundColor.withOpacity(0)
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -247,7 +291,8 @@ class MainPage extends HookWidget {
                     Navigator.of(context).pushNamed(CartPage.routeName);
                   },
                   tooltip: "Cart",
-                  icon: SvgPicture.asset("assets/svg/bag.svg", color: Colors.grey.shade800),
+                  icon: SvgPicture.asset("assets/svg/bag.svg",
+                      color: Colors.grey.shade800),
                 ),
                 SizedBox(width: kDefaultPadding),
                 IconButton(
@@ -258,9 +303,13 @@ class MainPage extends HookWidget {
                   tooltip: "Profile",
                   icon: CircleAvatar(
                     radius: kAppBarHeight / 2,
-                    child: !isAuthed ? SvgPicture.asset("assets/svg/person.svg", width: 20) : null,
+                    child: !isAuthed
+                        ? SvgPicture.asset("assets/svg/person.svg", width: 20)
+                        : null,
                     backgroundColor: theme.backgroundColor,
-                    backgroundImage: isAuthed ? AssetImage("assets/images/avatar_placeholder.jpeg") : null,
+                    backgroundImage: isAuthed
+                        ? AssetImage("assets/images/avatar_placeholder.jpeg")
+                        : null,
                   ),
                 ),
               ],
@@ -271,12 +320,14 @@ class MainPage extends HookWidget {
     );
   }
 
-  Widget _buildBottomNavigationBar(BuildContext context, ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
+  Widget _buildBottomNavigationBar(BuildContext context,
+      ValueNotifier<int> currentTab, ValueNotifier<bool> appBarVisible) {
     final theme = Theme.of(context);
 
     return Container(
       clipBehavior: Clip.antiAlias,
-      padding: EdgeInsets.all(kDefaultPadding).copyWith(bottom: kDefaultPadding / 2),
+      padding:
+          EdgeInsets.all(kDefaultPadding).copyWith(bottom: kDefaultPadding / 2),
       decoration: BoxDecoration(
         color: theme.backgroundColor,
         boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
@@ -285,9 +336,24 @@ class MainPage extends HookWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _buildIcon(name: "home", description: "Home", idx: 0, currentIdx: currentTab, appBarVisible: appBarVisible),
-            _buildIcon(name: "categories", description: "Categories and Collections", idx: 1, currentIdx: currentTab, appBarVisible: appBarVisible),
-            _buildIcon(name: "bookmark", description: "Bookmarks", idx: 2, currentIdx: currentTab, appBarVisible: appBarVisible),
+            _buildIcon(
+                name: "home",
+                description: "Home",
+                idx: 0,
+                currentIdx: currentTab,
+                appBarVisible: appBarVisible),
+            _buildIcon(
+                name: "categories",
+                description: "Categories and Collections",
+                idx: 1,
+                currentIdx: currentTab,
+                appBarVisible: appBarVisible),
+            _buildIcon(
+                name: "bookmark",
+                description: "Bookmarks",
+                idx: 2,
+                currentIdx: currentTab,
+                appBarVisible: appBarVisible),
           ],
         ),
       ),
@@ -307,7 +373,8 @@ class MainPage extends HookWidget {
         appBarVisible.value = true;
       },
       tooltip: description,
-      icon: SvgPicture.asset("assets/svg/$name${idx == currentIdx.value ? "_filled" : ""}.svg"),
+      icon: SvgPicture.asset(
+          "assets/svg/$name${idx == currentIdx.value ? "_filled" : ""}.svg"),
     );
   }
 }
