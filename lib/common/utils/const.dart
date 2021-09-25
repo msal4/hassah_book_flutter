@@ -8,6 +8,7 @@ const kSlidableActionExtentRatio = .25;
 const kDefaultIconSize = 20.0;
 const kCartBoxName = "cartStore";
 const kAuthBoxName = "authStore";
+const kLocaleBoxName = "localeStore";
 const kDangerColor = Color(0xFFF06F6F);
 
 const kDefaultImageWidth = 140.0;

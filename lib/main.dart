@@ -38,18 +38,24 @@ void main() async {
   Hive.registerAdapter(CartItemAdapter());
 
   await Hive.openBox(kAuthBoxName);
+  await Hive.openBox(kLocaleBoxName);
   await Hive.openBox<CartItem>(kCartBoxName);
 
   final isAuthenticated = Auth.getToken(TokenType.Access) != null;
+  String locale = Hive.box(kLocaleBoxName).get("locale");
+  if (locale == null || locale.isEmpty) {
+    locale = "ar";
+  }
 
-  runApp(App(isAuthenticated: isAuthenticated));
+  runApp(App(isAuthenticated: isAuthenticated, locale: Locale(locale)));
 }
 
 class App extends StatefulWidget {
-  const App({@required this.isAuthenticated})
+  const App({@required this.isAuthenticated, @required this.locale})
       : assert(isAuthenticated != null, "isAuthenticated is required");
 
   final bool isAuthenticated;
+  final Locale locale;
 
   @override
   _AppState createState() => _AppState();
@@ -64,9 +70,16 @@ const _kGreenColor = Color(0xFF45AE9E);
 class _AppState extends State<App> {
   Locale _locale;
 
+  @override
+  void initState() {
+    _locale = widget.locale;
+    super.initState();
+  }
+
   setLocale(Locale locale) {
     setState(() {
       _locale = locale;
+      Hive.box(kLocaleBoxName).put("locale", _locale.languageCode);
     });
   }
 
@@ -165,35 +178,35 @@ class _AppState extends State<App> {
     );
   }
 
-  ThemeData _buildTheme() {
-    final theme = ThemeData(
-      primarySwatch: createMaterialColor(_kOrangeColor),
-      accentColor: _kGreenColor,
-      scaffoldBackgroundColor: Colors.white,
-      visualDensity: VisualDensity.adaptivePlatformDensity,
-      fontFamily: "Dubai",
-      splashColor: Colors.transparent,
-      backgroundColor: Color(0xFFF7F7F7),
-    );
+  final _theme = ThemeData(
+    primarySwatch: createMaterialColor(_kOrangeColor),
+    accentColor: _kGreenColor,
+    scaffoldBackgroundColor: Colors.white,
+    visualDensity: VisualDensity.adaptivePlatformDensity,
+    fontFamily: "Dubai",
+    splashColor: Colors.transparent,
+    backgroundColor: const Color(0xFFF7F7F7),
+  );
 
-    return theme.copyWith(
-        appBarTheme: theme.appBarTheme.copyWith(
-          backgroundColor: theme.scaffoldBackgroundColor,
+  ThemeData _buildTheme() {
+    return _theme.copyWith(
+        appBarTheme: _theme.appBarTheme.copyWith(
+          backgroundColor: _theme.scaffoldBackgroundColor,
           elevation: 0,
           centerTitle: true,
         ),
-        tooltipTheme: theme.tooltipTheme.copyWith(
+        tooltipTheme: _theme.tooltipTheme.copyWith(
           decoration: BoxDecoration(
             color: Colors.grey.shade800,
             borderRadius: BorderRadius.circular(kDefaultBorderRadius),
           ),
         ),
         highlightColor: Colors.grey.withOpacity(.1),
-        bottomSheetTheme: theme.bottomSheetTheme
+        bottomSheetTheme: _theme.bottomSheetTheme
             .copyWith(backgroundColor: Colors.transparent),
-        textTheme: theme.textTheme.copyWith(
+        textTheme: _theme.textTheme.copyWith(
             button:
-                theme.textTheme.button.copyWith(color: Colors.grey.shade800)));
+                _theme.textTheme.button.copyWith(color: Colors.grey.shade800)));
   }
 }
 
