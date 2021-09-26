@@ -303,7 +303,7 @@ class MainPage extends HookWidget {
                   onPressed: () {
                     Navigator.of(context).pushNamed(CartPage.routeName);
                   },
-                  tooltip: "Cart",
+                  tooltip: context.loc.cart,
                   icon: SvgPicture.asset("assets/svg/bag.svg",
                       color: Colors.grey.shade800),
                 ),
@@ -313,7 +313,7 @@ class MainPage extends HookWidget {
                   onPressed: () {
                     Navigator.of(context).pushNamed(ProfilePage.routeName);
                   },
-                  tooltip: "Profile",
+                  tooltip: context.loc.profile,
                   icon: CircleAvatar(
                     radius: kAppBarHeight / 2,
                     child: !isAuthed
@@ -351,19 +351,19 @@ class MainPage extends HookWidget {
           children: [
             _buildIcon(
                 name: "home",
-                description: "Home",
+                description: context.loc.home,
                 idx: 0,
                 currentIdx: currentTab,
                 appBarVisible: appBarVisible),
             _buildIcon(
                 name: "categories",
-                description: "Categories and Collections",
+                description: context.loc.categoriesAndCollections,
                 idx: 1,
                 currentIdx: currentTab,
                 appBarVisible: appBarVisible),
             _buildIcon(
                 name: "bookmark",
-                description: "Bookmarks",
+                description: context.loc.bookmarks,
                 idx: 2,
                 currentIdx: currentTab,
                 appBarVisible: appBarVisible),

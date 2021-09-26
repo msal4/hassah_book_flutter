@@ -12,6 +12,7 @@ import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
@@ -69,7 +70,9 @@ class _SearchPageState extends State<SearchPage> {
                 return [_buildSliverAppBar(context)];
               },
               body: Query(
-                options: QueryOptions(document: _searchQuery.document, variables: {_kSearchQueryKey: _query}),
+                options: QueryOptions(
+                    document: _searchQuery.document,
+                    variables: {_kSearchQueryKey: _query}),
                 builder: (result, {fetchMore, refetch}) {
                   if (result.hasException) {
                     return Retry(message: result.exception.toString());
@@ -82,18 +85,26 @@ class _SearchPageState extends State<SearchPage> {
                   final data = _searchQuery.parse(result.data);
 
                   return PaginationHandler(
-                    enabled: !result.isLoading && data.products.items.length != data.products.total,
+                    enabled: !result.isLoading &&
+                        data.products.items.length != data.products.total,
                     fetchMore: () {
                       final options = FetchMoreOptions(
                         document: _searchQuery.document,
-                        updateQuery: (oldData, newData) => updatePaginatedResponse(oldData, newData, "products"),
-                        variables: {"searchQuery": _query, "skip": data.products.items.length},
+                        updateQuery: (oldData, newData) =>
+                            updatePaginatedResponse(
+                                oldData, newData, "products"),
+                        variables: {
+                          "searchQuery": _query,
+                          "skip": data.products.items.length
+                        },
                       );
 
                       fetchMore(options);
                     },
                     child: ListView.separated(
-                      padding: EdgeInsets.only(top: kDefaultPadding, bottom: kDefaultPadding + padding.top),
+                      padding: EdgeInsets.only(
+                          top: kDefaultPadding,
+                          bottom: kDefaultPadding + padding.top),
                       itemBuilder: (context, idx) {
                         if (idx == 0) {
                           return _buildAuthorsRow(context, data.authors.items);
@@ -108,25 +119,31 @@ class _SearchPageState extends State<SearchPage> {
                             onTap: () {
                               Navigator.of(context).pushNamed(
                                 ProductDetailPage.routeName,
-                                arguments: ProductDetailPageArguments(product: product, heroTagPrefix: _heroTagPrefix),
+                                arguments: ProductDetailPageArguments(
+                                    product: product,
+                                    heroTagPrefix: _heroTagPrefix),
                               );
                             },
                             child: RoundContainer(
                               color: theme.scaffoldBackgroundColor,
-                              margin: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: kDefaultPadding),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildImage(product),
                                   SizedBox(width: kDefaultPadding),
-                                  Expanded(child: _buildProductInfo(theme.textTheme, product)),
+                                  Expanded(
+                                      child: _buildProductInfo(
+                                          theme.textTheme, product)),
                                 ],
                               ),
                             ),
                           ),
                         );
                       },
-                      separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
+                      separatorBuilder: (context, idx) =>
+                          SizedBox(height: kDefaultPadding),
                       itemCount: data.products.items.length + 1,
                     ),
                   );
@@ -163,7 +180,8 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildAuthor(ThemeData theme, AuthorMixin author) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, AuthorPage.routeName, arguments: AuthorPageArguments(id: author.id));
+        Navigator.pushNamed(context, AuthorPage.routeName,
+            arguments: AuthorPageArguments(id: author.id));
       },
       child: Container(
         width: _kAuthorRadius * 2,
@@ -172,7 +190,8 @@ class _SearchPageState extends State<SearchPage> {
             CircleAvatar(
               radius: _kAuthorRadius,
               backgroundColor: theme.backgroundColor,
-              backgroundImage: const AssetImage("assets/images/product_placeholder.png"),
+              backgroundImage:
+                  const AssetImage("assets/images/product_placeholder.png"),
               foregroundImage: NetworkImage(author.image),
             ),
             const SizedBox(height: 5),
@@ -180,7 +199,8 @@ class _SearchPageState extends State<SearchPage> {
               author.name,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: theme.textTheme.bodyText1.copyWith(fontWeight: FontWeight.w500),
+              style: theme.textTheme.bodyText1
+                  .copyWith(fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -192,10 +212,14 @@ class _SearchPageState extends State<SearchPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(product.name, style: textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by ${product.author.name}", style: textTheme.bodyText2, overflow: TextOverflow.ellipsis),
+        Text(product.name,
+            style: textTheme.headline6, overflow: TextOverflow.ellipsis),
+        Text("by ${product.author.name}",
+            style: textTheme.bodyText2, overflow: TextOverflow.ellipsis),
         SizedBox(height: kDefaultPadding / 2),
-        Chips(items: product.categories.map((c) => c.name).toList(), collapsable: false),
+        Chips(
+            items: product.categories.map((c) => c.name).toList(),
+            collapsable: false),
       ],
     );
   }
@@ -206,7 +230,8 @@ class _SearchPageState extends State<SearchPage> {
       child: Container(
         width: kDefaultImageWidth / 2,
         clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
         child: FadeInImage.assetNetwork(
           placeholder: "assets/images/product_placeholder.png",
           image: product.image,
@@ -240,7 +265,8 @@ class _SearchPageState extends State<SearchPage> {
                 onChanged: (value) {
                   if (_timer?.isActive ?? false) _timer?.cancel();
 
-                  _timer = Timer(Duration(milliseconds: _kDebounceDuration), () {
+                  _timer =
+                      Timer(Duration(milliseconds: _kDebounceDuration), () {
                     setState(() {
                       _query = value;
                     });
@@ -250,7 +276,7 @@ class _SearchPageState extends State<SearchPage> {
                 autofocus: true,
                 style: theme.textTheme.headline6,
                 decoration: InputDecoration(
-                  hintText: "Search",
+                  hintText: context.loc.search,
                   border: InputBorder.none,
                 ),
               ),

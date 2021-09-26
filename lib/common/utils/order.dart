@@ -1,19 +1,21 @@
+import 'package:flutter/material.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 
-String humanizeOrderStatus(OrderStatus status) {
+String humanizeOrderStatus(BuildContext context, OrderStatus status) {
   switch (status) {
     case OrderStatus.pending:
-      return "Pending";
+      return context.loc.pending;
     case OrderStatus.processed:
-      return "Processed";
+      return context.loc.processed;
     case OrderStatus.delivering:
-      return "Delivering";
+      return context.loc.delivering;
     case OrderStatus.delivered:
-      return "Delivered";
+      return context.loc.delivered;
     case OrderStatus.canceled:
-      return "Canceled";
+      return context.loc.canceled;
     case OrderStatus.failed:
-      return "Failed";
+      return context.loc.failed;
     default:
       return "Unknown";
   }

@@ -6,9 +6,9 @@ import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
-import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:provider/provider.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -24,7 +24,7 @@ class ProfilePage extends StatelessWidget {
     final auth = context.watch<AuthProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: Text("Profile")),
+      appBar: AppBar(title: Text(context.loc.profile)),
       body: ListView(
         padding: EdgeInsets.all(kDefaultPadding)
             .copyWith(bottom: padding.bottom + kDefaultPadding),
@@ -79,7 +79,7 @@ class ProfilePage extends StatelessWidget {
                           horizontal: kDefaultPadding * 1.5,
                           vertical: kDefaultPadding),
                       child: Text(
-                        "LOGOUT",
+                        context.loc.logout.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: theme.textTheme.button,
                       ),
@@ -102,7 +102,7 @@ class ProfilePage extends StatelessWidget {
                       child:
                           Icon(Icons.person_outline, color: theme.primaryColor),
                     ),
-                    title: Text("Personal Information"),
+                    title: Text(context.loc.personalInformation),
                     trailing: Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.of(context)
@@ -129,7 +129,7 @@ class ProfilePage extends StatelessWidget {
                       child: Icon(Icons.shopping_bag_outlined,
                           color: theme.primaryColor),
                     ),
-                    title: Text("My Orders"),
+                    title: Text(context.loc.myOrders),
                     trailing: Icon(Icons.chevron_right),
                   ),
                 ),
@@ -139,7 +139,7 @@ class ProfilePage extends StatelessWidget {
             // TODO: design a simple header to lead the user to login or register.
             Column(
               children: [
-                Text("Login to see your profile",
+                Text(context.loc.loginToSeeYourProfile,
                     style: theme.textTheme.subtitle1),
                 SizedBox(height: kDefaultPadding),
                 Material(
@@ -156,7 +156,7 @@ class ProfilePage extends StatelessWidget {
                           horizontal: kDefaultPadding * 1.5,
                           vertical: kDefaultPadding),
                       child: Text(
-                        "LOGIN",
+                        context.loc.login.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: theme.textTheme.button
                             .copyWith(color: Colors.white),
@@ -180,7 +180,7 @@ class ProfilePage extends StatelessWidget {
                 child:
                     Icon(Icons.translate_outlined, color: theme.primaryColor),
               ),
-              title: Text("Language"),
+              title: Text(context.loc.language),
               trailing: Icon(Icons.chevron_right),
               onTap: () {
                 showModalBottomSheet<void>(
@@ -204,7 +204,7 @@ class ProfilePage extends StatelessWidget {
                 child: Icon(Icons.notifications_outlined,
                     color: theme.primaryColor),
               ),
-              title: Text("Notifications"),
+              title: Text(context.loc.notifications),
               trailing: Icon(Icons.chevron_right),
             ),
           ),
@@ -221,7 +221,7 @@ class ProfilePage extends StatelessWidget {
                 backgroundColor: theme.primaryColor.withOpacity(.2),
                 child: Icon(Icons.info_outline, color: theme.primaryColor),
               ),
-              title: Text("Contact Us"),
+              title: Text(context.loc.contactUs),
               trailing: Icon(Icons.chevron_right),
             ),
           ),
@@ -239,7 +239,7 @@ class ProfilePage extends StatelessWidget {
                 child:
                     Icon(Icons.privacy_tip_outlined, color: theme.primaryColor),
               ),
-              title: Text("Privacy Policy"),
+              title: Text(context.loc.privacyPolicy),
               trailing: Icon(Icons.chevron_right),
             ),
           ),
@@ -360,7 +360,7 @@ class LogoutDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              'Are you sure you want to logout?',
+              context.loc.logoutConfirmation,
               style: theme.textTheme.subtitle1,
             ),
             const SizedBox(height: kDefaultPadding),
@@ -381,7 +381,7 @@ class LogoutDialog extends StatelessWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding),
                         child: Text(
-                          "CANCEL",
+                          context.loc.cancel.toUpperCase(),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.button
                               .copyWith(color: Colors.white),
@@ -408,7 +408,7 @@ class LogoutDialog extends StatelessWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding),
                         child: Text(
-                          "YES",
+                          context.loc.yes,
                           textAlign: TextAlign.center,
                           style: theme.textTheme.button,
                         ),

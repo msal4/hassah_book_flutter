@@ -9,6 +9,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hassah_book_flutter/main.dart';
 import 'package:provider/provider.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 class LoginPage extends HookWidget {
   static const routeName = "/login";
@@ -34,11 +35,11 @@ class LoginPage extends HookWidget {
                   Column(
                     children: [
                       SvgPicture.asset("assets/svg/icon.svg", width: kAvatarRadius),
-                      SizedBox(height: kDefaultPadding / 2),
-                      Text("Hassah Book", style: theme.textTheme.headline6),
+                      const SizedBox(height: kDefaultPadding / 2),
+                      Text(context.loc.appTitle, style: theme.textTheme.headline6),
                     ],
                   ),
-                  SizedBox(height: kDefaultPadding * 2),
+                  const SizedBox(height: kDefaultPadding * 2),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
                     padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -51,11 +52,11 @@ class LoginPage extends HookWidget {
                       decoration: InputDecoration(
                         icon: SvgPicture.asset("assets/svg/person.svg", width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: "Phone Number",
+                        hintText: context.loc.phoneNumber,
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
                     padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -68,16 +69,16 @@ class LoginPage extends HookWidget {
                       decoration: InputDecoration(
                         icon: SvgPicture.asset("assets/svg/lock.svg", width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: "Password",
+                        hintText: context.loc.password,
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: kDefaultPadding),
                   GestureDetector(
                     onTap: () {},
-                    child: Text("Forgot password?", style: theme.textTheme.button.copyWith(color: theme.accentColor)),
+                    child: Text(context.loc.forgotPassword, style: theme.textTheme.button.copyWith(color: theme.accentColor)),
                   ),
-                  SizedBox(height: kDefaultPadding * 2),
+                  const SizedBox(height: kDefaultPadding * 2),
                   Material(
                     color: isLoading ? Colors.grey.shade800 : theme.accentColor,
                     borderRadius: BorderRadius.circular(9999),
@@ -94,31 +95,31 @@ class LoginPage extends HookWidget {
                         width: double.maxFinite,
                         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
                         child: Text(
-                          "LOGIN",
+                          context.loc.login.toUpperCase(),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.button.copyWith(color: Colors.white),
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: kDefaultPadding),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushNamed(SignupPage.routeName);
+                      Navigator.of(context).pushReplacementNamed(SignupPage.routeName);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Don't have an account?"),
+                        Text(context.loc.dontHaveAnAccount),
                         SizedBox(width: kDefaultPadding / 2),
                         Text(
-                          "SIGN UP",
+                          context.loc.signup.toUpperCase(),
                           style: theme.textTheme.button.copyWith(color: theme.accentColor),
                         ),
                       ],
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding * 2),
+                  const SizedBox(height: kDefaultPadding * 2),
                   Material(
                     color: theme.backgroundColor,
                     borderRadius: BorderRadius.circular(9999),
@@ -135,7 +136,7 @@ class LoginPage extends HookWidget {
                         width: double.maxFinite,
                         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
                         child: Text(
-                          "SKIP",
+                          context.loc.skip.toUpperCase(),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.button.copyWith(color: Colors.grey.shade800),
                         ),

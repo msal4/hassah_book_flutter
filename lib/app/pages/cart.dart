@@ -10,6 +10,7 @@ import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -27,9 +28,12 @@ class CartPage extends StatefulWidget {
 class _CartPageState extends State<CartPage> {
   final _orderMutation = PlaceOrderMutation();
 
-  final _phoneController = TextEditingController.fromValue(TextEditingValue(text: "07705983835"));
-  final _provinceController = TextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
-  final _addressController = TextEditingController.fromValue(TextEditingValue(text: "123 Street"));
+  final _phoneController =
+      TextEditingController.fromValue(TextEditingValue(text: "07705983835"));
+  final _provinceController =
+      TextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
+  final _addressController =
+      TextEditingController.fromValue(TextEditingValue(text: "123 Street"));
 
   @override
   void dispose() {
@@ -45,7 +49,8 @@ class _CartPageState extends State<CartPage> {
     final padding = MediaQuery.of(context).padding;
     final size = MediaQuery.of(context).size;
     // Get the min bottom sheet height fraction.
-    final minSheetSize = (padding.bottom + _kBottomSheetMinExtent) / size.height;
+    final minSheetSize =
+        (padding.bottom + _kBottomSheetMinExtent) / size.height;
     final initialSheetHeight = min(_kBottomSheetMinHeight / size.height, 1.0);
 
     return UnfocusOnTap(
@@ -55,12 +60,16 @@ class _CartPageState extends State<CartPage> {
           final items = box.values.toList();
 
           return Scaffold(
-            bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, box),
+            bottomSheet: _buildBottomSheet(
+                context, initialSheetHeight, minSheetSize, box),
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                SliverAppBar(title: Text("Cart"), floating: true, snap: true),
+                SliverAppBar(
+                    title: Text(context.loc.cart), floating: true, snap: true),
               ],
-              body: items.length == 0 ? _buildPlaceholder(context) : _buildItemsList(context, items),
+              body: items.length == 0
+                  ? _buildPlaceholder(context)
+                  : _buildItemsList(context, items),
             ),
           );
         },
@@ -87,7 +96,9 @@ class _CartPageState extends State<CartPage> {
             actionExtentRatio: kSlidableActionExtentRatio,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed(ProductDetailPage.routeName, arguments: ProductDetailPageArguments(id: item.id, heroTagPrefix: "none"));
+                Navigator.of(context).pushNamed(ProductDetailPage.routeName,
+                    arguments: ProductDetailPageArguments(
+                        id: item.id, heroTagPrefix: "none"));
               },
               child: RoundContainer(
                 padding: const EdgeInsets.all(kDefaultPadding),
@@ -95,7 +106,7 @@ class _CartPageState extends State<CartPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildImage(item.image),
-                    SizedBox(width: kDefaultPadding),
+                    const SizedBox(width: kDefaultPadding),
                     Expanded(child: _buildProductInfo(context, theme, item)),
                   ],
                 ),
@@ -104,7 +115,8 @@ class _CartPageState extends State<CartPage> {
             secondaryActions: <Widget>[
               IconSlideAction(
                 color: kDangerColor,
-                iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
+                iconWidget: SvgPicture.asset("assets/svg/trash.svg",
+                    width: kDefaultIconSize),
                 onTap: () => _deleteItem(context, item),
               )
             ],
@@ -122,20 +134,23 @@ class _CartPageState extends State<CartPage> {
     return Container(
       padding: const EdgeInsets.all(kDefaultPadding),
       child: Text(
-        "Your cart is empty.",
+        context.loc.yourCartIsEmpty + ".",
         style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.w300),
         textAlign: TextAlign.center,
       ),
     );
   }
 
-  Widget _buildProductInfo(BuildContext context, ThemeData theme, CartItem item) {
+  Widget _buildProductInfo(
+      BuildContext context, ThemeData theme, CartItem item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(item.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by ${item.authorName}", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
-        SizedBox(height: kDefaultPadding / 2),
+        Text(item.name,
+            style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
+        Text("${context.loc.by} ${item.authorName}",
+            style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
+        const SizedBox(height: kDefaultPadding / 2),
         Row(
           children: [
             GestureDetector(
@@ -148,9 +163,11 @@ class _CartPageState extends State<CartPage> {
               },
               child: Icon(Icons.remove),
             ),
-            SizedBox(width: kDefaultPadding),
-            Text(item.quantity.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
-            SizedBox(width: kDefaultPadding),
+            const SizedBox(width: kDefaultPadding),
+            Text(item.quantity.toString(),
+                style: theme.textTheme.subtitle1.copyWith(
+                    color: theme.accentColor, fontWeight: FontWeight.bold)),
+            const SizedBox(width: kDefaultPadding),
             GestureDetector(
               onTap: () {
                 item.quantity++;
@@ -158,10 +175,11 @@ class _CartPageState extends State<CartPage> {
               },
               child: Icon(Icons.add),
             ),
-            Spacer(),
+            const Spacer(),
             Text(
-              "${item.price * item.quantity} IQD",
-              style: theme.textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
+              "${item.price * item.quantity} ${context.loc.iqd}",
+              style: theme.textTheme.subtitle1.copyWith(
+                  fontWeight: FontWeight.bold, color: theme.accentColor),
             ),
           ],
         )
@@ -173,7 +191,8 @@ class _CartPageState extends State<CartPage> {
     return Container(
       width: kDefaultImageWidth / 2,
       clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
       child: FadeInImage.assetNetwork(
         placeholder: "assets/images/product_placeholder.png",
         image: url,
@@ -205,10 +224,10 @@ class _CartPageState extends State<CartPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  'Do you want to remove this item from your cart?',
+                  context.loc.removeItemFromCartConfirmation,
                   style: theme.textTheme.subtitle1,
                 ),
-                SizedBox(height: kDefaultPadding),
+                const SizedBox(height: kDefaultPadding),
                 Row(
                   children: [
                     Expanded(
@@ -222,11 +241,14 @@ class _CartPageState extends State<CartPage> {
                             Navigator.pop(context);
                           },
                           child: Ink(
-                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding),
                             child: Text(
-                              "CANCEL",
+                              context.loc.cancel.toUpperCase(),
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.button.copyWith(color: Colors.white),
+                              style: theme.textTheme.button
+                                  .copyWith(color: Colors.white),
                             ),
                           ),
                         ),
@@ -245,9 +267,11 @@ class _CartPageState extends State<CartPage> {
                             Navigator.pop(context);
                           },
                           child: Ink(
-                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding),
                             child: Text(
-                              "YES",
+                              context.loc.yes.toUpperCase(),
                               textAlign: TextAlign.center,
                               style: theme.textTheme.button,
                             ),
@@ -265,13 +289,18 @@ class _CartPageState extends State<CartPage> {
     );
   }
 
-  DraggableScrollableSheet _buildBottomSheet(BuildContext context, double initialSheetHeight, double minSheetSize, Box<CartItem> box) {
+  DraggableScrollableSheet _buildBottomSheet(BuildContext context,
+      double initialSheetHeight, double minSheetSize, Box<CartItem> box) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
 
-    final totalPrice = box.values.fold(0, (acc, item) => acc += item.price * item.quantity);
+    final totalPrice =
+        box.values.fold(0, (acc, item) => acc += item.price * item.quantity);
 
-    final purchases = box.values.map((item) => PurchasePartialInput(product: ObjectIdInput(id: item.id), quantity: item.quantity)).toList();
+    final purchases = box.values
+        .map((item) => PurchasePartialInput(
+            product: ObjectIdInput(id: item.id), quantity: item.quantity))
+        .toList();
 
     return DraggableScrollableSheet(
       expand: false,
@@ -288,7 +317,9 @@ class _CartPageState extends State<CartPage> {
                   topLeft: Radius.circular(kDefaultBorderRadius * 2),
                   topRight: Radius.circular(kDefaultBorderRadius * 2),
                 ),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)],
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)
+                ],
               ),
               child: Stack(
                 children: [
@@ -303,49 +334,61 @@ class _CartPageState extends State<CartPage> {
                     children: [
                       Row(
                         children: [
-                          Text("Total", style: theme.textTheme.headline6),
+                          Text(context.loc.total,
+                              style: theme.textTheme.headline6),
                           Spacer(),
-                          Text("$totalPrice IQD", style: theme.textTheme.headline6.copyWith(fontWeight: FontWeight.bold)),
+                          Text("$totalPrice ${context.loc.iqd}",
+                              style: theme.textTheme.headline6
+                                  .copyWith(fontWeight: FontWeight.bold)),
                         ],
                       ),
-                      SizedBox(height: kDefaultPadding),
-                      Divider(),
-                      SizedBox(height: kDefaultPadding),
+                      const SizedBox(height: kDefaultPadding),
+                      const Divider(),
+                      const SizedBox(height: kDefaultPadding),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius),
                         child: TextField(
                           controller: _phoneController,
                           textInputAction: TextInputAction.next,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding / 1.5),
                             border: InputBorder.none,
-                            labelText: "Phone Number",
+                            labelText: context.loc.phoneNumber,
                             filled: true,
                           ),
                         ),
                       ),
-                      SizedBox(height: kDefaultPadding),
+                      const SizedBox(height: kDefaultPadding),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius),
                         child: TextField(
                           controller: _provinceController,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding / 1.5),
                             border: InputBorder.none,
-                            labelText: "Province",
+                            labelText: context.loc.province,
                             filled: true,
                           ),
                         ),
                       ),
-                      SizedBox(height: kDefaultPadding),
+                      const SizedBox(height: kDefaultPadding),
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                        borderRadius:
+                            BorderRadius.circular(kDefaultBorderRadius),
                         child: TextField(
                           controller: _addressController,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding / 1.5),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding / 1.5),
                             border: InputBorder.none,
-                            labelText: "Address",
+                            labelText: context.loc.address,
                             filled: true,
                           ),
                         ),
@@ -360,7 +403,9 @@ class _CartPageState extends State<CartPage> {
                                   address: _addressController.text,
                                   purchases: purchases,
                                 );
-                                final result = await runMutation({'data': input}).networkResult;
+                                final result =
+                                    await runMutation({'data': input})
+                                        .networkResult;
                                 if (result.hasException) {
                                   return;
                                 }
@@ -368,18 +413,22 @@ class _CartPageState extends State<CartPage> {
                                   debugPrint(result.data.toString());
                                   box.clear();
                                   Navigator.pop(context);
-                                  Navigator.of(context).pushNamed(OrdersPage.routeName);
+                                  Navigator.of(context)
+                                      .pushNamed(OrdersPage.routeName);
                                 }
                               }
                             : null,
                         child: RoundContainer(
                           padding: const EdgeInsets.all(kDefaultPadding),
-                          color: box.isEmpty || result.isLoading ? Colors.grey.shade800 : theme.accentColor,
+                          color: box.isEmpty || result.isLoading
+                              ? Colors.grey.shade800
+                              : theme.accentColor,
                           borderRadius: BorderRadius.circular(9999),
                           child: Text(
-                            "ORDER NOW",
+                            context.loc.orderNow.toUpperCase(),
                             textAlign: TextAlign.center,
-                            style: theme.textTheme.button.copyWith(color: Colors.white),
+                            style: theme.textTheme.button
+                                .copyWith(color: Colors.white),
                           ),
                         ),
                       )
@@ -392,7 +441,8 @@ class _CartPageState extends State<CartPage> {
                         margin: const EdgeInsets.only(top: kDefaultPadding),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade500,
-                          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                          borderRadius:
+                              BorderRadius.circular(kDefaultBorderRadius),
                         ),
                         width: 40,
                         height: 4,
