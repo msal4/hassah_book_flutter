@@ -59,7 +59,7 @@ class ProductCard extends HookWidget {
                 Text(product.name,
                     style: textTheme.headline6,
                     overflow: TextOverflow.ellipsis),
-                Text("${context.loc.by} ${product.author.name}",
+                Text("${product.author.name}",
                     style: textTheme.bodyText2,
                     overflow: TextOverflow.ellipsis),
               ],

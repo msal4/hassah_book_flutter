@@ -97,6 +97,7 @@ class AuthorPage extends HookWidget {
                         const EdgeInsets.symmetric(horizontal: kDefaultPadding),
                     child: Text(
                       author.overview,
+                      textAlign: TextAlign.center,
                       overflow: authorOverviewClipped.value
                           ? TextOverflow.ellipsis
                           : null,
@@ -176,6 +177,7 @@ class AuthorPage extends HookWidget {
                             overflow: overviewClipped.value
                                 ? TextOverflow.ellipsis
                                 : null,
+                            textAlign: TextAlign.center,
                             style: theme.textTheme.bodyText1
                                 .copyWith(color: Colors.grey.shade700),
                           ),

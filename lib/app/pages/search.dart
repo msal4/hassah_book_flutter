@@ -114,7 +114,8 @@ class _SearchPageState extends State<SearchPage> {
 
                         return Tooltip(
                           key: Key(product.id),
-                          message: "${product.name} by ${product.author.name}",
+                          message:
+                              "${product.name} ${context.loc.by} ${product.author.name}",
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).pushNamed(
@@ -132,10 +133,13 @@ class _SearchPageState extends State<SearchPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildImage(product),
-                                  SizedBox(width: kDefaultPadding),
+                                  const SizedBox(width: kDefaultPadding),
                                   Expanded(
-                                      child: _buildProductInfo(
-                                          theme.textTheme, product)),
+                                    child: _buildProductInfo(
+                                      theme.textTheme,
+                                      product,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -143,7 +147,7 @@ class _SearchPageState extends State<SearchPage> {
                         );
                       },
                       separatorBuilder: (context, idx) =>
-                          SizedBox(height: kDefaultPadding),
+                          const SizedBox(height: kDefaultPadding),
                       itemCount: data.products.items.length + 1,
                     ),
                   );
@@ -214,9 +218,9 @@ class _SearchPageState extends State<SearchPage> {
       children: [
         Text(product.name,
             style: textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by ${product.author.name}",
+        Text(product.author.name,
             style: textTheme.bodyText2, overflow: TextOverflow.ellipsis),
-        SizedBox(height: kDefaultPadding / 2),
+        const SizedBox(height: kDefaultPadding / 2),
         Chips(
             items: product.categories.map((c) => c.name).toList(),
             collapsable: false),
@@ -252,14 +256,14 @@ class _SearchPageState extends State<SearchPage> {
       toolbarHeight: kAppBarHeight,
       backgroundColor: theme.backgroundColor,
       titleSpacing: 0,
-      leading: SizedBox(),
+      leading: const SizedBox(),
       leadingWidth: 0,
       title: Container(
         padding: const EdgeInsets.all(kDefaultPadding),
         child: Row(
           children: [
             _buildBackButton(context),
-            SizedBox(width: kDefaultPadding),
+            const SizedBox(width: kDefaultPadding),
             Expanded(
               child: TextField(
                 onChanged: (value) {
@@ -281,10 +285,10 @@ class _SearchPageState extends State<SearchPage> {
                 ),
               ),
             ),
-            SizedBox(width: kDefaultPadding / 2),
-            Icon(Icons.search),
-            SizedBox(width: kDefaultPadding),
-            Icon(Icons.filter_list),
+            const SizedBox(width: kDefaultPadding / 2),
+            const Icon(Icons.search),
+            const SizedBox(width: kDefaultPadding),
+            const Icon(Icons.filter_list),
           ],
         ),
       ),

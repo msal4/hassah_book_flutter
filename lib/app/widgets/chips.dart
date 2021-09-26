@@ -8,7 +8,13 @@ const _kMinVerticalPadding = 2.0;
 const _kMaxNumChips = 3;
 
 class Chips extends HookWidget {
-  const Chips({Key key, @required this.items, this.maxNumChips = _kMaxNumChips, this.collapsable = true, this.textColor, this.backgroundColor})
+  const Chips(
+      {Key key,
+      @required this.items,
+      this.maxNumChips = _kMaxNumChips,
+      this.collapsable = true,
+      this.textColor,
+      this.backgroundColor})
       : assert(maxNumChips != null, "maxNumChips must not be null"),
         super(key: key);
 
@@ -26,13 +32,17 @@ class Chips extends HookWidget {
   Widget build(BuildContext context) {
     if (this.items == null || this.items.isEmpty) return SizedBox();
 
-    final items = this.items.fold(<String>[], (List<String> previousList, element) {
-      return !previousList.contains(element) ? [...previousList, element] : previousList;
+    final items =
+        this.items.fold(<String>[], (List<String> previousList, element) {
+      return !previousList.contains(element)
+          ? [...previousList, element]
+          : previousList;
     }).toList();
 
     final theme = Theme.of(context);
 
-    final currentItems = useState(items.length > maxNumChips ? items.sublist(0, maxNumChips) : items);
+    final currentItems = useState(
+        items.length > maxNumChips ? items.sublist(0, maxNumChips) : items);
 
     final backgroundColor = this.backgroundColor ?? theme.primaryColor;
     final textColor = this.textColor ?? Colors.white;
@@ -47,9 +57,10 @@ class Chips extends HookWidget {
             text: item,
             backgroundColor: backgroundColor,
             textColor: textColor,
-            rightMargin: (items.last != item),
           ),
-        if (collapsable && items.length > maxNumChips && currentItems.value.length == maxNumChips)
+        if (collapsable &&
+            items.length > maxNumChips &&
+            currentItems.value.length == maxNumChips)
           GestureDetector(
             onTap: () {
               currentItems.value = items;
@@ -64,17 +75,29 @@ class Chips extends HookWidget {
     );
   }
 
-  Widget _buildChip({@required TextStyle textStyle, @required Color backgroundColor, @required Color textColor, text = "...", rightMargin = false}) {
+  Widget _buildChip({
+    @required TextStyle textStyle,
+    @required Color backgroundColor,
+    @required Color textColor,
+    text = "...",
+  }) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: _kMinHorizontalPadding, vertical: _kMinVerticalPadding),
-      margin: rightMargin ? const EdgeInsets.only(right: _kMinHorizontalPadding) : null,
+      padding: const EdgeInsets.symmetric(
+        horizontal: _kMinHorizontalPadding,
+        vertical: _kMinVerticalPadding,
+      ),
+      margin:
+          const EdgeInsets.symmetric(horizontal: _kMinHorizontalPadding / 2),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(9999),
         color: backgroundColor,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(.05), blurRadius: 10)
+        ],
       ),
-      child: Text(text, style: textStyle.copyWith(color: textColor, fontSize: 10)),
+      child:
+          Text(text, style: textStyle.copyWith(color: textColor, fontSize: 10)),
     );
   }
 }

@@ -191,24 +191,42 @@ class _AppState extends State<App> {
   );
 
   ThemeData _buildTheme() {
-    return _theme.copyWith(
-        appBarTheme: _theme.appBarTheme.copyWith(
-          backgroundColor: _theme.scaffoldBackgroundColor,
-          elevation: 0,
-          centerTitle: true,
+    final theme = _theme.copyWith(
+      tooltipTheme: _theme.tooltipTheme.copyWith(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade800,
+          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
         ),
-        tooltipTheme: _theme.tooltipTheme.copyWith(
-          decoration: BoxDecoration(
-            color: Colors.grey.shade800,
-            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-          ),
+      ),
+      highlightColor: Colors.grey.withOpacity(.1),
+      bottomSheetTheme: _theme.bottomSheetTheme.copyWith(
+        backgroundColor: Colors.transparent,
+      ),
+      textTheme: _theme.textTheme.copyWith(
+        button: _theme.textTheme.button.copyWith(
+          color: Colors.grey.shade800,
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
         ),
-        highlightColor: Colors.grey.withOpacity(.1),
-        bottomSheetTheme: _theme.bottomSheetTheme
-            .copyWith(backgroundColor: Colors.transparent),
-        textTheme: _theme.textTheme.copyWith(
-            button:
-                _theme.textTheme.button.copyWith(color: Colors.grey.shade800)));
+        headline6: _theme.textTheme.headline6.copyWith(
+          fontWeight: FontWeight.w500,
+          fontSize: 20,
+        ),
+        bodyText1: _theme.textTheme.bodyText1.copyWith(
+          fontWeight: FontWeight.w500,
+          fontSize: 14,
+        ),
+      ),
+    );
+
+    return theme.copyWith(
+      appBarTheme: theme.appBarTheme.copyWith(
+        backgroundColor: _theme.scaffoldBackgroundColor,
+        elevation: 0,
+        centerTitle: true,
+        textTheme: theme.textTheme,
+      ),
+    );
   }
 }
 

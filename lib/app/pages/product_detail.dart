@@ -88,14 +88,17 @@ class ProductDetailPage extends HookWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _buildProductImage(
-                          id ?? product.id, product.image, heroTagPrefix),
+                        id ?? product.id,
+                        product.image,
+                        heroTagPrefix,
+                      ),
                       const SizedBox(height: kDefaultPadding),
                       Center(
                         child: Chips(
                           items: product.categories.map((e) => e.name).toList(),
                         ),
                       ),
-                      SizedBox(height: kDefaultPadding * 2),
+                      const SizedBox(height: kDefaultPadding * 2),
                       _buildProductHeader(
                           context, product, data?.product, refetch),
                       const SizedBox(height: kDefaultPadding),
@@ -270,12 +273,14 @@ class ProductDetailPage extends HookWidget {
                 child: RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                        text: "${context.loc.by} ",
-                        style: theme.textTheme.bodyText1),
+                      text: "${context.loc.by} ",
+                      style: theme.textTheme.bodyText1,
+                    ),
                     TextSpan(
                       text: product.author.name,
-                      style: theme.textTheme.bodyText1
-                          .copyWith(color: theme.accentColor),
+                      style: theme.textTheme.bodyText1.copyWith(
+                        color: theme.accentColor,
+                      ),
                     ),
                   ]),
                 ),
@@ -321,7 +326,7 @@ class ProductDetailPage extends HookWidget {
             style: theme.textTheme.bodyText1
                 .copyWith(color: Colors.grey.shade800)),
         Text(value ?? "...",
-            style: theme.textTheme.subtitle1
+            style: theme.textTheme.bodyText1
                 .copyWith(fontWeight: FontWeight.bold)),
       ],
     );
@@ -331,9 +336,9 @@ class ProductDetailPage extends HookWidget {
     return Center(
       child: Container(
         height: 30,
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(width: 1, color: Colors.black),
+        decoration: const BoxDecoration(
+          border: const Border(
+            left: const BorderSide(width: 1, color: Colors.black),
           ),
         ),
       ),
