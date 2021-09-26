@@ -6,6 +6,7 @@ import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/products_row.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
@@ -67,7 +68,7 @@ class SearchBox extends HookWidget {
     final textTheme = Theme.of(context).textTheme;
 
     return Container(
-      padding: const EdgeInsets.only(left: kDefaultPadding),
+      padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
       clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(kDefaultBorderRadius),
@@ -80,7 +81,7 @@ class SearchBox extends HookWidget {
         style: textTheme.headline6,
         decoration: InputDecoration(
             icon: Icon(Icons.search, color: Colors.grey.shade800),
-            hintText: "Search",
+            hintText: context.loc.search,
             border: InputBorder.none),
       ),
     );

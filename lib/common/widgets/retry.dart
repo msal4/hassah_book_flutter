@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 class Retry extends StatelessWidget {
   const Retry({
@@ -19,7 +20,7 @@ class Retry extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           MaterialButton(
-            child: const Text('RETRY'),
+            child: Text(context.loc.retry),
             onPressed: onRetry,
           ),
           Text(message),

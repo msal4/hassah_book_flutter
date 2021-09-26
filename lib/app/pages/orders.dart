@@ -13,6 +13,7 @@ import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:provider/provider.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 class OrdersPage extends StatelessWidget {
   static const routeName = "/orders";
@@ -22,7 +23,7 @@ class OrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("My Orders")),
+      appBar: AppBar(title: Text(context.loc.myOrders)),
       body: Query(
         options: QueryOptions(document: _myOrdersQuery.document),
         builder: (result, {fetchMore, refetch}) {
@@ -63,7 +64,7 @@ class _OrdersList extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Login to see your orders", style: theme.textTheme.subtitle1),
+            Text(context.loc.loginToSeeYourOrders, style: theme.textTheme.subtitle1),
             SizedBox(height: kDefaultPadding),
             Material(
               color: theme.accentColor,
@@ -77,7 +78,7 @@ class _OrdersList extends HookWidget {
                   width: double.maxFinite,
                   padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
                   child: Text(
-                    "LOGIN",
+                    context.loc.login.toUpperCase(),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.button.copyWith(color: Colors.white),
                   ),
@@ -152,7 +153,7 @@ class _OrdersList extends HookWidget {
               children: [
                 _buildImage(productImage),
                 if (morePurchasesCount > 0) ...[
-                  SizedBox(width: kDefaultPadding),
+                  const SizedBox(width: kDefaultPadding),
                   Padding(
                     padding: const EdgeInsets.only(bottom: kDefaultPadding / 2),
                     child: Text("+$morePurchasesCount", style: theme.textTheme.subtitle1),
@@ -160,28 +161,28 @@ class _OrdersList extends HookWidget {
                 ],
               ],
             ),
-            SizedBox(width: kDefaultPadding),
+            const SizedBox(width: kDefaultPadding),
             _buildDivider(),
-            SizedBox(width: kDefaultPadding),
+            const SizedBox(width: kDefaultPadding),
             Column(
               children: [
                 Text(
-                  "Status",
+                  context.loc.status,
                   style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
                 ),
-                Text(humanizeOrderStatus(order.status), style: theme.textTheme.subtitle1),
+                Text(humanizeOrderStatus(context, order.status), style: theme.textTheme.subtitle1),
               ],
             ),
-            SizedBox(width: kDefaultPadding),
+            const SizedBox(width: kDefaultPadding),
             _buildDivider(),
-            SizedBox(width: kDefaultPadding),
+            const SizedBox(width: kDefaultPadding),
             Column(
               children: [
                 Text(
-                  "Total",
+                  context.loc.total,
                   style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
                 ),
-                Text("${order.totalPrice} IQD", style: theme.textTheme.subtitle1),
+                Text("${order.totalPrice} ${context.loc.iqd}", style: theme.textTheme.subtitle1),
               ],
             ),
           ],
@@ -221,7 +222,7 @@ class _OrdersList extends HookWidget {
     final theme = Theme.of(context);
 
     return Text(
-      "You have no orders.",
+      context.loc.youHaveNoOrders,
       style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.w300),
       textAlign: TextAlign.center,
     );

@@ -11,15 +11,16 @@ import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
-import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailPageArguments {
-  const ProductDetailPageArguments({this.product, this.id, @required this.heroTagPrefix})
+  const ProductDetailPageArguments(
+      {this.product, this.id, @required this.heroTagPrefix})
       : assert(product != null || id != null, "a product or an id is required"),
         assert(heroTagPrefix != null, "heroTagPrefix is required");
 
@@ -46,59 +47,104 @@ class ProductDetailPage extends HookWidget {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
 
-    final defaultQuantity = Hive.box<CartItem>(kCartBoxName).get(id ?? product.id)?.quantity ?? 1;
+    final defaultQuantity =
+        Hive.box<CartItem>(kCartBoxName).get(id ?? product.id)?.quantity ?? 1;
     final overviewClipped = useState(true);
     final quantity = useState(defaultQuantity);
 
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          SliverAppBar(title: Text("Product Details"), floating: true, snap: true),
+          SliverAppBar(
+            title: Text(context.loc.productDetails),
+            floating: true,
+            snap: true,
+          ),
           SliverToBoxAdapter(
             child: Query(
-              options: QueryOptions(document: _productQuery.document, variables: {"id": id ?? product.id}),
+              options: QueryOptions(
+                  document: _productQuery.document,
+                  variables: {"id": id ?? product.id}),
               builder: (result, {fetchMore, refetch}) {
                 if (this.product == null) {
                   if (result.isLoading) return LoadingIndicator();
-                  if (result.hasException) return Retry(message: result.exception.toString(), onRetry: refetch);
+                  if (result.hasException)
+                    return Retry(
+                      message: result.exception.toString(),
+                      onRetry: refetch,
+                    );
                 }
 
-                final data = result.data != null ? _productQuery.parse(result.data) : null;
+                final data = result.data != null
+                    ? _productQuery.parse(result.data)
+                    : null;
                 final product = this.product ?? data.product;
+
+                final language = data?.product?.language ?? "...";
 
                 return Container(
                   padding: const EdgeInsets.all(kDefaultPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildProductImage(id ?? product.id, product.image, heroTagPrefix),
+                      _buildProductImage(
+                        id ?? product.id,
+                        product.image,
+                        heroTagPrefix,
+                      ),
                       const SizedBox(height: kDefaultPadding),
-                      Center(child: Chips(items: product.categories.map((e) => e.name).toList())),
-                      SizedBox(height: kDefaultPadding * 2),
-                      _buildProductHeader(context, product, data?.product, refetch),
+                      Center(
+                        child: Chips(
+                          items: product.categories.map((e) => e.name).toList(),
+                        ),
+                      ),
+                      const SizedBox(height: kDefaultPadding * 2),
+                      _buildProductHeader(
+                          context, product, data?.product, refetch),
                       const SizedBox(height: kDefaultPadding),
                       RoundContainer(
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            _buildInfoColumn(title: "Published In", value: data?.product?.publishedAt?.year.toString() ?? "...", theme: theme),
+                            _buildInfoColumn(
+                              title: context.loc.publishedIn,
+                              value:
+                                  data?.product?.publishedAt?.year.toString() ??
+                                      "...",
+                              theme: theme,
+                            ),
                             _buildDivider(),
-                            _buildInfoColumn(title: "Pages", value: data?.product?.pages.toString() ?? "...", theme: theme),
+                            _buildInfoColumn(
+                              title: context.loc.pages,
+                              value: data?.product?.pages.toString() ?? "...",
+                              theme: theme,
+                            ),
                             _buildDivider(),
-                            _buildInfoColumn(title: "Language", value: data?.product?.language ?? "...", theme: theme)
+                            _buildInfoColumn(
+                              title: context.loc.language,
+                              value: (language == "ar"
+                                  ? context.loc.ar
+                                  : language == "en"
+                                      ? context.loc.en
+                                      : language),
+                              theme: theme,
+                            )
                           ],
                         ),
                       ),
-                      SizedBox(height: kDefaultPadding),
+                      const SizedBox(height: kDefaultPadding),
                       GestureDetector(
                         onTap: () {
                           overviewClipped.value = !overviewClipped.value;
                         },
                         child: Text(
                           data?.product?.overview ?? "...",
-                          style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade800),
+                          style: theme.textTheme.bodyText1
+                              .copyWith(color: Colors.grey.shade800),
                           maxLines: overviewClipped.value ? 2 : null,
-                          overflow: overviewClipped.value ? TextOverflow.ellipsis : null,
+                          overflow: overviewClipped.value
+                              ? TextOverflow.ellipsis
+                              : null,
                         ),
                       ),
                       const SizedBox(height: kDefaultPadding),
@@ -110,7 +156,7 @@ class ProductDetailPage extends HookWidget {
                               borderRadius: BorderRadius.circular(9999),
                               child: Row(
                                 children: [
-                                  Text("QTY"),
+                                  Text(context.loc.qty),
                                   Spacer(),
                                   GestureDetector(
                                     onTap: () {
@@ -121,7 +167,10 @@ class ProductDetailPage extends HookWidget {
                                     child: Icon(Icons.remove),
                                   ),
                                   const SizedBox(width: kDefaultPadding),
-                                  Text(quantity.value.toString(), style: theme.textTheme.subtitle1.copyWith(color: theme.accentColor, fontWeight: FontWeight.bold)),
+                                  Text(quantity.value.toString(),
+                                      style: theme.textTheme.subtitle1.copyWith(
+                                          color: theme.accentColor,
+                                          fontWeight: FontWeight.bold)),
                                   const SizedBox(width: kDefaultPadding),
                                   GestureDetector(
                                     onTap: () {
@@ -137,19 +186,23 @@ class ProductDetailPage extends HookWidget {
                           Expanded(
                             flex: 1,
                             child: ValueListenableBuilder<Box<CartItem>>(
-                              valueListenable: Hive.box<CartItem>(kCartBoxName).listenable(),
+                              valueListenable:
+                                  Hive.box<CartItem>(kCartBoxName).listenable(),
                               builder: (context, box, child) {
                                 final inCartItem = box.get(id ?? product.id);
 
-                                if (inCartItem != null && inCartItem.quantity == quantity.value) {
+                                if (inCartItem != null &&
+                                    inCartItem.quantity == quantity.value) {
                                   return GestureDetector(
-                                    onTap: () => Navigator.of(context).pushNamed(CartPage.routeName),
+                                    onTap: () => Navigator.of(context)
+                                        .pushNamed(CartPage.routeName),
                                     child: RoundContainer(
                                       borderRadius: BorderRadius.circular(9999),
                                       color: theme.accentColor,
                                       child: Text(
-                                        "Go to Cart",
-                                        style: theme.textTheme.button.copyWith(color: Colors.white),
+                                        context.loc.goToCart,
+                                        style: theme.textTheme.button
+                                            .copyWith(color: Colors.white),
                                         textAlign: TextAlign.center,
                                       ),
                                     ),
@@ -157,13 +210,21 @@ class ProductDetailPage extends HookWidget {
                                 }
 
                                 return GestureDetector(
-                                  onTap: data != null ? () => box.put(data.product.id, CartItem.fromProduct(data.product, quantity.value)) : null,
+                                  onTap: data != null
+                                      ? () => box.put(
+                                          data.product.id,
+                                          CartItem.fromProduct(
+                                              data.product, quantity.value))
+                                      : null,
                                   child: RoundContainer(
                                     borderRadius: BorderRadius.circular(9999),
-                                    color: data == null ? Colors.grey.shade800 : theme.primaryColor,
+                                    color: data == null
+                                        ? Colors.grey.shade800
+                                        : theme.primaryColor,
                                     child: Text(
-                                      "Add to Cart",
-                                      style: theme.textTheme.button.copyWith(color: Colors.white),
+                                      context.loc.addToCart,
+                                      style: theme.textTheme.button
+                                          .copyWith(color: Colors.white),
                                       textAlign: TextAlign.center,
                                     ),
                                   ),
@@ -185,7 +246,8 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Row _buildProductHeader(BuildContext context, ProductMixin product, ProductDetailMixin productDetail, VoidCallback refetch) {
+  Row _buildProductHeader(BuildContext context, ProductMixin product,
+      ProductDetailMixin productDetail, VoidCallback refetch) {
     final theme = Theme.of(context);
 
     return Row(
@@ -195,8 +257,9 @@ class ProductDetailPage extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${product.price} IQD",
-                style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.bold, color: theme.accentColor),
+                "${product.price} ${context.loc.iqd}",
+                style: theme.textTheme.headline5.copyWith(
+                    fontWeight: FontWeight.bold, color: theme.accentColor),
               ),
               Text(
                 product.name,
@@ -204,14 +267,20 @@ class ProductDetailPage extends HookWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushNamed(context, AuthorPage.routeName, arguments: AuthorPageArguments(id: product.author.id));
+                  Navigator.pushNamed(context, AuthorPage.routeName,
+                      arguments: AuthorPageArguments(id: product.author.id));
                 },
                 child: RichText(
                   text: TextSpan(children: [
-                    TextSpan(text: "by ", style: theme.textTheme.bodyText1),
+                    TextSpan(
+                      text: "${context.loc.by} ",
+                      style: theme.textTheme.bodyText1,
+                    ),
                     TextSpan(
                       text: product.author.name,
-                      style: theme.textTheme.bodyText1.copyWith(color: theme.accentColor),
+                      style: theme.textTheme.bodyText1.copyWith(
+                        color: theme.accentColor,
+                      ),
                     ),
                   ]),
                 ),
@@ -247,11 +316,18 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Column _buildInfoColumn({@required String title, @required String value, @required ThemeData theme}) {
+  Column _buildInfoColumn(
+      {@required String title,
+      @required String value,
+      @required ThemeData theme}) {
     return Column(
       children: [
-        Text(title, style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade800)),
-        Text(value ?? "...", style: theme.textTheme.subtitle1.copyWith(fontWeight: FontWeight.bold)),
+        Text(title,
+            style: theme.textTheme.bodyText1
+                .copyWith(color: Colors.grey.shade800)),
+        Text(value ?? "...",
+            style: theme.textTheme.bodyText1
+                .copyWith(fontWeight: FontWeight.bold)),
       ],
     );
   }
@@ -260,9 +336,9 @@ class ProductDetailPage extends HookWidget {
     return Center(
       child: Container(
         height: 30,
-        decoration: BoxDecoration(
-          border: Border(
-            left: BorderSide(width: 1, color: Colors.black),
+        decoration: const BoxDecoration(
+          border: const Border(
+            left: const BorderSide(width: 1, color: Colors.black),
           ),
         ),
       ),
@@ -316,7 +392,11 @@ class _BookmarkState extends State<Bookmark> {
           },
           icon: Container(
             padding: const EdgeInsets.all(kDefaultPadding / 2),
-            decoration: BoxDecoration(color: product.isFavorite ? theme.accentColor : theme.backgroundColor, borderRadius: BorderRadius.circular(9999)),
+            decoration: BoxDecoration(
+                color: product.isFavorite
+                    ? theme.accentColor
+                    : theme.backgroundColor,
+                borderRadius: BorderRadius.circular(9999)),
             child: Icon(
               product.isFavorite ? Icons.bookmark : Icons.bookmark_border,
               color: product.isFavorite ? Colors.white : Colors.grey.shade800,

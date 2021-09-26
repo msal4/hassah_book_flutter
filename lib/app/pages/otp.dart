@@ -10,6 +10,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hassah_book_flutter/main.dart';
 import 'package:provider/provider.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 class OTPPage extends HookWidget {
   static const routeName = "/otp";
@@ -37,12 +38,12 @@ class OTPPage extends HookWidget {
                   Column(
                     children: [
                       SvgPicture.asset("assets/svg/icon.svg", width: kAvatarRadius),
-                      Text("Hassah Book", style: theme.textTheme.headline6),
+                      Text(context.loc.appTitle, style: theme.textTheme.headline6),
                     ],
                   ),
                   SizedBox(height: kDefaultPadding * 2),
                   Text(
-                    "Enter the 6-digit code we sent to your phone number ${form.phoneNumber}",
+                    "${context.loc.verificationCodeExplanation} ${form.phoneNumber}",
                     style: theme.textTheme.subtitle1,
                     textAlign: TextAlign.center,
                   ),
@@ -59,7 +60,7 @@ class OTPPage extends HookWidget {
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: "Verification Code",
+                        hintText: context.loc.verificationCode,
                       ),
                     ),
                   ),
@@ -85,7 +86,7 @@ class OTPPage extends HookWidget {
                         width: double.maxFinite,
                         padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
                         child: Text(
-                          "VERIFY",
+                          context.loc.verify.toUpperCase(),
                           textAlign: TextAlign.center,
                           style: theme.textTheme.button.copyWith(color: Colors.white),
                         ),

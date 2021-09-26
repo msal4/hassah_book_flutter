@@ -14,6 +14,7 @@ import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:intl/intl.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 const _kBottomSheetMinExtent = 20.0;
 const _kBottomSheetMinHeight = 460.0;
@@ -28,7 +29,8 @@ final _kDefaultStatusColor = Colors.grey.shade800;
 const _kQueryPollInterval = Duration(seconds: 10);
 
 class OrderStatusInfo {
-  const OrderStatusInfo([this.status = OrderStatus.pending]) : assert(status != null);
+  const OrderStatusInfo([this.status = OrderStatus.pending])
+      : assert(status != null);
 
   final OrderStatus status;
 
@@ -45,7 +47,8 @@ class OrderStatusInfo {
 }
 
 class OrderDetailPageArguments {
-  const OrderDetailPageArguments({@required this.orderId}) : assert(orderId != null);
+  const OrderDetailPageArguments({@required this.orderId})
+      : assert(orderId != null);
 
   final String orderId;
 }
@@ -66,19 +69,24 @@ class OrderDetailPage extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     // Get the min bottom sheet height fraction.
-    final minSheetSize = (padding.bottom + _kBottomSheetMinExtent) / size.height;
+    final minSheetSize =
+        (padding.bottom + _kBottomSheetMinExtent) / size.height;
     final initialSheetHeight = min(_kBottomSheetMinHeight / size.height, 1.0);
 
     return UnfocusOnTap(
       child: Query(
-        options: QueryOptions(document: _orderQuery.document, variables: {"id": orderId}, pollInterval: _kQueryPollInterval),
+        options: QueryOptions(
+            document: _orderQuery.document,
+            variables: {"id": orderId},
+            pollInterval: _kQueryPollInterval),
         builder: (result, {refetch, fetchMore}) {
-          const appBarTitle = Text("Order Details");
+          final appBarTitle = Text(context.loc.orderDetails);
 
           if (result.hasException) {
             return Scaffold(
               appBar: AppBar(title: appBarTitle),
-              body: Retry(message: result.exception.toString(), onRetry: refetch),
+              body:
+                  Retry(message: result.exception.toString(), onRetry: refetch),
             );
           }
 
@@ -92,7 +100,8 @@ class OrderDetailPage extends StatelessWidget {
           final order = _orderQuery.parse(result.data).order;
 
           return Scaffold(
-            bottomSheet: _buildBottomSheet(context, initialSheetHeight, minSheetSize, order, refetch),
+            bottomSheet: _buildBottomSheet(
+                context, initialSheetHeight, minSheetSize, order, refetch),
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 SliverAppBar(title: appBarTitle, floating: true, snap: true),
@@ -105,7 +114,8 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  ListView _buildPurchasesList(BuildContext context, List<PurchaseMixin> items) {
+  ListView _buildPurchasesList(
+      BuildContext context, List<PurchaseMixin> items) {
     final padding = MediaQuery.of(context).padding;
 
     return ListView.separated(
@@ -118,7 +128,12 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  DraggableScrollableSheet _buildBottomSheet(BuildContext context, double initialSheetHeight, double minSheetSize, OrderMixin order, Future<QueryResult> Function() refetch) {
+  DraggableScrollableSheet _buildBottomSheet(
+      BuildContext context,
+      double initialSheetHeight,
+      double minSheetSize,
+      OrderMixin order,
+      Future<QueryResult> Function() refetch) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
 
@@ -130,7 +145,9 @@ class OrderDetailPage extends StatelessWidget {
       minChildSize: minSheetSize,
       builder: (BuildContext context, ScrollController scrollController) {
         return Mutation(
-          options: MutationOptions(document: _cancelOrderMutation.document, variables: {"id": orderId}),
+          options: MutationOptions(
+              document: _cancelOrderMutation.document,
+              variables: {"id": orderId}),
           builder: (runMutation, result, {refresh}) {
             return Container(
               decoration: BoxDecoration(
@@ -139,7 +156,9 @@ class OrderDetailPage extends StatelessWidget {
                   topLeft: const Radius.circular(kDefaultBorderRadius * 2),
                   topRight: const Radius.circular(kDefaultBorderRadius * 2),
                 ),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)],
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)
+                ],
               ),
               child: Stack(
                 children: [
@@ -154,18 +173,37 @@ class OrderDetailPage extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text("Total", style: theme.textTheme.headline6),
+                          Text(context.loc.total,
+                              style: theme.textTheme.headline6),
                           const Spacer(),
-                          Text("${order.totalPrice} IQD", style: theme.textTheme.headline6),
+                          Text("${order.totalPrice} ${context.loc.iqd}",
+                              style: theme.textTheme.headline6),
                         ],
                       ),
                       const SizedBox(height: kDefaultPadding * 2),
                       Row(
                         children: [
-                          ..._buildIconLine("pending", OrderStatusInfo(), currentStatusInfo, false),
-                          ..._buildIconLine("processed", OrderStatusInfo(OrderStatus.processed), currentStatusInfo),
-                          ..._buildIconLine("car", OrderStatusInfo(OrderStatus.delivering), currentStatusInfo),
-                          ..._buildIconLine("delivered", OrderStatusInfo(OrderStatus.delivered), currentStatusInfo),
+                          ..._buildIconLine(
+                            "pending",
+                            OrderStatusInfo(),
+                            currentStatusInfo,
+                            false,
+                          ),
+                          ..._buildIconLine(
+                            "processed",
+                            OrderStatusInfo(OrderStatus.processed),
+                            currentStatusInfo,
+                          ),
+                          ..._buildIconLine(
+                            "car",
+                            OrderStatusInfo(OrderStatus.delivering),
+                            currentStatusInfo,
+                          ),
+                          ..._buildIconLine(
+                            "delivered",
+                            OrderStatusInfo(OrderStatus.delivered),
+                            currentStatusInfo,
+                          ),
                         ],
                       ),
                       const SizedBox(height: kDefaultPadding * 2),
@@ -180,25 +218,33 @@ class OrderDetailPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Status",
-                                  style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
+                                  context.loc.status,
+                                  style: theme.textTheme.bodyText1
+                                      .copyWith(color: Colors.grey.shade600),
                                   textAlign: TextAlign.center,
                                 ),
-                                Text(humanizeOrderStatus(order.status), style: theme.textTheme.subtitle1, textAlign: TextAlign.center),
+                                Text(humanizeOrderStatus(context, order.status),
+                                    style: theme.textTheme.subtitle1,
+                                    textAlign: TextAlign.center),
                               ],
                             ),
-                            SizedBox(width: kDefaultPadding),
+                            const SizedBox(width: kDefaultPadding),
                             _buildDivider(),
-                            SizedBox(width: kDefaultPadding),
+                            const SizedBox(width: kDefaultPadding),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  "Ordered On",
-                                  style: theme.textTheme.bodyText1.copyWith(color: Colors.grey.shade600),
+                                  context.loc.orderedOn,
+                                  style: theme.textTheme.bodyText1
+                                      .copyWith(color: Colors.grey.shade600),
                                   textAlign: TextAlign.center,
                                 ),
-                                Text(DateFormat.yMEd().format(order.createdAt.toLocal()), style: theme.textTheme.subtitle1, textAlign: TextAlign.center),
+                                Text(
+                                    DateFormat.yMEd()
+                                        .format(order.createdAt.toLocal()),
+                                    style: theme.textTheme.subtitle1,
+                                    textAlign: TextAlign.center),
                               ],
                             ),
                           ],
@@ -207,15 +253,23 @@ class OrderDetailPage extends StatelessWidget {
                       const SizedBox(height: kDefaultPadding * 2),
                       if (order.status == OrderStatus.pending)
                         GestureDetector(
-                          onTap: result.isNotLoading ? () => _cancelOrder(context, runMutation, refetch) : null,
+                          onTap: result.isNotLoading
+                              ? () =>
+                                  _cancelOrder(context, runMutation, refetch)
+                              : null,
                           child: RoundContainer(
                             padding: const EdgeInsets.all(kDefaultPadding),
-                            color: result.isLoading ? Colors.grey.shade600 : theme.scaffoldBackgroundColor,
+                            color: result.isLoading
+                                ? Colors.grey.shade600
+                                : theme.scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(9999),
                             child: Text(
-                              "CANCEL",
+                              context.loc.cancel.toUpperCase(),
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.button.copyWith(color: result.isLoading ? Colors.grey.shade200 : Colors.grey.shade800),
+                              style: theme.textTheme.button.copyWith(
+                                  color: result.isLoading
+                                      ? Colors.grey.shade200
+                                      : Colors.grey.shade800),
                             ),
                           ),
                         )
@@ -248,12 +302,14 @@ class OrderDetailPage extends StatelessWidget {
     );
   }
 
-  Color _getColorByStatus(OrderStatusInfo status, OrderStatusInfo currentStatus) {
+  Color _getColorByStatus(
+      OrderStatusInfo status, OrderStatusInfo currentStatus) {
     if (currentStatus.status == OrderStatus.failed) {
       return kDangerColor;
     }
 
-    if (status.status == OrderStatus.pending && currentStatus.status == OrderStatus.pending) {
+    if (status.status == OrderStatus.pending &&
+        currentStatus.status == OrderStatus.pending) {
       return _kPendingStatusColor;
     } else if (status.index <= currentStatus.index) {
       return _kGreenStatusColor;
@@ -262,7 +318,9 @@ class OrderDetailPage extends StatelessWidget {
     }
   }
 
-  List<Widget> _buildIconLine(String iconName, OrderStatusInfo status, OrderStatusInfo currentStatusInfo, [hasLine = true]) {
+  List<Widget> _buildIconLine(String iconName, OrderStatusInfo status,
+      OrderStatusInfo currentStatusInfo,
+      [hasLine = true]) {
     final color = _getColorByStatus(status, currentStatusInfo);
 
     return [
@@ -291,7 +349,8 @@ class OrderDetailPage extends StatelessWidget {
 
   Future<void> _cancelOrder(
     BuildContext context,
-    MultiSourceResult Function(Map<String, dynamic>, {Object optimisticResult}) runMutation,
+    MultiSourceResult Function(Map<String, dynamic>, {Object optimisticResult})
+        runMutation,
     Future<QueryResult> Function() refetch,
   ) async {
     final theme = Theme.of(context);
@@ -314,10 +373,10 @@ class OrderDetailPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  'Are you sure you want to cancel this order?',
+                  context.loc.cancelOrderConfirmation,
                   style: theme.textTheme.subtitle1,
                 ),
-                SizedBox(height: kDefaultPadding),
+                const SizedBox(height: kDefaultPadding),
                 Row(
                   children: [
                     Expanded(
@@ -331,11 +390,14 @@ class OrderDetailPage extends StatelessWidget {
                             Navigator.pop(context);
                           },
                           child: Ink(
-                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding),
                             child: Text(
-                              "NO",
+                              context.loc.no.toUpperCase(),
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.button.copyWith(color: Colors.white),
+                              style: theme.textTheme.button
+                                  .copyWith(color: Colors.white),
                             ),
                           ),
                         ),
@@ -350,7 +412,8 @@ class OrderDetailPage extends StatelessWidget {
                         clipBehavior: Clip.antiAlias,
                         child: InkWell(
                           onTap: () async {
-                            final result = await runMutation({"id": orderId}).networkResult;
+                            final result = await runMutation({"id": orderId})
+                                .networkResult;
 
                             if (result.hasException) {
                               refetch();
@@ -364,9 +427,11 @@ class OrderDetailPage extends StatelessWidget {
                             Navigator.pop(context);
                           },
                           child: Ink(
-                            padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: kDefaultPadding * 1.5,
+                                vertical: kDefaultPadding),
                             child: Text(
-                              "YES",
+                              context.loc.yes.toUpperCase(),
                               textAlign: TextAlign.center,
                               style: theme.textTheme.button,
                             ),
@@ -413,7 +478,8 @@ class PurchaseCard extends HookWidget {
         Navigator.pushNamed(
           context,
           ProductDetailPage.routeName,
-          arguments: ProductDetailPageArguments(heroTagPrefix: heroTagPrefix, product: purchase.product),
+          arguments: ProductDetailPageArguments(
+              heroTagPrefix: heroTagPrefix, product: purchase.product),
         );
       },
       child: RoundContainer(
@@ -424,7 +490,7 @@ class PurchaseCard extends HookWidget {
             _buildImage(heroTagPrefix),
             const SizedBox(width: kDefaultPadding),
             Expanded(
-              child: _buildProductInfo(theme, purchase),
+              child: _buildProductInfo(context, theme, purchase),
             ),
           ],
         ),
@@ -437,7 +503,8 @@ class PurchaseCard extends HookWidget {
       tag: "image-$heroTagPrefix-${purchase.product.id}",
       child: Container(
         clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
         child: FadeInImage.assetNetwork(
           placeholder: "assets/images/product_placeholder.png",
           image: purchase.product.image,
@@ -449,19 +516,21 @@ class PurchaseCard extends HookWidget {
     );
   }
 
-  Widget _buildProductInfo(ThemeData theme, PurchaseMixin item) {
+  Widget _buildProductInfo(BuildContext context, ThemeData theme, PurchaseMixin item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(item.product.name, style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("by ${item.product.author.name}", style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
+        Text(item.product.name,
+            style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
+        Text("${context.loc.by} ${item.product.author.name}",
+            style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
         SizedBox(height: kDefaultPadding / 2),
         Row(
           children: [
-            Text("${item.quantity} items"),
+            Text("${item.quantity} ${context.loc.items}"),
             Spacer(),
             Text(
-              "${item.product.price * item.quantity} IQD",
+              "${item.product.price * item.quantity} ${context.loc.iqd}",
               style: theme.textTheme.subtitle1.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.accentColor,

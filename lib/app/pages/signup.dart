@@ -13,6 +13,7 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:provider/provider.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 class SignupForm {
   SignupForm({
@@ -39,17 +40,23 @@ class SignupPage extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final nameController = useTextEditingController.fromValue(TextEditingValue(text: "Mohammed Salman"));
-    final phoneController = useTextEditingController.fromValue(TextEditingValue(text: "07705983835"));
-    final provinceController = useTextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
-    final addressController = useTextEditingController.fromValue(TextEditingValue(text: "123 Street"));
-    final passwordController = useTextEditingController.fromValue(TextEditingValue(text: "12345678"));
+    final nameController = useTextEditingController
+        .fromValue(TextEditingValue(text: "Mohammed Salman"));
+    final phoneController = useTextEditingController
+        .fromValue(TextEditingValue(text: "07705983835"));
+    final provinceController =
+        useTextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
+    final addressController = useTextEditingController
+        .fromValue(TextEditingValue(text: "123 Street"));
+    final passwordController =
+        useTextEditingController.fromValue(TextEditingValue(text: "12345678"));
 
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return UnfocusOnTap(
       child: Scaffold(
-        appBar: AppBar(iconTheme: theme.iconTheme.copyWith(color: theme.accentColor)),
+        appBar: AppBar(
+            iconTheme: theme.iconTheme.copyWith(color: theme.accentColor)),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(kDefaultPadding),
           child: IgnorePointer(
@@ -59,92 +66,113 @@ class SignupPage extends HookWidget {
                 children: [
                   Column(
                     children: [
-                      SvgPicture.asset("assets/svg/icon.svg", width: kAvatarRadius),
-                      Text("Hassah Book", style: theme.textTheme.headline6),
+                      SvgPicture.asset("assets/svg/icon.svg",
+                          width: kAvatarRadius),
+                      Text(context.loc.appTitle, style: theme.textTheme.headline6),
                     ],
                   ),
                   SizedBox(height: kDefaultPadding * 2),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultPadding,
+                        vertical: kDefaultPadding / 2),
                     child: TextField(
                       enabled: !isLoading,
                       controller: nameController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.name,
-                      style: theme.textTheme.bodyText1.copyWith(color: isLoading ? Colors.grey.shade600 : null),
+                      style: theme.textTheme.bodyText1.copyWith(
+                          color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
-                        icon: SvgPicture.asset("assets/svg/name.svg", width: kDefaultIconSize),
+                        icon: SvgPicture.asset("assets/svg/name.svg",
+                            width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: "Full Name",
+                        hintText: context.loc.fullName,
                       ),
                     ),
                   ),
                   SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultPadding,
+                        vertical: kDefaultPadding / 2),
                     child: TextField(
                       enabled: !isLoading,
                       controller: phoneController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
-                      style: theme.textTheme.bodyText1.copyWith(color: isLoading ? Colors.grey.shade600 : null),
+                      style: theme.textTheme.bodyText1.copyWith(
+                          color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
-                        icon: SvgPicture.asset("assets/svg/person.svg", width: kDefaultIconSize),
+                        icon: SvgPicture.asset("assets/svg/person.svg",
+                            width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: "Phone Number",
+                        hintText: context.loc.phoneNumber,
                       ),
                     ),
                   ),
                   SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultPadding,
+                        vertical: kDefaultPadding / 2),
                     child: TextField(
                       enabled: !isLoading,
                       controller: provinceController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.streetAddress,
-                      style: theme.textTheme.bodyText1.copyWith(color: isLoading ? Colors.grey.shade600 : null),
+                      style: theme.textTheme.bodyText1.copyWith(
+                          color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
-                        icon: SvgPicture.asset("assets/svg/pin.svg", width: kDefaultIconSize),
+                        icon: SvgPicture.asset("assets/svg/pin.svg",
+                            width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: "Province",
+                        hintText: context.loc.province,
                       ),
                     ),
                   ),
                   SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultPadding,
+                        vertical: kDefaultPadding / 2),
                     child: TextField(
                       enabled: !isLoading,
                       controller: addressController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.streetAddress,
-                      style: theme.textTheme.bodyText1.copyWith(color: isLoading ? Colors.grey.shade600 : null),
+                      style: theme.textTheme.bodyText1.copyWith(
+                          color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
-                        icon: SvgPicture.asset("assets/svg/building.svg", width: kDefaultIconSize),
+                        icon: SvgPicture.asset("assets/svg/building.svg",
+                            width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: "Address",
+                        hintText: context.loc.address,
                       ),
                     ),
                   ),
                   SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultPadding,
+                        vertical: kDefaultPadding / 2),
                     child: TextField(
                       enabled: !isLoading,
                       controller: passwordController,
                       textInputAction: TextInputAction.next,
                       obscureText: true,
-                      style: theme.textTheme.bodyText1.copyWith(color: isLoading ? Colors.grey.shade600 : null),
+                      style: theme.textTheme.bodyText1.copyWith(
+                          color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
-                        icon: SvgPicture.asset("assets/svg/lock.svg", width: kDefaultIconSize, height: kDefaultIconSize),
+                        icon: SvgPicture.asset("assets/svg/lock.svg",
+                            width: kDefaultIconSize, height: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: "Password",
+                        hintText: context.loc.password,
                       ),
                     ),
                   ),
@@ -168,11 +196,14 @@ class SignupPage extends HookWidget {
                           : null,
                       child: Ink(
                         width: double.maxFinite,
-                        padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: kDefaultPadding * 1.5,
+                            vertical: kDefaultPadding),
                         child: Text(
-                          "SIGNUP",
+                          context.loc.signup.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button.copyWith(color: Colors.white),
+                          style: theme.textTheme.button
+                              .copyWith(color: Colors.white),
                         ),
                       ),
                     ),
@@ -180,16 +211,17 @@ class SignupPage extends HookWidget {
                   SizedBox(height: kDefaultPadding),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushNamed(LoginPage.routeName);
+                      Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text("Already have an account?"),
+                        Text(context.loc.alreadyHaveAnAccount),
                         SizedBox(width: kDefaultPadding / 2),
                         Text(
-                          "LOGIN",
-                          style: theme.textTheme.button.copyWith(color: theme.accentColor),
+                          context.loc.login,
+                          style: theme.textTheme.button
+                              .copyWith(color: theme.accentColor),
                         ),
                       ],
                     ),
@@ -206,17 +238,21 @@ class SignupPage extends HookWidget {
   Future<void> _onSignup(BuildContext context, SignupForm arguments) async {
     void onMessage(String token) async {
       try {
-        final input = SendVerificationCodeInput(phoneNumber: arguments.phoneNumber, recaptchaToken: token);
-        final sessionInfo = await context.read<AuthProvider>().sendVerificationCode(input);
+        final input = SendVerificationCodeInput(
+            phoneNumber: arguments.phoneNumber, recaptchaToken: token);
+        final sessionInfo =
+            await context.read<AuthProvider>().sendVerificationCode(input);
         arguments.sessionInfo = sessionInfo;
 
-        Navigator.of(context).pushNamed(OTPPage.routeName, arguments: arguments);
+        Navigator.of(context)
+            .pushNamed(OTPPage.routeName, arguments: arguments);
       } on OperationException catch (e) {
         debugPrint(e.toString());
         // TODO: handle errors.
       }
     }
 
-    Navigator.of(context).pushNamed(CaptchaPage.routeName, arguments: CaptchaPageArguments(onMessage: onMessage));
+    Navigator.of(context).pushNamed(CaptchaPage.routeName,
+        arguments: CaptchaPageArguments(onMessage: onMessage));
   }
 }
