@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
@@ -44,7 +46,7 @@ void main() async {
   final isAuthenticated = Auth.getToken(TokenType.Access) != null;
   String locale = Hive.box(kLocaleBoxName).get("locale");
   if (locale == null || locale.isEmpty) {
-    locale = "ar";
+    locale = (Platform.localeName?.startsWith("ar") ?? false) ? "ar" : "en";
   }
 
   runApp(App(isAuthenticated: isAuthenticated, locale: Locale(locale)));
