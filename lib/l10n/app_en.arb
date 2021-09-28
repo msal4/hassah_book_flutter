@@ -61,6 +61,11 @@
   "yourCartIsEmpty": "Your cart is empty",
   "removeItemFromCartConfirmation": "Do you want to remove this item from your cart?",
   "orderNow": "Order Now",
-  "authorDetails": "Author Details"
-
+  "authorDetails": "Author Details",
+  "invalidCredentials": "Phone or password is incorrect",
+  "phoneNotFound": "Phone number is not found",
+  "somethingWentWrong": "Something went wrong please try again",
+  "invalidPhoneNumber": "Invalid phone number",
+  "phoneNumberIsRequired": "Phone number is required",
+  "userWithThisPhoneAlreadyExists": "User with this phone number already exists. Please login or reset password."
 }

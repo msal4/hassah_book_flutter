@@ -11,9 +11,9 @@ import 'package:hassah_book_flutter/app/pages/otp.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:provider/provider.dart';
-import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 class SignupForm {
   SignupForm({
@@ -52,6 +52,7 @@ class SignupPage extends HookWidget {
         useTextEditingController.fromValue(TextEditingValue(text: "12345678"));
 
     final isLoading = context.watch<AuthProvider>().isLoading;
+    final error = useState("");
 
     return UnfocusOnTap(
       child: Scaffold(
@@ -68,10 +69,11 @@ class SignupPage extends HookWidget {
                     children: [
                       SvgPicture.asset("assets/svg/icon.svg",
                           width: kAvatarRadius),
-                      Text(context.loc.appTitle, style: theme.textTheme.headline6),
+                      Text(context.loc.appTitle,
+                          style: theme.textTheme.headline6),
                     ],
                   ),
-                  SizedBox(height: kDefaultPadding * 2),
+                  const SizedBox(height: kDefaultPadding * 2),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
                     padding: const EdgeInsets.symmetric(
@@ -92,7 +94,7 @@ class SignupPage extends HookWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
                     padding: const EdgeInsets.symmetric(
@@ -113,7 +115,7 @@ class SignupPage extends HookWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
                     padding: const EdgeInsets.symmetric(
@@ -134,7 +136,7 @@ class SignupPage extends HookWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
                     padding: const EdgeInsets.symmetric(
@@ -155,7 +157,7 @@ class SignupPage extends HookWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
                     padding: const EdgeInsets.symmetric(
@@ -176,7 +178,17 @@ class SignupPage extends HookWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding * 2),
+                  const SizedBox(height: kDefaultPadding),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      error.value,
+                      style: theme.textTheme.bodyText1.copyWith(
+                        color: Colors.red,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: kDefaultPadding),
                   Material(
                     color: isLoading ? Colors.grey.shade800 : theme.accentColor,
                     borderRadius: BorderRadius.circular(9999),
@@ -192,6 +204,7 @@ class SignupPage extends HookWidget {
                                   address: addressController.text,
                                   password: passwordController.text,
                                 ),
+                                error: error,
                               )
                           : null,
                       child: Ink(
@@ -208,16 +221,17 @@ class SignupPage extends HookWidget {
                       ),
                     ),
                   ),
-                  SizedBox(height: kDefaultPadding),
+                  const SizedBox(height: kDefaultPadding),
                   GestureDetector(
                     onTap: () {
-                      Navigator.of(context).pushReplacementNamed(LoginPage.routeName);
+                      Navigator.of(context)
+                          .pushReplacementNamed(LoginPage.routeName);
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(context.loc.alreadyHaveAnAccount),
-                        SizedBox(width: kDefaultPadding / 2),
+                        const SizedBox(width: kDefaultPadding / 2),
                         Text(
                           context.loc.login,
                           style: theme.textTheme.button
@@ -235,7 +249,8 @@ class SignupPage extends HookWidget {
     );
   }
 
-  Future<void> _onSignup(BuildContext context, SignupForm arguments) async {
+  Future<void> _onSignup(BuildContext context, SignupForm arguments,
+      {@required ValueNotifier<String> error}) async {
     void onMessage(String token) async {
       try {
         final input = SendVerificationCodeInput(
@@ -247,8 +262,12 @@ class SignupPage extends HookWidget {
         Navigator.of(context)
             .pushNamed(OTPPage.routeName, arguments: arguments);
       } on OperationException catch (e) {
-        debugPrint(e.toString());
-        // TODO: handle errors.
+        if (e.graphqlErrors
+            .any((err) => err.extensions["code"] == "ALREADY_EXISTS")) {
+          error.value = context.loc.userWithThisPhoneAlreadyExists;
+        } else {
+          error.value = context.loc.somethingWentWrong;
+        }
       }
     }
 

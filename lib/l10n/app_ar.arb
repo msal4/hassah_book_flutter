@@ -61,5 +61,11 @@
   "yourCartIsEmpty": "السلة فارغة",
   "removeItemFromCartConfirmation": "هل انت متأكد من رغبتك من حذف هذا العنصر من سلتك",
   "orderNow": "الطلب الان",
-  "authorDetails": "معلومات الكاتب"
+  "authorDetails": "معلومات الكاتب",
+  "invalidCredentials": "رقم الهاتف او كلمة المرور غير صحيحة",
+  "phoneNotFound": "رقم الهاتف غير مسجل لدينا",
+  "somethingWentWrong": "حدث خطأ ما يرجى اعادة المحاولة",
+  "invalidPhoneNumber": "رقم الهاتف غير صالح",
+  "phoneNumberIsRequired": "رقم الهاتف غير صحيح",
+  "userWithThisPhoneAlreadyExists": "رقم الهاتف مسجل من قبل يرجى تسجيل الدخول او استرداد الرمز"
 }
