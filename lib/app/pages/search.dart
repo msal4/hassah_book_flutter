@@ -4,6 +4,7 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/pages/author.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
@@ -106,6 +107,10 @@ class _SearchPageState extends State<SearchPage> {
                           top: kDefaultPadding,
                           bottom: kDefaultPadding + padding.top),
                       itemBuilder: (context, idx) {
+                        if (data.products.items.length == 0 &&
+                            data.authors.items.length == 0) {
+                          return _buildNoItemsFound(context, _query);
+                        }
                         if (idx == 0) {
                           return _buildAuthorsRow(context, data.authors.items);
                         }
@@ -269,8 +274,8 @@ class _SearchPageState extends State<SearchPage> {
                 onChanged: (value) {
                   if (_timer?.isActive ?? false) _timer?.cancel();
 
-                  _timer =
-                      Timer(Duration(milliseconds: _kDebounceDuration), () {
+                  _timer = Timer(
+                      const Duration(milliseconds: _kDebounceDuration), () {
                     setState(() {
                       _query = value;
                     });
@@ -307,6 +312,147 @@ class _SearchPageState extends State<SearchPage> {
           color: Colors.grey.shade800,
         ),
       ),
+    );
+  }
+
+  Widget _buildNoItemsFound(BuildContext context, String query) {
+    final theme = Theme.of(context);
+
+    return Column(
+      children: [
+        const Icon(Icons.error_outline),
+        Text(context.loc.noResultsFound),
+        Padding(
+          padding: const EdgeInsets.all(kDefaultPadding),
+          child: Material(
+            color: theme.primaryColor,
+            borderRadius: BorderRadius.circular(9999),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  builder: (context) => RequestBookDialog(),
+                  backgroundColor: theme.backgroundColor,
+                  isScrollControlled: true,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                  ),
+                );
+              },
+              child: Ink(
+                width: double.maxFinite,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: kDefaultPadding * 1.5,
+                  vertical: kDefaultPadding,
+                ),
+                child: Text(
+                  context.loc.requestUnavailableBook,
+                  textAlign: TextAlign.center,
+                  style: theme.textTheme.button.copyWith(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class RequestBookDialog extends HookWidget {
+  final _requestMutation = CreateRequestMutation();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final contentController = useTextEditingController();
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+
+    return Mutation(
+      options: MutationOptions(document: _requestMutation.document),
+      builder: (sendRequest, res) {
+        final onSubmit = () async {
+          if (contentController.text.isNotEmpty) {
+            final res = await sendRequest({"content": contentController.text})
+                .networkResult;
+            if (res.hasException) return;
+
+            Navigator.pop(context);
+          }
+        };
+
+        return GestureDetector(
+          behavior: HitTestBehavior.translucent,
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Container(
+            padding: const EdgeInsets.all(kDefaultPadding)
+                .copyWith(bottom: bottomPadding + kDefaultPadding),
+            child: SafeArea(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Text(
+                    context.loc.requestUnavailableBook,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.headline6,
+                  ),
+                  const SizedBox(height: kDefaultPadding),
+                  const Divider(),
+                  const SizedBox(height: kDefaultPadding),
+                  RoundContainer(
+                    color: Colors.grey.shade200,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultPadding,
+                      vertical: kDefaultPadding / 2,
+                    ),
+                    child: TextField(
+                      controller: contentController,
+                      textInputAction: TextInputAction.next,
+                      maxLines: null,
+                      keyboardType: TextInputType.text,
+                      onSubmitted: (v) {
+                        onSubmit();
+                      },
+                      enableSuggestions: true,
+                      decoration: InputDecoration(
+                        border: InputBorder.none,
+                        hintText: context.loc.requestBookName,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: kDefaultPadding * 2),
+                  Material(
+                    color: theme.accentColor,
+                    borderRadius: BorderRadius.circular(9999),
+                    clipBehavior: Clip.antiAlias,
+                    child: InkWell(
+                      onTap: () {
+                        onSubmit();
+                      },
+                      child: Ink(
+                        width: double.maxFinite,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: kDefaultPadding * 1.5,
+                          vertical: kDefaultPadding,
+                        ),
+                        child: Text(
+                          context.loc.requestBook,
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.button
+                              .copyWith(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,0 +1,5 @@
+mutation CreateRequest($content: String!) {
+    createRequest(data: {content: $content}) {
+        id
+    }
+}

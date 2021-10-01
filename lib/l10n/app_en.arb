@@ -67,5 +67,9 @@
   "somethingWentWrong": "Something went wrong please try again",
   "invalidPhoneNumber": "Invalid phone number",
   "phoneNumberIsRequired": "Phone number is required",
-  "userWithThisPhoneAlreadyExists": "User with this phone number already exists. Please login or reset password."
+  "userWithThisPhoneAlreadyExists": "User with this phone number already exists. Please login or reset password.",
+  "requestBook": "Request Book",
+  "requestUnavailableBook": "Request Unavailable Book",
+  "noResultsFound": "No results found",
+  "requestBookName": "Book and author name or any other information"
 }

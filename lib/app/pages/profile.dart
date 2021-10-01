@@ -141,7 +141,7 @@ class ProfilePage extends StatelessWidget {
               children: [
                 Text(context.loc.loginToSeeYourProfile,
                     style: theme.textTheme.subtitle1),
-                SizedBox(height: kDefaultPadding),
+                const SizedBox(height: kDefaultPadding),
                 Material(
                   color: theme.accentColor,
                   borderRadius: BorderRadius.circular(9999),

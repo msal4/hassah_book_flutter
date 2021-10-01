@@ -67,5 +67,9 @@
   "somethingWentWrong": "حدث خطأ ما يرجى اعادة المحاولة",
   "invalidPhoneNumber": "رقم الهاتف غير صالح",
   "phoneNumberIsRequired": "رقم الهاتف غير صحيح",
-  "userWithThisPhoneAlreadyExists": "رقم الهاتف مسجل من قبل يرجى تسجيل الدخول او استرداد الرمز"
+  "userWithThisPhoneAlreadyExists": "رقم الهاتف مسجل من قبل يرجى تسجيل الدخول او استرداد الرمز",
+  "requestBook": "اطلب الكتاب",
+  "noResultsFound": "لم يتم العثور على نتائج",
+  "requestUnavailableBook": "اطلب كتاب غير متوفر",
+  "requestBookName": "اسم الكتاب والكاتب واي معلومات اخرى"
 }
