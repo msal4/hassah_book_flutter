@@ -305,26 +305,29 @@ class _SearchPageState extends State<SearchPage> {
         Navigator.pushNamed(context, AuthorPage.routeName,
             arguments: AuthorPageArguments(id: author.id));
       },
-      child: Container(
-        width: _kAuthorRadius * 2,
-        child: Column(
-          children: [
-            CircleAvatar(
-              radius: _kAuthorRadius,
-              backgroundColor: theme.backgroundColor,
-              backgroundImage:
-                  const AssetImage("assets/images/product_placeholder.png"),
-              foregroundImage: NetworkImage(author.image),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              author.name,
-              overflow: TextOverflow.ellipsis,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyText1
-                  .copyWith(fontWeight: FontWeight.w500),
-            ),
-          ],
+      child: Tooltip(
+        message: author.name,
+        child: Container(
+          width: _kAuthorRadius * 2,
+          child: Column(
+            children: [
+              CircleAvatar(
+                radius: _kAuthorRadius,
+                backgroundColor: theme.backgroundColor,
+                backgroundImage:
+                    const AssetImage("assets/images/product_placeholder.png"),
+                foregroundImage: NetworkImage(author.image),
+              ),
+              const SizedBox(height: 5),
+              Text(
+                author.name,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyText1
+                    .copyWith(fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
         ),
       ),
     );
