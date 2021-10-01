@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
@@ -16,7 +17,8 @@ class CategoriesPage extends HookWidget {
     final padding = MediaQuery.of(context).padding;
 
     return Query(
-      options: QueryOptions(document: _categoriesQuery.document),
+      options: QueryOptions(
+          document: _categoriesQuery.document, variables: {"take": 100}),
       builder: (result, {fetchMore, refetch}) {
         if (result.isLoading && result.data == null) {
           return LoadingIndicator();
@@ -29,12 +31,13 @@ class CategoriesPage extends HookWidget {
         final data = _categoriesQuery.parse(result.data);
 
         return PaginationHandler(
-          enabled: !result.isLoading && data.categories.items.length != data.categories.total,
+          enabled: !result.isLoading &&
+              data.categories.items.length != data.categories.total,
           fetchMore: () {
             final options = FetchMoreOptions(
               document: _categoriesQuery.document,
               updateQuery: _updatePaginatedQuery,
-              variables: {"skip": data.categories.items.length},
+              variables: {"skip": data.categories.items.length, "take": 100},
             );
 
             fetchMore(options);
@@ -47,7 +50,8 @@ class CategoriesPage extends HookWidget {
             itemBuilder: (context, idx) {
               return _buildCategoryItem(context, data.categories.items[idx]);
             },
-            separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
+            separatorBuilder: (context, idx) =>
+                SizedBox(height: kDefaultPadding),
             itemCount: data.categories.items.length,
           ),
         );
@@ -59,7 +63,10 @@ class CategoriesPage extends HookWidget {
     final oldDataParsed = _categoriesQuery.parse(oldData);
     final newDataParsed = _categoriesQuery.parse(newData);
 
-    final items = [...oldDataParsed.categories.items, ...newDataParsed.categories.items];
+    final items = [
+      ...oldDataParsed.categories.items,
+      ...newDataParsed.categories.items
+    ];
 
     newDataParsed.categories.items = items;
 
@@ -71,7 +78,13 @@ class CategoriesPage extends HookWidget {
 
     return GestureDetector(
       key: Key(cat.id),
-      onTap: () {},
+      onTap: () {
+        Navigator.pushNamed(
+          context,
+          SearchPage.routeName,
+          arguments: SearchPageArguments(categoryID: cat.id),
+        );
+      },
       child: RoundContainer(
         padding: const EdgeInsets.symmetric(
           horizontal: kDefaultPadding,

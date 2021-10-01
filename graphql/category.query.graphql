@@ -1,0 +1,9 @@
+query CategorySearch($id: ID!, $searchQuery: String, $order: [OrderByMap!], $skip: Int , $take: Int) {
+    category(id: $id) {
+        id
+        name
+        products(searchQuery: $searchQuery, order: $order,skip: $skip, take: $take) {
+            ...PaginatedProductResponse
+        }
+    }
+}

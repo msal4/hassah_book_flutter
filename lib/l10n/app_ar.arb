@@ -74,5 +74,10 @@
   "requestBookName": "اسم الكتاب والكاتب واي معلومات اخرى",
   "loginToSeeYourBookmarks": "سجل الدخول لرؤية قائمتك",
   "youDontHaveBookmarks": "لم تقم بأضافة اي منتج لقائمتك",
-  "filter": "فلتر"
+  "filter": "فلتر",
+  "category": "التصنيف",
+  "latest": "الاحدث",
+  "oldest": "الاقدم",
+  "sort": "الترتيب",
+  "clear": "أزالة"
 }

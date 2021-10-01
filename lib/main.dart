@@ -126,36 +126,44 @@ class _AppState extends State<App> {
                 // I wanted it to be clearer and it's also easier to write this way.
                 switch (settings.name) {
                   case SearchPage.routeName:
+                    final arguments = settings.arguments as SearchPageArguments;
                     return createRouteWithFadeTransition(
-                        builder: (context, _, __) => SearchPage());
+                      builder: (context, _, __) =>
+                          SearchPage(categoryID: arguments?.categoryID),
+                    );
                   case CaptchaPage.routeName:
                     final arguments =
                         settings.arguments as CaptchaPageArguments;
                     return createRouteWithFadeTransition(
-                        builder: (context, _, __) =>
-                            CaptchaPage(onMessage: arguments.onMessage));
+                      builder: (context, _, __) =>
+                          CaptchaPage(onMessage: arguments.onMessage),
+                    );
                   case OTPPage.routeName:
                     final arguments = settings.arguments as SignupForm;
                     return MaterialPageRoute(
-                        builder: (context) => OTPPage(form: arguments));
+                      builder: (context) => OTPPage(form: arguments),
+                    );
                   case ProductDetailPage.routeName:
                     final arguments =
                         settings.arguments as ProductDetailPageArguments;
                     return MaterialPageRoute(
-                        builder: (context) => ProductDetailPage(
-                            product: arguments.product,
-                            id: arguments.id,
-                            heroTagPrefix: arguments.heroTagPrefix));
+                      builder: (context) => ProductDetailPage(
+                          product: arguments.product,
+                          id: arguments.id,
+                          heroTagPrefix: arguments.heroTagPrefix),
+                    );
                   case OrderDetailPage.routeName:
                     final arguments =
                         settings.arguments as OrderDetailPageArguments;
                     return MaterialPageRoute(
-                        builder: (context) =>
-                            OrderDetailPage(orderId: arguments.orderId));
+                      builder: (context) =>
+                          OrderDetailPage(orderId: arguments.orderId),
+                    );
                   case AuthorPage.routeName:
                     final arguments = settings.arguments as AuthorPageArguments;
                     return MaterialPageRoute(
-                        builder: (context) => AuthorPage(id: arguments.id));
+                      builder: (context) => AuthorPage(id: arguments.id),
+                    );
                   default:
                     return null;
                 }

@@ -74,5 +74,10 @@
   "requestBookName": "Book and author name or any other information",
   "loginToSeeYourBookmarks": "Login to see your bookmarks",
   "youDontHaveBookmarks": "You haven't bookmarked any product",
-  "filter": "Filter"
+  "filter": "Filter",
+  "category": "Category",
+  "latest": "Latest",
+  "oldest": "Oldest",
+  "sort": "Sort",
+  "clear": "Clear"
 }
