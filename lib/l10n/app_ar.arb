@@ -71,5 +71,7 @@
   "requestBook": "اطلب الكتاب",
   "noResultsFound": "لم يتم العثور على نتائج",
   "requestUnavailableBook": "اطلب كتاب غير متوفر",
-  "requestBookName": "اسم الكتاب والكاتب واي معلومات اخرى"
+  "requestBookName": "اسم الكتاب والكاتب واي معلومات اخرى",
+  "loginToSeeYourBookmarks": "سجل الدخول لرؤية قائمتك",
+  "youDontHaveBookmarks": "لم تقم بأضافة اي منتج لقائمتك"
 }

@@ -10,6 +10,7 @@ import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/product_details_card.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:provider/provider.dart';
@@ -38,8 +39,11 @@ class BookmarksPage extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Login to see your bookmarks", style: theme.textTheme.subtitle1),
-            SizedBox(height: kDefaultPadding),
+            Text(
+              context.loc.loginToSeeYourBookmarks,
+              style: theme.textTheme.subtitle1,
+            ),
+            const SizedBox(height: kDefaultPadding),
             Material(
               color: theme.accentColor,
               borderRadius: BorderRadius.circular(9999),
@@ -50,9 +54,12 @@ class BookmarksPage extends HookWidget {
                 },
                 child: Ink(
                   width: double.maxFinite,
-                  padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: kDefaultPadding * 1.5,
+                    vertical: kDefaultPadding,
+                  ),
                   child: Text(
-                    "LOGIN",
+                    context.loc.login.toUpperCase(),
                     textAlign: TextAlign.center,
                     style: theme.textTheme.button.copyWith(color: Colors.white),
                   ),
@@ -65,7 +72,10 @@ class BookmarksPage extends HookWidget {
     }
 
     if (hasException) {
-      return Retry(message: exception.toString(), onRetry: bookmarks.getBookmarks);
+      return Retry(
+        message: exception.toString(),
+        onRetry: bookmarks.getBookmarks,
+      );
     }
 
     if (isLoading && data == null) {
@@ -82,7 +92,8 @@ class BookmarksPage extends HookWidget {
     );
   }
 
-  Widget _buildBookmarksList(BuildContext context, BookmarksProvider bookmarks) {
+  Widget _buildBookmarksList(
+      BuildContext context, BookmarksProvider bookmarks) {
     final padding = MediaQuery.of(context).padding;
     final items = bookmarks.bookmarks?.items ?? [];
 
@@ -99,7 +110,8 @@ class BookmarksPage extends HookWidget {
 
         return _buildItem(items[idx], bookmarks);
       },
-      separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
+      separatorBuilder: (context, idx) =>
+          const SizedBox(height: kDefaultPadding),
     );
   }
 
@@ -115,13 +127,17 @@ class BookmarksPage extends HookWidget {
             child: ProductDetailsCard(
               product: bookmark.product,
               isBookmarked: true,
-              onBookmarkTap: () => bookmarks.removeBookmark(bookmark.product.id),
+              onBookmarkTap: () =>
+                  bookmarks.removeBookmark(bookmark.product.id),
             ),
             secondaryActions: <Widget>[
               IconSlideAction(
                 onTap: () => bookmarks.removeBookmark(bookmark.product.id),
                 color: kDangerColor,
-                iconWidget: SvgPicture.asset("assets/svg/trash.svg", width: kDefaultIconSize),
+                iconWidget: SvgPicture.asset(
+                  "assets/svg/trash.svg",
+                  width: kDefaultIconSize,
+                ),
               )
             ],
           );
@@ -134,7 +150,7 @@ class BookmarksPage extends HookWidget {
     final theme = Theme.of(context);
 
     return Text(
-      "You don't have any bookmarks.",
+      context.loc.youDontHaveBookmarks,
       style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.w300),
       textAlign: TextAlign.center,
     );
