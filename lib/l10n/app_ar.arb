@@ -73,5 +73,6 @@
   "requestUnavailableBook": "اطلب كتاب غير متوفر",
   "requestBookName": "اسم الكتاب والكاتب واي معلومات اخرى",
   "loginToSeeYourBookmarks": "سجل الدخول لرؤية قائمتك",
-  "youDontHaveBookmarks": "لم تقم بأضافة اي منتج لقائمتك"
+  "youDontHaveBookmarks": "لم تقم بأضافة اي منتج لقائمتك",
+  "filter": "فلتر"
 }

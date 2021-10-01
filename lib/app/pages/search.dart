@@ -80,7 +80,7 @@ class _SearchPageState extends State<SearchPage> {
                   }
 
                   if (result.data == null && result.isLoading) {
-                    return LoadingIndicator();
+                    return const LoadingIndicator();
                   }
 
                   final data = _searchQuery.parse(result.data);
@@ -104,8 +104,9 @@ class _SearchPageState extends State<SearchPage> {
                     },
                     child: ListView.separated(
                       padding: EdgeInsets.only(
-                          top: kDefaultPadding,
-                          bottom: kDefaultPadding + padding.top),
+                        top: kDefaultPadding,
+                        bottom: kDefaultPadding + padding.top,
+                      ),
                       itemBuilder: (context, idx) {
                         if (data.products.items.length == 0 &&
                             data.authors.items.length == 0) {
@@ -126,8 +127,9 @@ class _SearchPageState extends State<SearchPage> {
                               Navigator.of(context).pushNamed(
                                 ProductDetailPage.routeName,
                                 arguments: ProductDetailPageArguments(
-                                    product: product,
-                                    heroTagPrefix: _heroTagPrefix),
+                                  product: product,
+                                  heroTagPrefix: _heroTagPrefix,
+                                ),
                               );
                             },
                             child: RoundContainer(
@@ -254,6 +256,7 @@ class _SearchPageState extends State<SearchPage> {
 
   SliverAppBar _buildSliverAppBar(BuildContext context) {
     final theme = Theme.of(context);
+    final isRTL = context.locale.languageCode == "ar";
 
     return SliverAppBar(
       floating: true,
@@ -263,44 +266,63 @@ class _SearchPageState extends State<SearchPage> {
       titleSpacing: 0,
       leading: const SizedBox(),
       leadingWidth: 0,
-      title: Container(
-        padding: const EdgeInsets.all(kDefaultPadding),
-        child: Row(
-          children: [
-            _buildBackButton(context),
-            const SizedBox(width: kDefaultPadding),
-            Expanded(
-              child: TextField(
-                onChanged: (value) {
-                  if (_timer?.isActive ?? false) _timer?.cancel();
+      title: Row(
+        children: [
+          _buildBackButton(context, isRTL),
+          const SizedBox(width: kDefaultPadding / 2),
+          Expanded(
+            child: TextField(
+              onChanged: (value) {
+                if (_timer?.isActive ?? false) _timer?.cancel();
 
-                  _timer = Timer(
-                      const Duration(milliseconds: _kDebounceDuration), () {
-                    setState(() {
-                      _query = value;
-                    });
+                _timer =
+                    Timer(const Duration(milliseconds: _kDebounceDuration), () {
+                  setState(() {
+                    _query = value;
                   });
-                },
-                textInputAction: TextInputAction.search,
-                autofocus: true,
-                style: theme.textTheme.headline6,
-                decoration: InputDecoration(
-                  hintText: context.loc.search,
-                  border: InputBorder.none,
-                ),
+                });
+              },
+              textInputAction: TextInputAction.search,
+              autofocus: true,
+              style: theme.textTheme.headline6,
+              decoration: InputDecoration(
+                hintText: context.loc.search,
+                border: InputBorder.none,
               ),
             ),
-            const SizedBox(width: kDefaultPadding / 2),
-            const Icon(Icons.search),
-            const SizedBox(width: kDefaultPadding),
-            const Icon(Icons.filter_list),
-          ],
-        ),
+          ),
+          const SizedBox(width: kDefaultPadding / 2),
+          const Icon(Icons.search),
+          const SizedBox(width: kDefaultPadding),
+          IconButton(
+            tooltip: context.loc.filter,
+            icon: Icon(Icons.filter_list),
+            onPressed: () {},
+            padding: EdgeInsets.only(
+              left: isRTL ? kDefaultPadding : 0,
+              right: isRTL ? 0 : kDefaultPadding,
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildBackButton(BuildContext context) {
+  Widget _buildBackButton(BuildContext context, bool isRTL) {
+    return IconButton(
+      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+      icon: Icon(
+        Platform.isAndroid ? Icons.arrow_back : Icons.arrow_back_ios,
+        color: Colors.grey.shade800,
+      ),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+      padding: EdgeInsets.only(
+        left: isRTL ? 0 : kDefaultPadding,
+        right: isRTL ? kDefaultPadding : 0,
+      ),
+    );
     return Tooltip(
       message: MaterialLocalizations.of(context).backButtonTooltip,
       child: GestureDetector(

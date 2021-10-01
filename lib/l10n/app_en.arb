@@ -73,5 +73,6 @@
   "noResultsFound": "No results found",
   "requestBookName": "Book and author name or any other information",
   "loginToSeeYourBookmarks": "Login to see your bookmarks",
-  "youDontHaveBookmarks": "You haven't bookmarked any product"
+  "youDontHaveBookmarks": "You haven't bookmarked any product",
+  "filter": "Filter"
 }

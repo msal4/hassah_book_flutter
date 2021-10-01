@@ -7,4 +7,6 @@ extension LocalizationsExt on BuildContext {
   AppLocalizations get loc => AppLocalizations.of(this);
 
   void Function(Locale) get setLocale => App.of(this).setLocale;
+
+  Locale get locale => Localizations.localeOf(this);
 }
