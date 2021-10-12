@@ -115,8 +115,10 @@ class _CartPageState extends State<CartPage> {
             secondaryActions: <Widget>[
               IconSlideAction(
                 color: kDangerColor,
-                iconWidget: SvgPicture.asset("assets/svg/trash.svg",
-                    width: kDefaultIconSize),
+                iconWidget: SvgPicture.asset(
+                  "assets/svg/trash.svg",
+                  width: kDefaultIconSize,
+                ),
                 onTap: () => _deleteItem(context, item),
               )
             ],
@@ -179,7 +181,9 @@ class _CartPageState extends State<CartPage> {
             Text(
               "${item.price * item.quantity} ${context.loc.iqd}",
               style: theme.textTheme.subtitle1.copyWith(
-                  fontWeight: FontWeight.bold, color: theme.accentColor),
+                fontWeight: FontWeight.bold,
+                color: theme.accentColor,
+              ),
             ),
           ],
         )
@@ -254,7 +258,7 @@ class _CartPageState extends State<CartPage> {
                         ),
                       ),
                     ),
-                    SizedBox(width: kDefaultPadding),
+                    const SizedBox(width: kDefaultPadding),
                     Expanded(
                       flex: 1,
                       child: Material(
@@ -393,7 +397,7 @@ class _CartPageState extends State<CartPage> {
                           ),
                         ),
                       ),
-                      SizedBox(height: kDefaultPadding),
+                      const SizedBox(height: kDefaultPadding),
                       GestureDetector(
                         onTap: box.isNotEmpty && result.isNotLoading
                             ? () async {
