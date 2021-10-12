@@ -96,9 +96,13 @@ class _CartPageState extends State<CartPage> {
             actionExtentRatio: kSlidableActionExtentRatio,
             child: GestureDetector(
               onTap: () {
-                Navigator.of(context).pushNamed(ProductDetailPage.routeName,
-                    arguments: ProductDetailPageArguments(
-                        id: item.id, heroTagPrefix: "none"));
+                Navigator.of(context).pushNamed(
+                  ProductDetailPage.routeName,
+                  arguments: ProductDetailPageArguments(
+                    id: item.id,
+                    heroTagPrefix: "none",
+                  ),
+                );
               },
               child: RoundContainer(
                 padding: const EdgeInsets.all(kDefaultPadding),
