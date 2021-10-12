@@ -15,12 +15,12 @@ const _kBookmarkIconWidth = 20.0;
 const _kBookmarkIconHeight = 35.0;
 
 class ProductDetailsCard extends HookWidget {
-  const ProductDetailsCard(
-      {Key key,
-      @required this.product,
-      this.isBookmarked = false,
-      this.onBookmarkTap})
-      : assert(product != null),
+  const ProductDetailsCard({
+    Key key,
+    @required this.product,
+    this.isBookmarked = false,
+    this.onBookmarkTap,
+  })  : assert(product != null),
         assert(isBookmarked != null),
         super(key: key);
 
@@ -63,7 +63,7 @@ class ProductDetailsCard extends HookWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: kDefaultPadding),
+                const SizedBox(width: kDefaultPadding),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -74,7 +74,7 @@ class ProductDetailsCard extends HookWidget {
                       Text("${context.loc.by} ${product.author.name}",
                           style: theme.textTheme.bodyText2,
                           overflow: TextOverflow.ellipsis),
-                      SizedBox(height: kDefaultPadding / 2),
+                      const SizedBox(height: kDefaultPadding / 2),
                       Chips(
                         onChipPressed: (item) => Navigator.pushNamed(
                           context,
