@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
+import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
@@ -75,7 +76,14 @@ class ProductDetailsCard extends HookWidget {
                           overflow: TextOverflow.ellipsis),
                       SizedBox(height: kDefaultPadding / 2),
                       Chips(
-                        items: product.categories.map((e) => e.name).toList(),
+                        onChipPressed: (item) => Navigator.pushNamed(
+                          context,
+                          SearchPage.routeName,
+                          arguments: SearchPageArguments(categoryID: item.id),
+                        ),
+                        items: product.categories
+                            .map((e) => ChipItem(id: e.id, label: e.name))
+                            .toList(),
                         collapsable: false,
                         backgroundColor: theme.scaffoldBackgroundColor,
                         textColor: theme.textTheme.bodyText1.color,

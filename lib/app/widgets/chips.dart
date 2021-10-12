@@ -7,20 +7,37 @@ const _kMinHorizontalPadding = kDefaultPadding / 2;
 const _kMinVerticalPadding = 2.0;
 const _kMaxNumChips = 3;
 
+class ChipItem {
+  const ChipItem({@required this.id, @required this.label});
+
+  final String id;
+  final String label;
+
+  @override
+  int get hashCode => hashValues(id, label);
+
+  @override
+  bool operator ==(Object other) {
+    return other is ChipItem && other.id == id && other.label == label;
+  }
+}
+
 class Chips extends HookWidget {
-  const Chips(
-      {Key key,
-      @required this.items,
-      this.maxNumChips = _kMaxNumChips,
-      this.collapsable = true,
-      this.textColor,
-      this.backgroundColor})
-      : assert(maxNumChips != null, "maxNumChips must not be null"),
+  const Chips({
+    Key key,
+    @required this.items,
+    this.maxNumChips = _kMaxNumChips,
+    this.collapsable = true,
+    this.textColor,
+    this.backgroundColor,
+    this.onChipPressed,
+  })  : assert(maxNumChips != null, "maxNumChips must not be null"),
         super(key: key);
 
-  final List<String> items;
+  final List<ChipItem> items;
   final int maxNumChips;
   final bool collapsable;
+  final void Function(ChipItem item) onChipPressed;
 
   /// If not provided the default [textColor] is going to be used.
   final Color textColor;
@@ -30,10 +47,10 @@ class Chips extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (this.items == null || this.items.isEmpty) return SizedBox();
+    if (this.items == null || this.items.isEmpty) return const SizedBox();
 
     final items =
-        this.items.fold(<String>[], (List<String> previousList, element) {
+        this.items.fold(<ChipItem>[], (List<ChipItem> previousList, element) {
       return !previousList.contains(element)
           ? [...previousList, element]
           : previousList;
@@ -52,11 +69,16 @@ class Chips extends HookWidget {
       runSpacing: _kMinHorizontalPadding,
       children: [
         for (final item in currentItems.value)
-          _buildChip(
-            textStyle: theme.textTheme.bodyText1,
-            text: item,
-            backgroundColor: backgroundColor,
-            textColor: textColor,
+          GestureDetector(
+            onTap: () {
+              if (onChipPressed != null) onChipPressed(item);
+            },
+            child: _buildChip(
+              textStyle: theme.textTheme.bodyText1,
+              text: item.label,
+              backgroundColor: backgroundColor,
+              textColor: textColor,
+            ),
           ),
         if (collapsable &&
             items.length > maxNumChips &&
@@ -79,7 +101,7 @@ class Chips extends HookWidget {
     @required TextStyle textStyle,
     @required Color backgroundColor,
     @required Color textColor,
-    text = "...",
+    String text = "...",
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(

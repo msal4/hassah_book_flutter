@@ -349,8 +349,16 @@ class _SearchPageState extends State<SearchPage> {
         ),
         const SizedBox(height: kDefaultPadding / 2),
         Chips(
-            items: product.categories.map((c) => c.name).toList(),
-            collapsable: false),
+          onChipPressed: (item) => Navigator.pushNamed(
+            context,
+            SearchPage.routeName,
+            arguments: SearchPageArguments(categoryID: item.id),
+          ),
+          items: product.categories
+              .map((c) => ChipItem(id: c.id, label: c.name))
+              .toList(),
+          collapsable: false,
+        ),
       ],
     );
   }

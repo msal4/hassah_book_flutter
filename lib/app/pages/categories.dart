@@ -21,7 +21,7 @@ class CategoriesPage extends HookWidget {
           document: _categoriesQuery.document, variables: {"take": 100}),
       builder: (result, {fetchMore, refetch}) {
         if (result.isLoading && result.data == null) {
-          return LoadingIndicator();
+          return const LoadingIndicator();
         }
 
         if (result.hasException) {
@@ -51,7 +51,7 @@ class CategoriesPage extends HookWidget {
               return _buildCategoryItem(context, data.categories.items[idx]);
             },
             separatorBuilder: (context, idx) =>
-                SizedBox(height: kDefaultPadding),
+                const SizedBox(height: kDefaultPadding),
             itemCount: data.categories.items.length,
           ),
         );

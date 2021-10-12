@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
+import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
@@ -163,9 +164,15 @@ class AuthorPage extends HookWidget {
                             false)
                           const SizedBox(height: kDefaultPadding),
                         Chips(
-                            items: currentProduct.value?.categories
-                                ?.map((e) => e.name)
-                                ?.toList()),
+                          onChipPressed: (item) => Navigator.pushNamed(
+                            context,
+                            SearchPage.routeName,
+                            arguments: SearchPageArguments(categoryID: item.id),
+                          ),
+                          items: currentProduct.value?.categories
+                              ?.map((e) => ChipItem(id: e.id, label: e.name))
+                              ?.toList(),
+                        ),
                         const SizedBox(height: kDefaultPadding),
                         GestureDetector(
                           onTap: () =>

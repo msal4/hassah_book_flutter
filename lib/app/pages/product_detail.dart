@@ -7,6 +7,7 @@ import 'package:hassah_book_flutter/app/models/cart_item.dart';
 import 'package:hassah_book_flutter/app/pages/author.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
+import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
@@ -67,7 +68,7 @@ class ProductDetailPage extends HookWidget {
                   variables: {"id": id ?? product.id}),
               builder: (result, {fetchMore, refetch}) {
                 if (this.product == null) {
-                  if (result.isLoading) return LoadingIndicator();
+                  if (result.isLoading) return const LoadingIndicator();
                   if (result.hasException)
                     return Retry(
                       message: result.exception.toString(),
@@ -95,7 +96,14 @@ class ProductDetailPage extends HookWidget {
                       const SizedBox(height: kDefaultPadding),
                       Center(
                         child: Chips(
-                          items: product.categories.map((e) => e.name).toList(),
+                          onChipPressed: (item) => Navigator.pushNamed(
+                            context,
+                            SearchPage.routeName,
+                            arguments: SearchPageArguments(categoryID: item.id),
+                          ),
+                          items: product.categories
+                              .map((e) => ChipItem(id: e.id, label: e.name))
+                              .toList(),
                         ),
                       ),
                       const SizedBox(height: kDefaultPadding * 2),
