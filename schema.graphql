@@ -55,28 +55,34 @@ type LoginResponse {
 
 type Mutation {
     addFavorite(productId: ID!): Boolean!
-    adminDelete(id: ID!): Boolean!
-    adminLogin(data: AdminLoginInput!): LoginResponse!
-    adminRegister(data: AdminRegisterInput!): Admin!
-    adminUpdate(data: AdminUpdateInput!): Boolean!
     cancelOrder(orderId: ID!): Boolean!
+    createAdmin(data: CreateAdminInput!): Admin!
     createAuthor(data: CreateAuthorInput!, imageFile: Upload!): Author!
     createCategory(data: CreateCategoryInput!): Category!
-    createCollection(data: CreateCollectionInput!): Collection!
+    createCollection(data: CreateCollectionInput!, imageFile: Upload!): Collection!
     createProduct(data: CreateProductInput!, imageFile: Upload!): Product!
     createPublisher(data: CreatePublisherInput!): Publisher!
     createRequest(data: CreateUserRequestInput!): UserRequest!
+    createUser(data: CreateUserInput!): User!
+    deleteAdmin(id: ID!): Boolean!
+    deleteAuthor(id: ID!): Boolean!
+    deleteCategory(id: ID!): Boolean!
+    deleteCollection(id: ID!): Boolean!
     deleteProduct(id: ID!): Boolean!
+    deletePublisher(id: ID!): Boolean!
+    deleteUser(id: ID!): Boolean!
     forgotPassword(data: SendVerificationCodeInput!): SessionInfo!
     login(data: LoginInput!): LoginResponse!
+    loginAdmin(data: LoginAdminInput!): LoginResponse!
     placeOrder(data: PlaceOrderInput!): Order!
     register(data: RegisterInput!): User!
     removeFavorite(productId: ID!): Boolean!
     removeRequest(requestId: String!): Boolean!
     sendVerificationCode(data: SendVerificationCodeInput!): SessionInfo!
-    updateAuthor(data: UpdateAuthorInput!): Boolean!
+    updateAdmin(data: UpdateAdminInput!): Boolean!
+    updateAuthor(data: UpdateAuthorInput!, imageFile: Upload): Boolean!
     updateCategory(data: UpdateCategoryInput!): Boolean!
-    updateCollection(data: UpdateCollectionInput!): Boolean!
+    updateCollection(data: UpdateCollectionInput!, imageFile: Upload): Boolean!
     updateOrder(data: UpdateOrderInput!): Boolean!
     updatePassword(data: UpdatePasswordInput!): LoginResponse!
     updatePhoneNumber(data: VerificationInput!): Boolean!
@@ -84,6 +90,7 @@ type Mutation {
     updateProfile(data: UpdateProfileInput!): Boolean!
     updatePublisher(data: UpdatePublisherInput!): Boolean!
     updateRequest(data: UpdateUserRequestInput!): Boolean!
+    updateUser(data: UpdateUserInput!): Boolean!
 }
 
 type Order {
@@ -190,7 +197,7 @@ type Publisher {
     createdAt: DateTime!
     id: ID!
     name: String!
-    products(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): [Product!]!
+    products(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedProductResponse!
     updatedAt: DateTime!
 }
 
@@ -204,6 +211,7 @@ type Purchase {
 }
 
 type Query {
+    admin(id: ID!): Admin!
     admins(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedAdminResponse!
     author(id: ID!): Author
     authors(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedAuthorResponse!
@@ -222,6 +230,7 @@ type Query {
     publisher(id: ID!): Publisher
     publishers(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedPublisherResponse!
     requests(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserRequestResponse!
+    user(id: ID!): User
     users(order: [OrderByMap!], searchQuery: String, skip: Int = 0, take: Int = 10): PaginatedUserResponse!
 }
 
@@ -285,22 +294,10 @@ enum UserRequestStatus {
     Success
 }
 
-input AdminLoginInput {
-    email: String!
-    password: String!
-}
-
-input AdminRegisterInput {
+input CreateAdminInput {
     email: String!
     name: String!
     password: String!
-}
-
-input AdminUpdateInput {
-    email: String
-    id: ID
-    name: String
-    password: String
 }
 
 input CreateAuthorInput {
@@ -346,8 +343,22 @@ input CreatePublisherInput {
     name: String!
 }
 
+input CreateUserInput {
+    address: String
+    confirmed: Boolean
+    name: String!
+    password: String!
+    phone: String!
+    province: String
+}
+
 input CreateUserRequestInput {
     content: String!
+}
+
+input LoginAdminInput {
+    email: String!
+    password: String!
 }
 
 input LoginInput {
@@ -388,6 +399,13 @@ input RegisterInput {
 input SendVerificationCodeInput {
     phoneNumber: String!
     recaptchaToken: String!
+}
+
+input UpdateAdminInput {
+    email: String
+    id: ID
+    name: String
+    password: String
 }
 
 input UpdateAuthorInput {
@@ -453,6 +471,16 @@ input UpdateProfileInput {
 input UpdatePublisherInput {
     id: ID!
     name: String!
+}
+
+input UpdateUserInput {
+    address: String
+    confirmed: Boolean
+    id: ID!
+    name: String!
+    password: String
+    phone: String!
+    province: String
 }
 
 input UpdateUserRequestInput {

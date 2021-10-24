@@ -415,6 +415,8 @@ class _CartPageState extends State<CartPage> {
                                     await runMutation({'data': input})
                                         .networkResult;
                                 if (result.hasException) {
+                                  print(
+                                      "the error is: ${result.exception.toString()}");
                                   return;
                                 }
                                 if (result.isConcrete) {
