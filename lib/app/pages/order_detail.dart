@@ -8,13 +8,13 @@ import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:intl/intl.dart';
-import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 const _kBottomSheetMinExtent = 20.0;
 const _kBottomSheetMinHeight = 460.0;
@@ -76,9 +76,10 @@ class OrderDetailPage extends StatelessWidget {
     return UnfocusOnTap(
       child: Query(
         options: QueryOptions(
-            document: _orderQuery.document,
-            variables: {"id": orderId},
-            pollInterval: _kQueryPollInterval),
+          document: _orderQuery.document,
+          variables: {"id": orderId},
+          pollInterval: _kQueryPollInterval,
+        ),
         builder: (result, {refetch, fetchMore}) {
           final appBarTitle = Text(context.loc.orderDetails);
 
@@ -104,7 +105,10 @@ class OrderDetailPage extends StatelessWidget {
                 context, initialSheetHeight, minSheetSize, order, refetch),
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
-                SliverAppBar(title: appBarTitle, floating: true, snap: true),
+                SliverAppBar(
+                    title: Text("${context.loc.order} #${order.orderNumber}"),
+                    floating: true,
+                    snap: true),
               ],
               body: _buildPurchasesList(context, order.purchases.items),
             ),
@@ -516,7 +520,8 @@ class PurchaseCard extends HookWidget {
     );
   }
 
-  Widget _buildProductInfo(BuildContext context, ThemeData theme, PurchaseMixin item) {
+  Widget _buildProductInfo(
+      BuildContext context, ThemeData theme, PurchaseMixin item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

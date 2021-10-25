@@ -79,5 +79,7 @@
   "latest": "الاحدث",
   "oldest": "الاقدم",
   "sort": "الترتيب",
-  "clear": "أزالة"
+  "clear": "أزالة",
+  "copiedToClipboard": "تم النسخ",
+  "order": "طلب"
 }

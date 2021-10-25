@@ -18,6 +18,8 @@ fragment PaginatedOrderResponse on PaginatedOrderResponse {
 fragment Order on Order {
     id
     phone
+    orderNumber
+    province
     address
     status
     totalPrice

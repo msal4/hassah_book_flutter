@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
@@ -75,8 +76,10 @@ class _OrdersList extends HookWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(context.loc.loginToSeeYourOrders,
-                style: theme.textTheme.subtitle1),
+            Text(
+              context.loc.loginToSeeYourOrders,
+              style: theme.textTheme.subtitle1,
+            ),
             const SizedBox(height: kDefaultPadding),
             Material(
               color: theme.accentColor,
@@ -89,8 +92,9 @@ class _OrdersList extends HookWidget {
                 child: Ink(
                   width: double.maxFinite,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: kDefaultPadding * 1.5,
-                      vertical: kDefaultPadding),
+                    horizontal: kDefaultPadding * 1.5,
+                    vertical: kDefaultPadding,
+                  ),
                   child: Text(
                     context.loc.login.toUpperCase(),
                     textAlign: TextAlign.center,
@@ -132,22 +136,65 @@ class _OrdersList extends HookWidget {
 
           fetchMore(options);
         },
-        child: ListView.separated(
-          padding: EdgeInsets.only(
-            top: kDefaultPadding,
-            bottom: padding.bottom + kDefaultPadding,
-            left: padding.left + kDefaultPadding,
-            right: padding.right + kDefaultPadding,
+        child: Scrollbar(
+          child: ListView.separated(
+            padding: EdgeInsets.only(
+              top: kDefaultPadding,
+              bottom: padding.bottom + kDefaultPadding,
+              left: padding.left + kDefaultPadding,
+              right: padding.right + kDefaultPadding,
+            ),
+            itemBuilder: (context, idx) {
+              final order = orders.items[idx];
+              return Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  _buildOrder(
+                    context,
+                    order: order,
+                    morePurchasesCount: order.purchases.total - 1,
+                    productImage: order.purchases.items[0].product.image,
+                  ),
+                  Positioned(
+                    top: -15,
+                    left: -(theme.textTheme.headline6.fontSize / 2),
+                    child: GestureDetector(
+                      behavior: HitTestBehavior.opaque,
+                      onTap: () {
+                        Clipboard.setData(
+                          ClipboardData(text: "#${order.orderNumber}"),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            duration: Duration(seconds: 1),
+                            content: Text(
+                              context.loc.copiedToClipboard,
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(kDefaultPadding / 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(9999),
+                          color: theme.primaryColor.withAlpha(50),
+                        ),
+                        child: Text(
+                          "#${order.orderNumber}",
+                          style: theme.textTheme.bodyText1
+                              .copyWith(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+            separatorBuilder: (context, idx) =>
+                SizedBox(height: kDefaultPadding),
+            itemCount: orders.items.length,
           ),
-          itemBuilder: (context, idx) {
-            final order = orders.items[idx];
-            return _buildOrder(context,
-                order: order,
-                morePurchasesCount: order.purchases.total - 1,
-                productImage: order.purchases.items[0].product.image);
-          },
-          separatorBuilder: (context, idx) => SizedBox(height: kDefaultPadding),
-          itemCount: orders.items.length,
         ),
       ),
     );
@@ -161,8 +208,11 @@ class _OrdersList extends HookWidget {
 
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, OrderDetailPage.routeName,
-            arguments: OrderDetailPageArguments(orderId: order.id));
+        Navigator.pushNamed(
+          context,
+          OrderDetailPage.routeName,
+          arguments: OrderDetailPageArguments(orderId: order.id),
+        );
       },
       child: RoundContainer(
         padding: const EdgeInsets.all(kDefaultPadding),
@@ -178,8 +228,10 @@ class _OrdersList extends HookWidget {
                   const SizedBox(width: kDefaultPadding),
                   Padding(
                     padding: const EdgeInsets.only(bottom: kDefaultPadding / 2),
-                    child: Text("+$morePurchasesCount",
-                        style: theme.textTheme.subtitle1),
+                    child: Text(
+                      "+$morePurchasesCount",
+                      style: theme.textTheme.subtitle1,
+                    ),
                   )
                 ],
               ],

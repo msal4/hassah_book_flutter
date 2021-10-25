@@ -79,5 +79,7 @@
   "latest": "Latest",
   "oldest": "Oldest",
   "sort": "Sort",
-  "clear": "Clear"
+  "clear": "Clear",
+  "copiedToClipboard": "Copied to clipboard",
+  "order": "Order"
 }
