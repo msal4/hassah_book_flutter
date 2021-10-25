@@ -128,8 +128,9 @@ class _AppState extends State<App> {
                   case SearchPage.routeName:
                     final arguments = settings.arguments as SearchPageArguments;
                     return createRouteWithFadeTransition(
-                      builder: (context, _, __) =>
-                          SearchPage(categoryID: arguments?.categoryID),
+                      builder: (context, _, __) => SearchPage(
+                          categoryID: arguments?.categoryID,
+                          searchQuery: arguments?.searchQuery),
                     );
                   case CaptchaPage.routeName:
                     final arguments =

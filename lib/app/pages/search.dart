@@ -24,15 +24,17 @@ const _kAuthorRadius = 50.0;
 const _kSearchQueryKey = "searchQuery";
 
 class SearchPageArguments {
-  const SearchPageArguments({this.categoryID});
+  const SearchPageArguments({this.categoryID, this.searchQuery});
 
   final String categoryID;
+  final String searchQuery;
 }
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({this.categoryID});
+  const SearchPage({this.categoryID, this.searchQuery});
 
   final String categoryID;
+  final String searchQuery;
 
   static const routeName = "/search";
 
@@ -43,6 +45,8 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   final _searchQuery = SearchQuery();
   final _categorySearchQuery = CategorySearchQuery();
+
+  TextEditingController _searchController = TextEditingController();
 
   String _currentCategoryID;
   OrderBy _currentSort;
@@ -56,6 +60,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     _currentCategoryID = widget.categoryID;
+    _query = widget.searchQuery ?? "";
+    _searchController.text = _query;
 
     super.initState();
   }
@@ -63,6 +69,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void dispose() {
     _timer?.cancel();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -136,7 +143,8 @@ class _SearchPageState extends State<SearchPage> {
                               updatePaginatedResponse(
                                   oldData, newData, "products"),
                           variables: {
-                            "searchQuery": _query,
+                            "id": _currentCategoryID,
+                            _kSearchQueryKey: _query,
                             "skip": data.category.products.items.length
                           },
                         );
@@ -349,10 +357,12 @@ class _SearchPageState extends State<SearchPage> {
         ),
         const SizedBox(height: kDefaultPadding / 2),
         Chips(
-          onChipPressed: (item) => Navigator.pushNamed(
+          maxNumChips: 2,
+          onChipPressed: (item) => Navigator.pushReplacementNamed(
             context,
             SearchPage.routeName,
-            arguments: SearchPageArguments(categoryID: item.id),
+            arguments:
+                SearchPageArguments(categoryID: item.id, searchQuery: _query),
           ),
           items: product.categories
               .map((c) => ChipItem(id: c.id, label: c.name))
@@ -420,6 +430,7 @@ class _SearchPageState extends State<SearchPage> {
           const SizedBox(width: kDefaultPadding / 2),
           Expanded(
             child: TextField(
+              controller: _searchController,
               onChanged: (value) {
                 if (_timer?.isActive ?? false) _timer?.cancel();
 
