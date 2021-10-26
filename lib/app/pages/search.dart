@@ -14,6 +14,7 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/common/utils/image.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
@@ -290,7 +291,7 @@ class _SearchPageState extends State<SearchPage> {
     final theme = Theme.of(context);
 
     if (authors.length == 0) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     return Container(
@@ -324,7 +325,7 @@ class _SearchPageState extends State<SearchPage> {
                 backgroundColor: theme.backgroundColor,
                 backgroundImage:
                     const AssetImage("assets/images/product_placeholder.png"),
-                foregroundImage: NetworkImage(author.image),
+                foregroundImage: NetworkImage(imageURL(author.image, 200)),
               ),
               const SizedBox(height: 5),
               Text(
@@ -383,7 +384,7 @@ class _SearchPageState extends State<SearchPage> {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
         child: FadeInImage.assetNetwork(
           placeholder: "assets/images/product_placeholder.png",
-          image: product.image,
+          image: imageURL(product.image, 300),
           fit: BoxFit.cover,
           width: kSmallProductImageWidth,
           height: kSmallProductImageHeight,

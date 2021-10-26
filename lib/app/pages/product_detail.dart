@@ -17,6 +17,7 @@ import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import "package:path/path.dart" as path;
 import 'package:provider/provider.dart';
 
 class ProductDetailPageArguments {
@@ -314,7 +315,7 @@ class ProductDetailPage extends HookWidget {
           ),
           child: FadeInImage.assetNetwork(
             placeholder: "assets/images/product_placeholder.png",
-            image: image,
+            image: "${path.join(kImageCDN, image)}?w=300&h=300",
             fit: BoxFit.cover,
             height: kDefaultImageHeight,
             width: kDefaultImageWidth,

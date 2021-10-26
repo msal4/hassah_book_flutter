@@ -10,6 +10,7 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
+import "package:path/path.dart" as path;
 
 const _kBookmarkIconWidth = 20.0;
 const _kBookmarkIconHeight = 35.0;
@@ -38,9 +39,14 @@ class ProductDetailsCard extends HookWidget {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, ProductDetailPage.routeName,
-                arguments: ProductDetailPageArguments(
-                    product: product, heroTagPrefix: heroTagPrefix));
+            Navigator.pushNamed(
+              context,
+              ProductDetailPage.routeName,
+              arguments: ProductDetailPageArguments(
+                product: product,
+                heroTagPrefix: heroTagPrefix,
+              ),
+            );
           },
           child: RoundContainer(
             padding: const EdgeInsets.all(kDefaultPadding),
@@ -56,7 +62,8 @@ class ProductDetailsCard extends HookWidget {
                             BorderRadius.circular(kDefaultBorderRadius)),
                     child: FadeInImage.assetNetwork(
                       placeholder: "assets/images/product_placeholder.png",
-                      image: product.image,
+                      image:
+                          path.join(kImageCDN, product.image) + "?w=200&h=200",
                       fit: BoxFit.cover,
                       width: kSmallProductImageWidth,
                       height: kSmallProductImageHeight,

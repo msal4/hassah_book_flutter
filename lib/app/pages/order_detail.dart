@@ -15,6 +15,7 @@ import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:intl/intl.dart';
+import "package:path/path.dart" as path;
 
 const _kBottomSheetMinExtent = 20.0;
 const _kBottomSheetMinHeight = 460.0;
@@ -511,7 +512,7 @@ class PurchaseCard extends HookWidget {
             borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
         child: FadeInImage.assetNetwork(
           placeholder: "assets/images/product_placeholder.png",
-          image: purchase.product.image,
+          image: path.join(kImageCDN, purchase.product.image) + "?w=300&h=300",
           fit: BoxFit.cover,
           width: kSmallProductImageWidth,
           height: kSmallProductImageHeight,

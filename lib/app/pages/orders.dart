@@ -14,6 +14,7 @@ import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import "package:path/path.dart" as path;
 import 'package:provider/provider.dart';
 
 class OrdersPage extends StatelessWidget {
@@ -166,7 +167,7 @@ class _OrdersList extends HookWidget {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            duration: Duration(seconds: 1),
+                            duration: const Duration(seconds: 1),
                             content: Text(
                               context.loc.copiedToClipboard,
                               textAlign: TextAlign.center,
@@ -192,7 +193,7 @@ class _OrdersList extends HookWidget {
               );
             },
             separatorBuilder: (context, idx) =>
-                SizedBox(height: kDefaultPadding),
+                const SizedBox(height: kDefaultPadding),
             itemCount: orders.items.length,
           ),
         ),
@@ -277,7 +278,7 @@ class _OrdersList extends HookWidget {
           borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
       child: FadeInImage.assetNetwork(
         placeholder: "assets/images/product_placeholder.png",
-        image: url,
+        image: path.join(kImageCDN, url) + "?w=100&h=100",
         fit: BoxFit.cover,
         width: kSmallProductImageWidth / 1.5,
         height: kSmallProductImageHeight / 1.5,

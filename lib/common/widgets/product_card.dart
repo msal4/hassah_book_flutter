@@ -4,6 +4,7 @@ import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/common/utils/image.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 
 class ProductCard extends HookWidget {
@@ -49,19 +50,23 @@ class ProductCard extends HookWidget {
                             BorderRadius.circular(kDefaultBorderRadius)),
                     child: FadeInImage.assetNetwork(
                       placeholder: "assets/images/product_placeholder.png",
-                      image: product.image,
+                      image: imageURL(product.image, 300),
                       fit: BoxFit.cover,
                       width: width,
                       height: kDefaultImageHeight,
                     ),
                   ),
                 ),
-                Text(product.name,
-                    style: textTheme.headline6,
-                    overflow: TextOverflow.ellipsis),
-                Text("${product.author.name}",
-                    style: textTheme.bodyText2,
-                    overflow: TextOverflow.ellipsis),
+                Text(
+                  product.name,
+                  style: textTheme.headline6,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                Text(
+                  "${product.author.name}",
+                  style: textTheme.bodyText2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
             ),
           ),

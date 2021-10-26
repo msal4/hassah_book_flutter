@@ -8,6 +8,7 @@ import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/common/utils/image.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
@@ -53,7 +54,7 @@ class AuthorPage extends HookWidget {
           builder: (result, {fetchMore, refetch}) {
             if (result.data == null) {
               if (result.isLoading) {
-                return LoadingIndicator();
+                return const LoadingIndicator();
               }
 
               if (result.hasException) {
@@ -76,8 +77,9 @@ class AuthorPage extends HookWidget {
                     radius: kAvatarRadius,
                     backgroundColor: theme.backgroundColor,
                     backgroundImage: const AssetImage(
-                        "assets/images/product_placeholder.png"),
-                    foregroundImage: NetworkImage(author.image),
+                      "assets/images/product_placeholder.png",
+                    ),
+                    foregroundImage: NetworkImage(imageURL(author.image, 300)),
                   ),
                 ),
                 const SizedBox(height: kDefaultPadding),
@@ -239,7 +241,7 @@ class ProductImage extends HookWidget {
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
             child: FadeInImage.assetNetwork(
               placeholder: "assets/images/product_placeholder.png",
-              image: product.image,
+              image: imageURL(product.image, 500),
               fit: BoxFit.cover,
               width: kImageWidth,
             ),
