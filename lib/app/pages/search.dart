@@ -699,7 +699,12 @@ class FilterDialog extends HookWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.clear),
+                          Icon(
+                            Icons.clear,
+                            color: currentCategory.value != null
+                                ? kDangerColor
+                                : null,
+                          ),
                           const SizedBox(width: kDefaultPadding),
                           Text(
                             context.loc.clear.toUpperCase(),
