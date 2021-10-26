@@ -54,7 +54,9 @@ class HomePage extends HookWidget {
 
             final category = home.categories.items[index - 1];
             return ProductsRow(
-                title: category.name, items: category.products.items);
+              title: category.name,
+              items: category.products.items,
+            );
           },
         );
       },

@@ -17,3 +17,5 @@ const kDefaultImageHeight = 220.0;
 const kSmallProductImageWidth = kDefaultImageWidth / 2;
 const kSmallProductImageHeight = kDefaultImageHeight / 2;
 const kImageCDN = "https://hassahbook.imgix.net";
+
+const kCoverAspectRatio = 6 / 9;

@@ -14,10 +14,10 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
+import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import "package:path/path.dart" as path;
 import 'package:provider/provider.dart';
 
 class ProductDetailPageArguments {
@@ -109,7 +109,11 @@ class ProductDetailPage extends HookWidget {
                       ),
                       const SizedBox(height: kDefaultPadding * 2),
                       _buildProductHeader(
-                          context, product, data?.product, refetch),
+                        context,
+                        product,
+                        data?.product,
+                        refetch,
+                      ),
                       const SizedBox(height: kDefaultPadding),
                       RoundContainer(
                         child: Row(
@@ -303,23 +307,14 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Center _buildProductImage(String id, String image, String heroTagPrefix) {
+  Widget _buildProductImage(String id, String image, String heroTagPrefix) {
     return Center(
       child: Hero(
         tag: "image-$heroTagPrefix-$id",
-        child: Container(
+        child: ProductCoverImage(
+          image: product.image,
+          resolution: 300,
           width: kDefaultImageWidth,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-          ),
-          child: FadeInImage.assetNetwork(
-            placeholder: "assets/images/product_placeholder.png",
-            image: "${path.join(kImageCDN, image)}?w=300&h=300",
-            fit: BoxFit.cover,
-            height: kDefaultImageHeight,
-            width: kDefaultImageWidth,
-          ),
         ),
       ),
     );

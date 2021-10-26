@@ -33,7 +33,9 @@ class ProductCard extends HookWidget {
               context,
               ProductDetailPage.routeName,
               arguments: ProductDetailPageArguments(
-                  product: product, heroTagPrefix: heroTagPrefix),
+                product: product,
+                heroTagPrefix: heroTagPrefix,
+              ),
             );
           },
           child: Container(
@@ -43,18 +45,10 @@ class ProductCard extends HookWidget {
               children: [
                 Hero(
                   tag: "image-$heroTagPrefix-${product.id}",
-                  child: Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(kDefaultBorderRadius)),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: "assets/images/product_placeholder.png",
-                      image: imageURL(product.image, 300),
-                      fit: BoxFit.cover,
-                      width: width,
-                      height: kDefaultImageHeight,
-                    ),
+                  child: ProductCoverImage(
+                    image: product.image,
+                    width: width,
+                    resolution: 300,
                   ),
                 ),
                 Text(
@@ -70,6 +64,45 @@ class ProductCard extends HookWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ProductCoverImage extends StatelessWidget {
+  const ProductCoverImage(
+      {Key key,
+      @required this.image,
+      this.width = kDefaultImageWidth,
+      this.resolution = 500})
+      : super(key: key);
+
+  final String image;
+  final double width;
+  final int resolution;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+      ),
+      child: AspectRatio(
+        aspectRatio: kCoverAspectRatio,
+        child: FadeInImage.assetNetwork(
+          imageErrorBuilder: (ctx, obj, trace) {
+            return Image.asset(
+              "assets/images/product_placeholder.png",
+              fit: BoxFit.cover,
+            );
+          },
+          placeholder: "assets/images/product_placeholder.png",
+          image: imageURL(image, resolution),
+          fit: BoxFit.cover,
+          width: width,
         ),
       ),
     );

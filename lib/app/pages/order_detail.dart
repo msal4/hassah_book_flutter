@@ -12,10 +12,10 @@ import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
+import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:intl/intl.dart';
-import "package:path/path.dart" as path;
 
 const _kBottomSheetMinExtent = 20.0;
 const _kBottomSheetMinHeight = 460.0;
@@ -506,17 +506,10 @@ class PurchaseCard extends HookWidget {
   Widget _buildImage(String heroTagPrefix) {
     return Hero(
       tag: "image-$heroTagPrefix-${purchase.product.id}",
-      child: Container(
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-        child: FadeInImage.assetNetwork(
-          placeholder: "assets/images/product_placeholder.png",
-          image: path.join(kImageCDN, purchase.product.image) + "?w=300&h=300",
-          fit: BoxFit.cover,
-          width: kSmallProductImageWidth,
-          height: kSmallProductImageHeight,
-        ),
+      child: ProductCoverImage(
+        image: purchase.product.image,
+        width: kSmallProductImageWidth,
+        resolution: 150,
       ),
     );
   }

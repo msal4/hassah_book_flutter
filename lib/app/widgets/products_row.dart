@@ -29,9 +29,10 @@ class ProductsRow extends StatelessWidget {
       children: [
         Padding(
           padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
-          child: Text(title, style: textTheme.headline6.copyWith(color: Colors.grey.shade800)),
+          child: Text(title,
+              style: textTheme.headline6.copyWith(color: Colors.grey.shade800)),
         ),
-        SizedBox(height: kDefaultPadding / 2),
+        const SizedBox(height: kDefaultPadding / 2),
         Container(
           height: _kDefaultRowHeight,
           child: ListView.separated(
@@ -43,7 +44,7 @@ class ProductsRow extends StatelessWidget {
 
               return ProductCard(product: product);
             },
-            separatorBuilder: (_, __) => SizedBox(width: kDefaultPadding),
+            separatorBuilder: (_, __) => const SizedBox(width: kDefaultPadding),
           ),
         ),
       ],

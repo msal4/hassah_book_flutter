@@ -11,6 +11,7 @@ import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/image.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
+import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
 const kImageWidth = kDefaultImageWidth * 1.2;
@@ -232,19 +233,13 @@ class ProductImage extends HookWidget {
               product: product, heroTagPrefix: heroTagPrefix),
         );
       },
-      child: Hero(
-        tag: "image-$heroTagPrefix-${product.id}",
-        child: Center(
-          child: Container(
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-            child: FadeInImage.assetNetwork(
-              placeholder: "assets/images/product_placeholder.png",
-              image: imageURL(product.image, 500),
-              fit: BoxFit.cover,
-              width: kImageWidth,
-            ),
+      child: Align(
+        child: Hero(
+          tag: "image-$heroTagPrefix-${product.id}",
+          child: ProductCoverImage(
+            image: product.image,
+            width: kDefaultImageWidth * 1.2,
+            resolution: 300,
           ),
         ),
       ),

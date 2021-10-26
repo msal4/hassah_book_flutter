@@ -11,6 +11,7 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -196,18 +197,10 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _buildImage(String url) {
-    return Container(
+    return ProductCoverImage(
+      image: url,
       width: kDefaultImageWidth / 2,
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-      child: FadeInImage.assetNetwork(
-        placeholder: "assets/images/product_placeholder.png",
-        image: url,
-        fit: BoxFit.cover,
-        width: kSmallProductImageWidth,
-        height: kSmallProductImageHeight,
-      ),
+      resolution: 150,
     );
   }
 

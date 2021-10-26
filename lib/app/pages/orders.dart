@@ -13,8 +13,8 @@ import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
+import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
-import "package:path/path.dart" as path;
 import 'package:provider/provider.dart';
 
 class OrdersPage extends StatelessWidget {
@@ -147,49 +147,11 @@ class _OrdersList extends HookWidget {
             ),
             itemBuilder: (context, idx) {
               final order = orders.items[idx];
-              return Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  _buildOrder(
-                    context,
-                    order: order,
-                    morePurchasesCount: order.purchases.total - 1,
-                    productImage: order.purchases.items[0].product.image,
-                  ),
-                  Positioned(
-                    top: -15,
-                    left: -(theme.textTheme.headline6.fontSize / 2),
-                    child: GestureDetector(
-                      behavior: HitTestBehavior.opaque,
-                      onTap: () {
-                        Clipboard.setData(
-                          ClipboardData(text: "#${order.orderNumber}"),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            duration: const Duration(seconds: 1),
-                            content: Text(
-                              context.loc.copiedToClipboard,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(kDefaultPadding / 4),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(9999),
-                          color: theme.primaryColor.withAlpha(50),
-                        ),
-                        child: Text(
-                          "#${order.orderNumber}",
-                          style: theme.textTheme.bodyText1
-                              .copyWith(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+              return _buildOrder(
+                context,
+                order: order,
+                morePurchasesCount: order.purchases.total - 1,
+                productImage: order.purchases.items[0].product.image,
               );
             },
             separatorBuilder: (context, idx) =>
@@ -206,8 +168,30 @@ class _OrdersList extends HookWidget {
       @required int morePurchasesCount,
       @required String productImage}) {
     final theme = Theme.of(context);
+    final onCopy = () {
+      Clipboard.setData(
+        ClipboardData(text: "#${order.orderNumber}"),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(kDefaultBorderRadius),
+              topRight: Radius.circular(kDefaultBorderRadius),
+            ),
+          ),
+          duration: const Duration(seconds: 1),
+          content: Text(
+            context.loc.copiedToClipboard,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyText1.copyWith(color: Colors.white),
+          ),
+        ),
+      );
+    };
 
     return GestureDetector(
+      onLongPress: onCopy,
       onTap: () {
         Navigator.pushNamed(
           context,
@@ -215,74 +199,93 @@ class _OrdersList extends HookWidget {
           arguments: OrderDetailPageArguments(orderId: order.id),
         );
       },
-      child: RoundContainer(
-        padding: const EdgeInsets.all(kDefaultPadding),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          RoundContainer(
+            padding: const EdgeInsets.all(kDefaultPadding),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildImage(productImage),
-                if (morePurchasesCount > 0) ...[
-                  const SizedBox(width: kDefaultPadding),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: kDefaultPadding / 2),
-                    child: Text(
-                      "+$morePurchasesCount",
-                      style: theme.textTheme.subtitle1,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    _buildImage(productImage),
+                    if (morePurchasesCount > 0) ...[
+                      const SizedBox(width: kDefaultPadding),
+                      Padding(
+                        padding:
+                            const EdgeInsets.only(bottom: kDefaultPadding / 2),
+                        child: Text(
+                          "+$morePurchasesCount",
+                          style: theme.textTheme.subtitle1,
+                        ),
+                      )
+                    ],
+                  ],
+                ),
+                const SizedBox(width: kDefaultPadding),
+                _buildDivider(),
+                const SizedBox(width: kDefaultPadding),
+                Column(
+                  children: [
+                    Text(
+                      context.loc.status,
+                      style: theme.textTheme.bodyText1
+                          .copyWith(color: Colors.grey.shade600),
                     ),
-                  )
-                ],
-              ],
-            ),
-            const SizedBox(width: kDefaultPadding),
-            _buildDivider(),
-            const SizedBox(width: kDefaultPadding),
-            Column(
-              children: [
-                Text(
-                  context.loc.status,
-                  style: theme.textTheme.bodyText1
-                      .copyWith(color: Colors.grey.shade600),
+                    Text(humanizeOrderStatus(context, order.status),
+                        style: theme.textTheme.subtitle1),
+                  ],
                 ),
-                Text(humanizeOrderStatus(context, order.status),
-                    style: theme.textTheme.subtitle1),
-              ],
-            ),
-            const SizedBox(width: kDefaultPadding),
-            _buildDivider(),
-            const SizedBox(width: kDefaultPadding),
-            Column(
-              children: [
-                Text(
-                  context.loc.total,
-                  style: theme.textTheme.bodyText1
-                      .copyWith(color: Colors.grey.shade600),
+                const SizedBox(width: kDefaultPadding),
+                _buildDivider(),
+                const SizedBox(width: kDefaultPadding),
+                Column(
+                  children: [
+                    Text(
+                      context.loc.total,
+                      style: theme.textTheme.bodyText1
+                          .copyWith(color: Colors.grey.shade600),
+                    ),
+                    Text("${order.totalPrice} ${context.loc.iqd}",
+                        style: theme.textTheme.subtitle1),
+                  ],
                 ),
-                Text("${order.totalPrice} ${context.loc.iqd}",
-                    style: theme.textTheme.subtitle1),
               ],
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            top: -15,
+            left: -(theme.textTheme.headline6.fontSize / 2),
+            child: GestureDetector(
+              onTap: onCopy,
+              child: Container(
+                padding: const EdgeInsets.all(kDefaultPadding / 4),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(9999),
+                  color: theme.primaryColor.withAlpha(50),
+                ),
+                child: Text(
+                  "#${order.orderNumber}",
+                  style: theme.textTheme.bodyText1.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
 
-  Widget _buildImage(String url) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-      child: FadeInImage.assetNetwork(
-        placeholder: "assets/images/product_placeholder.png",
-        image: path.join(kImageCDN, url) + "?w=100&h=100",
-        fit: BoxFit.cover,
-        width: kSmallProductImageWidth / 1.5,
-        height: kSmallProductImageHeight / 1.5,
-      ),
+  Widget _buildImage(String image) {
+    return ProductCoverImage(
+      image: image,
+      width: kSmallProductImageWidth / 1.5,
+      resolution: 100,
     );
   }
 
