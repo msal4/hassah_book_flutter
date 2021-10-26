@@ -3,7 +3,7 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
-const _kDefaultRowHeight = 300.0;
+const _kDefaultRowHeight = 280.0;
 
 class ProductsRow extends StatelessWidget {
   const ProductsRow({Key key, @required this.title, @required this.items})
