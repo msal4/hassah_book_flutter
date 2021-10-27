@@ -225,10 +225,19 @@ class ProductDetailPage extends HookWidget {
 
                                 return GestureDetector(
                                   onTap: data != null
-                                      ? () => box.put(
-                                          data.product.id,
-                                          CartItem.fromProduct(
-                                              data.product, quantity.value))
+                                      ? () async {
+                                          await box.put(
+                                            data.product.id,
+                                            CartItem.fromProduct(
+                                                data.product, quantity.value),
+                                          );
+                                          showSnackBar(
+                                            context,
+                                            message:
+                                                context.loc.productAddedToCart,
+                                            type: SnackBarType.success,
+                                          );
+                                        }
                                       : null,
                                   child: RoundContainer(
                                     borderRadius: BorderRadius.circular(9999),

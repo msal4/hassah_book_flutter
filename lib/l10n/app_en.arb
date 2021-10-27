@@ -83,5 +83,6 @@
   "copiedToClipboard": "Copied to clipboard",
   "order": "Order",
   "productAddedToBookmarks":  "Product added to your bookmarks",
-  "productRemovedFromBookmarks":  "Product removed from your bookmarks"
+  "productRemovedFromBookmarks":  "Product removed from your bookmarks",
+  "productAddedToCart":  "Product added to your cart"
 }
