@@ -73,13 +73,13 @@ class BookmarksPage extends HookWidget {
 
     if (hasException) {
       return Retry(
-        message: exception.toString(),
+        message: context.loc.somethingWentWrong,
         onRetry: bookmarks.getBookmarks,
       );
     }
 
     if (isLoading && data == null) {
-      return LoadingIndicator();
+      return const LoadingIndicator();
     }
 
     return RefreshIndicator(

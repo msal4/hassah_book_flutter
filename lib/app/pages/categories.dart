@@ -6,6 +6,7 @@ import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
@@ -25,7 +26,8 @@ class CategoriesPage extends HookWidget {
         }
 
         if (result.hasException) {
-          return Retry(message: result.exception.toString(), onRetry: refetch);
+          return Retry(
+              message: context.loc.somethingWentWrong, onRetry: refetch);
         }
 
         final data = _categoriesQuery.parse(result.data);

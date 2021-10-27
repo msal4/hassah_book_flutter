@@ -25,11 +25,14 @@ class HomePage extends HookWidget {
       builder: (QueryResult result,
           {Future<QueryResult> Function() refetch, FetchMore fetchMore}) {
         if (result.hasException) {
-          return Retry(message: result.exception.toString(), onRetry: refetch);
+          return Retry(
+            message: context.loc.somethingWentWrong,
+            onRetry: refetch,
+          );
         }
 
         if (result.isLoading) {
-          return LoadingIndicator();
+          return const LoadingIndicator();
         }
 
         final home = _homeQuery.parse(result.data);

@@ -73,7 +73,7 @@ class ProductDetailPage extends HookWidget {
                   if (result.isLoading) return const LoadingIndicator();
                   if (result.hasException)
                     return Retry(
-                      message: result.exception.toString(),
+                      message: context.loc.somethingWentWrong,
                       onRetry: refetch,
                     );
                 }
