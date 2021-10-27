@@ -19,7 +19,7 @@ class ProductsRow extends StatelessWidget {
     final rightPadding = MediaQuery.of(context).padding.right + kDefaultPadding;
 
     if (items.length == 0) {
-      return SizedBox();
+      return const SizedBox();
     }
 
     final textTheme = Theme.of(context).textTheme;
