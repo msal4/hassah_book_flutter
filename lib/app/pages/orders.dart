@@ -12,6 +12,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
+import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
@@ -172,22 +173,7 @@ class _OrdersList extends HookWidget {
       Clipboard.setData(
         ClipboardData(text: "#${order.orderNumber}"),
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(kDefaultBorderRadius),
-              topRight: Radius.circular(kDefaultBorderRadius),
-            ),
-          ),
-          duration: const Duration(seconds: 1),
-          content: Text(
-            context.loc.copiedToClipboard,
-            textAlign: TextAlign.center,
-            style: theme.textTheme.bodyText1.copyWith(color: Colors.white),
-          ),
-        ),
-      );
+      showSnackBar(context, message: context.loc.copiedToClipboard);
     };
 
     return GestureDetector(

@@ -466,8 +466,8 @@ input UpdateProductInput {
 
 input UpdateProfileInput {
     address: String!
-    id: ID!
     name: String!
+    province: String!
 }
 
 input UpdatePublisherInput {
