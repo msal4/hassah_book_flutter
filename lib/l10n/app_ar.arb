@@ -81,5 +81,7 @@
   "sort": "الترتيب",
   "clear": "أزالة",
   "copiedToClipboard": "تم النسخ",
-  "order": "طلب"
+  "order": "طلب",
+  "productAddedToBookmarks":  "تم اضافة المنتج الى قائمتك",
+  "productRemovedFromBookmarks":  "تم ازالة المنتج من قائمتك"
 }

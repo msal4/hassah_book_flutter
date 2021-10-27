@@ -13,6 +13,7 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
@@ -390,8 +391,17 @@ class _BookmarkState extends State<Bookmark> {
 
             if (isFavorite) {
               await bookmarks.removeBookmark(productId);
+              showSnackBar(
+                context,
+                message: context.loc.productRemovedFromBookmarks,
+              );
             } else {
               await bookmarks.addBookmark(productId);
+              showSnackBar(
+                context,
+                message: context.loc.productAddedToBookmarks,
+                type: SnackBarType.success,
+              );
             }
           },
           icon: Container(

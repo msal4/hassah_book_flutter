@@ -67,8 +67,11 @@ class ProfileForm extends HookWidget {
       options: MutationOptions(document: _updateProfileMutation.document),
       builder: (updateProfile, result) {
         return ListView(
-          padding: const EdgeInsets.all(kDefaultPadding)
-              .copyWith(bottom: padding.bottom + kDefaultPadding),
+          padding: const EdgeInsets.all(kDefaultPadding).copyWith(
+            bottom: padding.bottom + kDefaultPadding,
+            left: padding.left + kDefaultPadding,
+            right: padding.right + kDefaultPadding,
+          ),
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(kDefaultBorderRadius),

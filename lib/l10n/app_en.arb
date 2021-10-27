@@ -81,5 +81,7 @@
   "sort": "Sort",
   "clear": "Clear",
   "copiedToClipboard": "Copied to clipboard",
-  "order": "Order"
+  "order": "Order",
+  "productAddedToBookmarks":  "Product added to your bookmarks",
+  "productRemovedFromBookmarks":  "Product removed from your bookmarks"
 }

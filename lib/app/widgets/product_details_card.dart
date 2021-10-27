@@ -58,8 +58,8 @@ class ProductDetailsCard extends HookWidget {
                   child: Container(
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
-                        borderRadius:
-                            BorderRadius.circular(kDefaultBorderRadius)),
+                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                    ),
                     child: FadeInImage.assetNetwork(
                       placeholder: "assets/images/product_placeholder.png",
                       image:
@@ -124,8 +124,11 @@ class ProductDetailsCard extends HookWidget {
                       bottomLeft: Radius.circular(5)),
                 ),
                 padding: const EdgeInsets.only(top: _kBookmarkIconHeight / 4),
-                child:
-                    Icon(Icons.bookmark_rounded, color: Colors.white, size: 15),
+                child: const Icon(
+                  Icons.bookmark_rounded,
+                  color: Colors.white,
+                  size: 15,
+                ),
               ),
             ),
           ),
