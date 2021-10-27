@@ -18,6 +18,7 @@ import 'package:hassah_book_flutter/common/utils/image.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
+import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 
 const _kDebounceDuration = 500;
@@ -377,18 +378,10 @@ class _SearchPageState extends State<SearchPage> {
   Widget _buildImage(ProductMixin product) {
     return Hero(
       tag: "image-$_heroTagPrefix-${product.id}",
-      child: Container(
-        width: kDefaultImageWidth / 2,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
-        child: FadeInImage.assetNetwork(
-          placeholder: "assets/images/product_placeholder.png",
-          image: imageURL(product.image, 300),
-          fit: BoxFit.cover,
-          width: kSmallProductImageWidth,
-          height: kSmallProductImageHeight,
-        ),
+      child: ProductCoverImage(
+        image: product.image,
+        width: kSmallProductImageWidth,
+        resolution: 150,
       ),
     );
   }

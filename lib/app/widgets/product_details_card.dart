@@ -10,7 +10,7 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
-import "package:path/path.dart" as path;
+import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 
 const _kBookmarkIconWidth = 20.0;
 const _kBookmarkIconHeight = 35.0;
@@ -55,19 +55,10 @@ class ProductDetailsCard extends HookWidget {
               children: [
                 Hero(
                   tag: "image-$heroTagPrefix-${product.id}",
-                  child: Container(
-                    clipBehavior: Clip.antiAlias,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
-                    ),
-                    child: FadeInImage.assetNetwork(
-                      placeholder: "assets/images/product_placeholder.png",
-                      image:
-                          path.join(kImageCDN, product.image) + "?w=200&h=200",
-                      fit: BoxFit.cover,
-                      width: kSmallProductImageWidth,
-                      height: kSmallProductImageHeight,
-                    ),
+                  child: ProductCoverImage(
+                    image: product.image,
+                    width: kSmallProductImageWidth,
+                    resolution: 150,
                   ),
                 ),
                 const SizedBox(width: kDefaultPadding),
