@@ -127,7 +127,7 @@ class _OrdersList extends HookWidget {
     return RefreshIndicator(
       onRefresh: refetch,
       child: PaginationHandler(
-        enabled: !result.isLoading && orders.items.length < orders.total,
+        enabled: result.isNotLoading && orders.hasMore,
         fetchMore: () {
           final options = FetchMoreOptions(
             document: query.document,
