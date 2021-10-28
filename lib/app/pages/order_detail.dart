@@ -229,7 +229,8 @@ class OrderDetailPage extends StatelessWidget {
                                   textAlign: TextAlign.center,
                                 ),
                                 Text(humanizeOrderStatus(context, order.status),
-                                    style: theme.textTheme.subtitle1,
+                                    style: theme.textTheme.subtitle1
+                                        .copyWith(color: order.status.color),
                                     textAlign: TextAlign.center),
                               ],
                             ),

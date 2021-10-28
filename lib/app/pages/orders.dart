@@ -251,7 +251,7 @@ class _OrdersList extends HookWidget {
                 padding: const EdgeInsets.all(kDefaultPadding / 4),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(9999),
-                  color: theme.primaryColor.withAlpha(50),
+                  color: order.status.color.withAlpha(50),
                 ),
                 child: Text(
                   "#${order.orderNumber}",
