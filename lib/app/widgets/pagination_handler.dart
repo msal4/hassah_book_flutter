@@ -35,18 +35,20 @@ class PaginationHandler extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!enabled) return child;
-
     return NotificationListener<ScrollNotification>(
-      onNotification: (scrollNotification) {
-        if (enabled &&
-            scrollNotification is ScrollUpdateNotification &&
-            scrollNotification.metrics.axis == axis &&
-            scrollNotification.metrics.pixels + _kDefaultFetchMoreThreshold >= scrollNotification.metrics.maxScrollExtent) {
-          fetchMore();
-        }
-        return false;
-      },
+      onNotification: enabled
+          ? (scrollNotification) {
+              if (enabled &&
+                  scrollNotification is ScrollUpdateNotification &&
+                  scrollNotification.metrics.axis == axis &&
+                  scrollNotification.metrics.pixels +
+                          _kDefaultFetchMoreThreshold >=
+                      scrollNotification.metrics.maxScrollExtent) {
+                fetchMore();
+              }
+              return false;
+            }
+          : null,
       child: child,
     );
   }
