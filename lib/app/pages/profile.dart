@@ -11,6 +11,7 @@ import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatelessWidget {
   static const routeName = "/profile";
@@ -251,6 +252,9 @@ class ProfilePage extends StatelessWidget {
               ),
               title: Text(context.loc.privacyPolicy),
               trailing: const Icon(Icons.chevron_right),
+              onTap: () {
+                launch("https://hassah.netlify.app/privacy_policy");
+              },
             ),
           ),
         ],
