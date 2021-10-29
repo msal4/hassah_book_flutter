@@ -24,7 +24,6 @@ class BookmarksPage extends HookWidget {
 
     final isLoading = bookmarks.isLoading;
     final hasException = bookmarks.hasException;
-    final exception = bookmarks.exception;
     final data = bookmarks.bookmarks;
 
     useEffect(() {

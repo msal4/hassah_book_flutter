@@ -16,6 +16,7 @@ import 'package:hassah_book_flutter/app/pages/bookmarks.dart';
 import 'package:hassah_book_flutter/app/pages/captcha.dart';
 import 'package:hassah_book_flutter/app/pages/cart.dart';
 import 'package:hassah_book_flutter/app/pages/categories.dart';
+import 'package:hassah_book_flutter/app/pages/contact_us.dart';
 import 'package:hassah_book_flutter/app/pages/home.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/order_detail.dart';
@@ -129,8 +130,9 @@ class _AppState extends State<App> {
                     final arguments = settings.arguments as SearchPageArguments;
                     return createRouteWithFadeTransition(
                       builder: (context, _, __) => SearchPage(
-                          categoryID: arguments?.categoryID,
-                          searchQuery: arguments?.searchQuery),
+                        categoryID: arguments?.categoryID,
+                        searchQuery: arguments?.searchQuery,
+                      ),
                     );
                   case CaptchaPage.routeName:
                     final arguments =
@@ -177,6 +179,7 @@ class _AppState extends State<App> {
                 LoginPage.routeName: (context) => LoginPage(),
                 SignupPage.routeName: (context) => SignupPage(),
                 ProfilePage.routeName: (context) => ProfilePage(),
+                ContactUsPage.routeName: (context) => ContactUsPage(),
                 PersonalInformationPage.routeName: (context) =>
                     PersonalInformationPage(),
                 OrdersPage.routeName: (context) => OrdersPage(),

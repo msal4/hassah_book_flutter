@@ -84,5 +84,9 @@
   "order": "Order",
   "productAddedToBookmarks":  "Product added to your bookmarks",
   "productRemovedFromBookmarks":  "Product removed from your bookmarks",
-  "productAddedToCart":  "Product added to your cart"
+  "productAddedToCart":  "Product added to your cart",
+  "facebook":  "Facebook",
+  "instagram":  "Instagram",
+  "twitter": "Twitter",
+  "email": "Email"
 }

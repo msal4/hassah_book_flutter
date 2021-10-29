@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
+import 'package:hassah_book_flutter/app/pages/contact_us.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
@@ -99,8 +100,10 @@ class ProfilePage extends StatelessWidget {
                         vertical: kDefaultPadding / 2),
                     leading: CircleAvatar(
                       backgroundColor: theme.primaryColor.withOpacity(.2),
-                      child:
-                          Icon(Icons.person_outline, color: theme.primaryColor),
+                      child: Icon(
+                        Icons.person_outline,
+                        color: theme.primaryColor,
+                      ),
                     ),
                     title: Text(context.loc.personalInformation),
                     trailing: Icon(Icons.chevron_right),
@@ -216,13 +219,18 @@ class ProfilePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
               tileColor: theme.backgroundColor,
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+                horizontal: kDefaultPadding,
+                vertical: kDefaultPadding / 2,
+              ),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),
                 child: Icon(Icons.info_outline, color: theme.primaryColor),
               ),
               title: Text(context.loc.contactUs),
               trailing: Icon(Icons.chevron_right),
+              onTap: () {
+                Navigator.pushNamed(context, ContactUsPage.routeName);
+              },
             ),
           ),
           const SizedBox(height: kDefaultPadding),
@@ -233,14 +241,16 @@ class ProfilePage extends StatelessWidget {
                   borderRadius: BorderRadius.circular(kDefaultBorderRadius)),
               tileColor: theme.backgroundColor,
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+                horizontal: kDefaultPadding,
+                vertical: kDefaultPadding / 2,
+              ),
               leading: CircleAvatar(
                 backgroundColor: theme.primaryColor.withOpacity(.2),
                 child:
                     Icon(Icons.privacy_tip_outlined, color: theme.primaryColor),
               ),
               title: Text(context.loc.privacyPolicy),
-              trailing: Icon(Icons.chevron_right),
+              trailing: const Icon(Icons.chevron_right),
             ),
           ),
         ],

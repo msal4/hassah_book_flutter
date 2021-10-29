@@ -84,5 +84,9 @@
   "order": "طلب",
   "productAddedToBookmarks":  "تم اضافة المنتج الى قائمتك",
   "productRemovedFromBookmarks":  "تم ازالة المنتج من قائمتك",
-  "productAddedToCart":  "تم اضافة المنتج الى سلتك"
+  "productAddedToCart":  "تم اضافة المنتج الى سلتك",
+  "facebook":  "فيسبوك",
+  "instagram":  "انستاگرام",
+  "twitter": "تويتر",
+  "email": "ايميل"
 }
