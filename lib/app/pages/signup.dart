@@ -40,16 +40,12 @@ class SignupPage extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final nameController = useTextEditingController
-        .fromValue(TextEditingValue(text: "Mohammed Salman"));
-    final phoneController = useTextEditingController
-        .fromValue(TextEditingValue(text: "07705983835"));
-    final provinceController =
-        useTextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
-    final addressController = useTextEditingController
-        .fromValue(TextEditingValue(text: "123 Street"));
-    final passwordController =
-        useTextEditingController.fromValue(TextEditingValue(text: "12345678"));
+    final nameController = useTextEditingController();
+
+    final phoneController = useTextEditingController();
+    final provinceController = useTextEditingController();
+    final addressController = useTextEditingController();
+    final passwordController = useTextEditingController();
 
     final isLoading = context.watch<AuthProvider>().isLoading;
     final error = useState("");

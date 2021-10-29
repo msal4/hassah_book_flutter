@@ -24,10 +24,9 @@ class LoginPage extends HookWidget {
     final phoneErr = useState("");
     final passwordErr = useState("");
 
-    final phoneController = useTextEditingController
-        .fromValue(TextEditingValue(text: "07705983835"));
-    final passwordController =
-        useTextEditingController.fromValue(TextEditingValue(text: "12345678"));
+    final phoneController = useTextEditingController();
+    final passwordController = useTextEditingController();
+
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return UnfocusOnTap(
