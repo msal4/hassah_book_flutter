@@ -349,11 +349,16 @@ class MainPage extends HookWidget {
                   icon: CircleAvatar(
                     radius: kAppBarHeight / 2,
                     child: !isAuthed
-                        ? SvgPicture.asset("assets/svg/person.svg", width: 20)
+                        ? SvgPicture.asset(
+                            "assets/svg/person.svg",
+                            width: 15,
+                            color: Colors.white,
+                          )
                         : null,
-                    backgroundColor: theme.backgroundColor,
+                    backgroundColor:
+                        !isAuthed ? theme.primaryColor : theme.backgroundColor,
                     backgroundImage: isAuthed
-                        ? AssetImage("assets/images/avatar_placeholder.jpeg")
+                        ? AssetImage("assets/images/product_placeholder.png")
                         : null,
                   ),
                 ),
@@ -375,43 +380,54 @@ class MainPage extends HookWidget {
           EdgeInsets.all(kDefaultPadding).copyWith(bottom: kDefaultPadding / 2),
       decoration: BoxDecoration(
         color: theme.backgroundColor,
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+        boxShadow: const [
+          const BoxShadow(color: Colors.black12, blurRadius: 10),
+        ],
       ),
       child: SafeArea(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             _buildIcon(
-                name: "home",
-                description: context.loc.home,
-                idx: 0,
-                currentIdx: currentTab,
-                appBarVisible: appBarVisible),
+              context,
+              name: "home",
+              description: context.loc.home,
+              idx: 0,
+              currentIdx: currentTab,
+              appBarVisible: appBarVisible,
+            ),
             _buildIcon(
-                name: "categories",
-                description: context.loc.categoriesAndCollections,
-                idx: 1,
-                currentIdx: currentTab,
-                appBarVisible: appBarVisible),
+              context,
+              name: "categories",
+              description: context.loc.categoriesAndCollections,
+              idx: 1,
+              currentIdx: currentTab,
+              appBarVisible: appBarVisible,
+            ),
             _buildIcon(
-                name: "bookmark",
-                description: context.loc.bookmarks,
-                idx: 2,
-                currentIdx: currentTab,
-                appBarVisible: appBarVisible),
+              context,
+              name: "bookmark",
+              description: context.loc.bookmarks,
+              idx: 2,
+              currentIdx: currentTab,
+              appBarVisible: appBarVisible,
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildIcon({
+  Widget _buildIcon(
+    BuildContext context, {
     @required String name,
     @required String description,
     @required int idx,
     @required ValueNotifier<int> currentIdx,
     @required ValueNotifier<bool> appBarVisible,
   }) {
+    final theme = Theme.of(context);
+    final selected = idx == currentIdx.value;
     return IconButton(
       onPressed: () {
         currentIdx.value = idx;
@@ -419,7 +435,9 @@ class MainPage extends HookWidget {
       },
       tooltip: description,
       icon: SvgPicture.asset(
-          "assets/svg/$name${idx == currentIdx.value ? "_filled" : ""}.svg"),
+        "assets/svg/$name${idx == currentIdx.value ? "_filled" : ""}.svg",
+        color: selected ? theme.accentColor : null,
+      ),
     );
   }
 }
