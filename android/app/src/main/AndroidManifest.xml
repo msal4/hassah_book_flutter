@@ -9,7 +9,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="hassah_book_flutter"
+        android:label="Hassah Book"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true"
     >
