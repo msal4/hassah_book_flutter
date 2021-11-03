@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
+import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
+import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
@@ -15,6 +17,7 @@ import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 
 const _kBottomSheetMinExtent = 20.0;
 const _kBottomSheetMinHeight = 550.0;
@@ -302,6 +305,7 @@ class _CartPageState extends State<CartPage> {
         .map((item) => PurchasePartialInput(
             product: ObjectIdInput(id: item.id), quantity: item.quantity))
         .toList();
+    final auth = context.watch<AuthProvider>();
 
     return DraggableScrollableSheet(
       expand: false,
@@ -398,6 +402,12 @@ class _CartPageState extends State<CartPage> {
                       GestureDetector(
                         onTap: box.isNotEmpty && result.isNotLoading
                             ? () async {
+                                if (!auth.isAuthenticated) {
+                                  Navigator.pushNamed(
+                                    context,
+                                    LoginPage.routeName,
+                                  );
+                                }
                                 final input = PlaceOrderInput(
                                   phone: _phoneController.text,
                                   province: _provinceController.text,
@@ -408,12 +418,9 @@ class _CartPageState extends State<CartPage> {
                                     await runMutation({'data': input})
                                         .networkResult;
                                 if (result.hasException) {
-                                  print(
-                                      "the error is: ${result.exception.toString()}");
                                   return;
                                 }
                                 if (result.isConcrete) {
-                                  debugPrint(result.data.toString());
                                   box.clear();
                                   Navigator.pop(context);
                                   Navigator.of(context)

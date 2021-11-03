@@ -21,6 +21,8 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
+final priceRegexp = RegExp(r"(\d)(?=(\d{3})+$)");
+
 class ProductDetailPageArguments {
   const ProductDetailPageArguments(
       {this.product, this.id, @required this.heroTagPrefix})
@@ -280,7 +282,7 @@ class ProductDetailPage extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${product.price} ${context.loc.iqd}",
+                "${product.price.round().toString().replaceAllMapped(priceRegexp, (m) => m.group(1) + ",")} ${context.loc.iqd}",
                 style: theme.textTheme.headline5.copyWith(
                     fontWeight: FontWeight.bold, color: theme.accentColor),
               ),

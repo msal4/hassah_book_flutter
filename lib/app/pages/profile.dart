@@ -44,7 +44,7 @@ class ProfilePage extends StatelessWidget {
                     }
 
                     if (result.isLoading) {
-                      return LoadingIndicator();
+                      return const LoadingIndicator();
                     }
 
                     final me = _meQuery.parse(result.data).me;
@@ -140,7 +140,6 @@ class ProfilePage extends StatelessWidget {
               ],
             )
           else
-            // TODO: design a simple header to lead the user to login or register.
             Column(
               children: [
                 Text(context.loc.loginToSeeYourProfile,
