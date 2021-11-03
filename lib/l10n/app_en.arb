@@ -88,5 +88,6 @@
   "facebook":  "Facebook",
   "instagram":  "Instagram",
   "twitter": "Twitter",
-  "email": "Email"
+  "email": "Email",
+  "phone": "Phone"
 }

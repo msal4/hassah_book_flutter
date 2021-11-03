@@ -54,6 +54,14 @@ class ContactUsPage extends StatelessWidget {
             url: "mailto:sal@hassah.me",
             color: Colors.amber,
           ),
+          const SizedBox(height: kDefaultPadding),
+          _buildLinkItem(
+            context,
+            name: context.loc.phone,
+            icon: "assets/svg/phone.svg",
+            url: "tel:07838378968",
+            color: Colors.green,
+          ),
         ],
       ),
     );
@@ -82,6 +90,7 @@ class ContactUsPage extends StatelessWidget {
           child: SvgPicture.asset(
             icon,
             width: 25,
+            color: Colors.black,
           ),
         ),
         title: Text(name),

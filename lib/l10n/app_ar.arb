@@ -54,7 +54,7 @@
   "logout": "تسجيل الخروج",
   "loginToSeeYourProfile": "تسجيل الدخول لرؤية معلوماتك",
   "notifications": "الاشعارات",
-  "contactUs": "التواصل معنا",
+  "contactUs": "تواصل معنا",
   "privacyPolicy": "سياسة الخصوصية",
   "logoutConfirmation": "هل انت متأكد من رغبتك بتسجيل الخروج؟",
   "retry": "اعادة المحاولة",
@@ -88,5 +88,6 @@
   "facebook":  "فيسبوك",
   "instagram":  "انستاگرام",
   "twitter": "تويتر",
-  "email": "ايميل"
+  "email": "ايميل",
+  "phone": "هاتف"
 }
