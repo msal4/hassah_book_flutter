@@ -14,6 +14,7 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/common/utils/price.dart';
 import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
@@ -178,7 +179,7 @@ class _CartPageState extends State<CartPage> {
             ),
             const Spacer(),
             Text(
-              "${item.price * item.quantity} ${context.loc.iqd}",
+              "${formatPrice(item.price * item.quantity)} ${context.loc.iqd}",
               style: theme.textTheme.subtitle1.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.accentColor,
@@ -307,8 +308,8 @@ class OrderSheet extends HookWidget {
     final provinceController = useTextEditingController();
     final addressController = useTextEditingController();
 
-    final totalPrice =
-        box.values.fold(0, (acc, item) => acc += item.price * item.quantity);
+    final double totalPrice =
+        box.values.fold(0.0, (acc, item) => acc += item.price * item.quantity);
 
     final purchases = box.values
         .map((item) => PurchasePartialInput(
@@ -360,7 +361,7 @@ class OrderSheet extends HookWidget {
 
   Widget _buildSheet(BuildContext context,
       {@required ScrollController scrollController,
-      @required int totalPrice,
+      @required double totalPrice,
       bool isLoading = false,
       @required TextEditingController phoneController,
       @required TextEditingController provinceController,
@@ -398,7 +399,7 @@ class OrderSheet extends HookWidget {
                     children: [
                       Text(context.loc.total, style: theme.textTheme.headline6),
                       const Spacer(),
-                      Text("$totalPrice ${context.loc.iqd}",
+                      Text("${formatPrice(totalPrice)} ${context.loc.iqd}",
                           style: theme.textTheme.headline6
                               .copyWith(fontWeight: FontWeight.bold)),
                     ],

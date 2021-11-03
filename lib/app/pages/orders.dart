@@ -12,6 +12,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
+import 'package:hassah_book_flutter/common/utils/price.dart';
 import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
@@ -235,8 +236,10 @@ class _OrdersList extends HookWidget {
                       style: theme.textTheme.bodyText1
                           .copyWith(color: Colors.grey.shade600),
                     ),
-                    Text("${order.totalPrice} ${context.loc.iqd}",
-                        style: theme.textTheme.subtitle1),
+                    Text(
+                      "${formatPrice(order.totalPrice)} ${context.loc.iqd}",
+                      style: theme.textTheme.subtitle1.copyWith(fontSize: 13),
+                    ),
                   ],
                 ),
               ],

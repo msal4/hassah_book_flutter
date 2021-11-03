@@ -10,6 +10,7 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
+import 'package:hassah_book_flutter/common/utils/price.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
@@ -181,7 +182,8 @@ class OrderDetailPage extends StatelessWidget {
                           Text(context.loc.total,
                               style: theme.textTheme.headline6),
                           const Spacer(),
-                          Text("${order.totalPrice} ${context.loc.iqd}",
+                          Text(
+                              "${formatPrice(order.totalPrice)} ${context.loc.iqd}",
                               style: theme.textTheme.headline6),
                         ],
                       ),
@@ -485,7 +487,9 @@ class PurchaseCard extends HookWidget {
           context,
           ProductDetailPage.routeName,
           arguments: ProductDetailPageArguments(
-              heroTagPrefix: heroTagPrefix, product: purchase.product),
+            heroTagPrefix: heroTagPrefix,
+            product: purchase.product,
+          ),
         );
       },
       child: RoundContainer(
@@ -524,13 +528,13 @@ class PurchaseCard extends HookWidget {
             style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
         Text("${context.loc.by} ${item.product.author.name}",
             style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
-        SizedBox(height: kDefaultPadding / 2),
+        const SizedBox(height: kDefaultPadding / 2),
         Row(
           children: [
             Text("${item.quantity} ${context.loc.items}"),
-            Spacer(),
+            const Spacer(),
             Text(
-              "${item.product.price * item.quantity} ${context.loc.iqd}",
+              "${formatPrice(item.product.price * item.quantity)} ${context.loc.iqd}",
               style: theme.textTheme.subtitle1.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.accentColor,

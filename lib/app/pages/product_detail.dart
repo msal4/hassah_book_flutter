@@ -13,6 +13,7 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/common/utils/price.dart';
 import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
@@ -20,8 +21,6 @@ import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
-
-final priceRegexp = RegExp(r"(\d)(?=(\d{3})+$)");
 
 class ProductDetailPageArguments {
   const ProductDetailPageArguments(
@@ -282,7 +281,7 @@ class ProductDetailPage extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${product.price.round().toString().replaceAllMapped(priceRegexp, (m) => m.group(1) + ",")} ${context.loc.iqd}",
+                "${formatPrice(product.price)} ${context.loc.iqd}",
                 style: theme.textTheme.headline5.copyWith(
                     fontWeight: FontWeight.bold, color: theme.accentColor),
               ),
@@ -324,7 +323,7 @@ class ProductDetailPage extends HookWidget {
       child: Hero(
         tag: "image-$heroTagPrefix-$id",
         child: ProductCoverImage(
-          image: product.image,
+          image: image,
           resolution: 300,
           width: kDefaultImageWidth,
         ),
