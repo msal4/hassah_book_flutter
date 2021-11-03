@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -13,6 +14,7 @@ import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hive/hive.dart';
@@ -30,24 +32,6 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
-  final _orderMutation = PlaceOrderMutation();
-
-  final _phoneController =
-      TextEditingController.fromValue(TextEditingValue(text: "07705983835"));
-  final _provinceController =
-      TextEditingController.fromValue(TextEditingValue(text: "Baghdad"));
-  final _addressController =
-      TextEditingController.fromValue(TextEditingValue(text: "123 Street"));
-
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    _provinceController.dispose();
-    _addressController.dispose();
-
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
     final padding = MediaQuery.of(context).padding;
@@ -64,12 +48,19 @@ class _CartPageState extends State<CartPage> {
           final items = box.values.toList();
 
           return Scaffold(
-            bottomSheet: _buildBottomSheet(
-                context, initialSheetHeight, minSheetSize, box),
+            bottomSheet: OrderSheet(
+              padding: padding,
+              initialSheetHeight: initialSheetHeight,
+              minSheetSize: minSheetSize,
+              box: box,
+            ),
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 SliverAppBar(
-                    title: Text(context.loc.cart), floating: true, snap: true),
+                  title: Text(context.loc.cart),
+                  floating: true,
+                  snap: true,
+                ),
               ],
               body: items.length == 0
                   ? _buildPlaceholder(context)
@@ -292,11 +283,29 @@ class _CartPageState extends State<CartPage> {
       },
     );
   }
+}
 
-  DraggableScrollableSheet _buildBottomSheet(BuildContext context,
-      double initialSheetHeight, double minSheetSize, Box<CartItem> box) {
-    final theme = Theme.of(context);
-    final padding = MediaQuery.of(context).padding;
+class OrderSheet extends HookWidget {
+  OrderSheet({
+    Key key,
+    @required this.initialSheetHeight,
+    @required this.minSheetSize,
+    @required this.box,
+    @required this.padding,
+  }) : super(key: key);
+
+  final _orderMutation = PlaceOrderMutation();
+  final _meQuery = MeQuery();
+  final double initialSheetHeight;
+  final double minSheetSize;
+  final Box<CartItem> box;
+  final EdgeInsets padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final phoneController = useTextEditingController();
+    final provinceController = useTextEditingController();
+    final addressController = useTextEditingController();
 
     final totalPrice =
         box.values.fold(0, (acc, item) => acc += item.price * item.quantity);
@@ -312,157 +321,206 @@ class _CartPageState extends State<CartPage> {
       initialChildSize: initialSheetHeight,
       minChildSize: minSheetSize,
       builder: (BuildContext context, ScrollController scrollController) {
-        return Mutation(
-          options: MutationOptions(document: _orderMutation.document),
-          builder: (runMutation, result) {
-            return Container(
-              decoration: BoxDecoration(
-                color: theme.scaffoldBackgroundColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(kDefaultBorderRadius * 2),
-                  topRight: Radius.circular(kDefaultBorderRadius * 2),
+        return auth.isAuthenticated
+            ? Query(
+                options: QueryOptions(document: _meQuery.document),
+                builder: (meResult, {refetch, fetchMore}) {
+                  if (!meResult.hasException && meResult.isNotLoading) {
+                    final me = _meQuery.parse(meResult.data).me;
+                    phoneController.text = me.phone;
+                    provinceController.text = me.province;
+                    addressController.text = me.address;
+                  }
+
+                  return _buildSheet(
+                    context,
+                    scrollController: scrollController,
+                    totalPrice: totalPrice,
+                    isLoading: meResult.isLoading,
+                    phoneController: phoneController,
+                    provinceController: provinceController,
+                    addressController: addressController,
+                    auth: auth,
+                    purchases: purchases,
+                  );
+                })
+            : _buildSheet(
+                context,
+                scrollController: scrollController,
+                totalPrice: totalPrice,
+                phoneController: phoneController,
+                provinceController: provinceController,
+                addressController: addressController,
+                auth: auth,
+                purchases: purchases,
+              );
+      },
+    );
+  }
+
+  Widget _buildSheet(BuildContext context,
+      {@required ScrollController scrollController,
+      @required int totalPrice,
+      bool isLoading = false,
+      @required TextEditingController phoneController,
+      @required TextEditingController provinceController,
+      @required TextEditingController addressController,
+      @required AuthProvider auth,
+      @required List<PurchasePartialInput> purchases}) {
+    final theme = Theme.of(context);
+
+    return Mutation(
+      options: MutationOptions(document: _orderMutation.document),
+      builder: (runMutation, result) {
+        return Container(
+          decoration: BoxDecoration(
+            color: theme.scaffoldBackgroundColor,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(kDefaultBorderRadius * 2),
+              topRight: Radius.circular(kDefaultBorderRadius * 2),
+            ),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)
+            ],
+          ),
+          child: Stack(
+            children: [
+              ListView(
+                padding: EdgeInsets.only(
+                  top: padding.top + kDefaultPadding,
+                  bottom: padding.bottom + kDefaultPadding,
+                  left: padding.left + kDefaultPadding,
+                  right: padding.right + kDefaultPadding,
                 ),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(.1), blurRadius: 10)
-                ],
-              ),
-              child: Stack(
+                controller: scrollController,
                 children: [
-                  ListView(
-                    padding: EdgeInsets.only(
-                      top: padding.top + kDefaultPadding,
-                      bottom: padding.bottom + kDefaultPadding,
-                      left: padding.left + kDefaultPadding,
-                      right: padding.right + kDefaultPadding,
-                    ),
-                    controller: scrollController,
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          Text(context.loc.total,
-                              style: theme.textTheme.headline6),
-                          Spacer(),
-                          Text("$totalPrice ${context.loc.iqd}",
-                              style: theme.textTheme.headline6
-                                  .copyWith(fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                      const SizedBox(height: kDefaultPadding),
-                      const Divider(),
-                      const SizedBox(height: kDefaultPadding),
-                      ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(kDefaultBorderRadius),
-                        child: TextField(
-                          controller: _phoneController,
-                          textInputAction: TextInputAction.next,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: kDefaultPadding * 1.5,
-                                vertical: kDefaultPadding / 1.5),
-                            border: InputBorder.none,
-                            labelText: context.loc.phoneNumber,
-                            filled: true,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: kDefaultPadding),
-                      ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(kDefaultBorderRadius),
-                        child: TextField(
-                          controller: _provinceController,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: kDefaultPadding * 1.5,
-                                vertical: kDefaultPadding / 1.5),
-                            border: InputBorder.none,
-                            labelText: context.loc.province,
-                            filled: true,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: kDefaultPadding),
-                      ClipRRect(
-                        borderRadius:
-                            BorderRadius.circular(kDefaultBorderRadius),
-                        child: TextField(
-                          controller: _addressController,
-                          decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.symmetric(
-                                horizontal: kDefaultPadding * 1.5,
-                                vertical: kDefaultPadding / 1.5),
-                            border: InputBorder.none,
-                            labelText: context.loc.address,
-                            filled: true,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: kDefaultPadding),
-                      GestureDetector(
-                        onTap: box.isNotEmpty && result.isNotLoading
-                            ? () async {
-                                if (!auth.isAuthenticated) {
-                                  Navigator.pushNamed(
-                                    context,
-                                    LoginPage.routeName,
-                                  );
-                                }
-                                final input = PlaceOrderInput(
-                                  phone: _phoneController.text,
-                                  province: _provinceController.text,
-                                  address: _addressController.text,
-                                  purchases: purchases,
-                                );
-                                final result =
-                                    await runMutation({'data': input})
-                                        .networkResult;
-                                if (result.hasException) {
-                                  return;
-                                }
-                                if (result.isConcrete) {
-                                  box.clear();
-                                  Navigator.pop(context);
-                                  Navigator.of(context)
-                                      .pushNamed(OrdersPage.routeName);
-                                }
-                              }
-                            : null,
-                        child: RoundContainer(
-                          padding: const EdgeInsets.all(kDefaultPadding),
-                          color: box.isEmpty || result.isLoading
-                              ? Colors.grey.shade800
-                              : theme.accentColor,
-                          borderRadius: BorderRadius.circular(9999),
-                          child: Text(
-                            context.loc.orderNow.toUpperCase(),
-                            textAlign: TextAlign.center,
-                            style: theme.textTheme.button
-                                .copyWith(color: Colors.white),
-                          ),
-                        ),
-                      )
+                      Text(context.loc.total, style: theme.textTheme.headline6),
+                      const Spacer(),
+                      Text("$totalPrice ${context.loc.iqd}",
+                          style: theme.textTheme.headline6
+                              .copyWith(fontWeight: FontWeight.bold)),
                     ],
                   ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: IgnorePointer(
-                      child: Container(
-                        margin: const EdgeInsets.only(top: kDefaultPadding),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade500,
-                          borderRadius:
-                              BorderRadius.circular(kDefaultBorderRadius),
-                        ),
-                        width: 40,
-                        height: 4,
+                  const SizedBox(height: kDefaultPadding),
+                  const Divider(),
+                  const SizedBox(height: kDefaultPadding),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                    child: TextField(
+                      enabled: !isLoading && result.isNotLoading,
+                      controller: phoneController,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: kDefaultPadding * 1.5,
+                            vertical: kDefaultPadding / 1.5),
+                        border: InputBorder.none,
+                        labelText: context.loc.phoneNumber,
+                        filled: true,
                       ),
                     ),
                   ),
+                  const SizedBox(height: kDefaultPadding),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                    child: TextField(
+                      enabled: !isLoading && result.isNotLoading,
+                      controller: provinceController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: kDefaultPadding * 1.5,
+                            vertical: kDefaultPadding / 1.5),
+                        border: InputBorder.none,
+                        labelText: context.loc.province,
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: kDefaultPadding),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                    child: TextField(
+                      enabled: !isLoading && result.isNotLoading,
+                      controller: addressController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: kDefaultPadding * 1.5,
+                            vertical: kDefaultPadding / 1.5),
+                        border: InputBorder.none,
+                        labelText: context.loc.address,
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: kDefaultPadding),
+                  GestureDetector(
+                    onTap: box.isNotEmpty && result.isNotLoading && !isLoading
+                        ? () async {
+                            if (!auth.isAuthenticated) {
+                              Navigator.pushNamed(
+                                context,
+                                LoginPage.routeName,
+                              );
+                              return;
+                            }
+                            final input = PlaceOrderInput(
+                              phone: phoneController.text,
+                              province: provinceController.text,
+                              address: addressController.text,
+                              purchases: purchases,
+                            );
+                            final result = await runMutation({'data': input})
+                                .networkResult;
+                            if (result.hasException) {
+                              showSnackBar(
+                                context,
+                                message: context.loc.somethingWentWrong,
+                                type: SnackBarType.error,
+                              );
+                              return;
+                            }
+                            if (result.isConcrete) {
+                              box.clear();
+                              Navigator.pop(context);
+                              Navigator.of(context)
+                                  .pushNamed(OrdersPage.routeName);
+                            }
+                          }
+                        : null,
+                    child: RoundContainer(
+                      padding: const EdgeInsets.all(kDefaultPadding),
+                      color: box.isEmpty || result.isLoading
+                          ? Colors.grey.shade800
+                          : theme.accentColor,
+                      borderRadius: BorderRadius.circular(9999),
+                      child: Text(
+                        context.loc.orderNow.toUpperCase(),
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.button
+                            .copyWith(color: Colors.white),
+                      ),
+                    ),
+                  )
                 ],
               ),
-            );
-          },
+              Align(
+                alignment: Alignment.topCenter,
+                child: IgnorePointer(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: kDefaultPadding),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade500,
+                      borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+                    ),
+                    width: 40,
+                    height: 4,
+                  ),
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
