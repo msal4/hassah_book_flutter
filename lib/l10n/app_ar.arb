@@ -89,5 +89,7 @@
   "instagram":  "انستاگرام",
   "twitter": "تويتر",
   "email": "ايميل",
-  "phone": "هاتف"
+  "phone": "هاتف",
+  "readMore": "اقرأ المزيد",
+  "readLess": "اقرأ اقل"
 }

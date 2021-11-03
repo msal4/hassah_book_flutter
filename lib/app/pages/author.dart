@@ -45,9 +45,10 @@ class AuthorPage extends HookWidget {
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
-              title: Text(context.loc.authorDetails),
-              floating: true,
-              snap: true),
+            title: Text(context.loc.authorDetails),
+            floating: true,
+            snap: true,
+          ),
         ],
         body: Query(
           options: QueryOptions(
@@ -100,12 +101,22 @@ class AuthorPage extends HookWidget {
                         const EdgeInsets.symmetric(horizontal: kDefaultPadding),
                     child: Text(
                       author.overview,
-                      textAlign: TextAlign.center,
+                      textAlign: authorOverviewClipped.value
+                          ? TextAlign.center
+                          : TextAlign.justify,
                       overflow: authorOverviewClipped.value
                           ? TextOverflow.ellipsis
                           : null,
                       // textAlign: TextAlign.center,
                     ),
+                  ),
+                ),
+                const SizedBox(height: kDefaultPadding / 2),
+                Center(
+                  child: _buildReadMoreLessButton(
+                    theme,
+                    authorOverviewClipped,
+                    context,
                   ),
                 ),
                 const SizedBox(height: kDefaultPadding),
@@ -186,11 +197,16 @@ class AuthorPage extends HookWidget {
                             overflow: overviewClipped.value
                                 ? TextOverflow.ellipsis
                                 : null,
-                            textAlign: TextAlign.center,
+                            textAlign: overviewClipped.value
+                                ? TextAlign.center
+                                : TextAlign.justify,
                             style: theme.textTheme.bodyText1
                                 .copyWith(color: Colors.grey.shade700),
                           ),
-                        )
+                        ),
+                        const SizedBox(height: kDefaultPadding / 2),
+                        _buildReadMoreLessButton(
+                            theme, overviewClipped, context),
                       ],
                     ),
                   ),
@@ -198,6 +214,45 @@ class AuthorPage extends HookWidget {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+
+  Material _buildReadMoreLessButton(ThemeData theme,
+      ValueNotifier<bool> authorOverviewClipped, BuildContext context) {
+    return Material(
+      color: theme.backgroundColor,
+      borderRadius: BorderRadius.circular(9999),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          authorOverviewClipped.value = !authorOverviewClipped.value;
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: kDefaultPadding,
+            vertical: kDefaultPadding / 4,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                authorOverviewClipped.value
+                    ? context.loc.readMore
+                    : context.loc.readLess,
+                style:
+                    theme.textTheme.button.copyWith(color: theme.accentColor),
+              ),
+              const SizedBox(width: 5),
+              Icon(
+                authorOverviewClipped.value
+                    ? Icons.keyboard_arrow_down_outlined
+                    : Icons.keyboard_arrow_up_outlined,
+                color: theme.accentColor,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -89,5 +89,7 @@
   "instagram":  "Instagram",
   "twitter": "Twitter",
   "email": "Email",
-  "phone": "Phone"
+  "phone": "Phone",
+  "readMore": "Read more",
+  "readLess": "Read less"
 }
