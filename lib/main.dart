@@ -95,6 +95,7 @@ class _AppState extends State<App> {
         statusBarColor: Colors.transparent,
         systemNavigationBarColor: theme.scaffoldBackgroundColor,
         statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
       ),
       child: HassahGraphQLProvider(
         uri: 'https://book.hassah.me/graphql',
