@@ -400,7 +400,9 @@ class _SearchPageState extends State<SearchPage> {
         backgroundColor: theme.backgroundColor,
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(kDefaultBorderRadius),
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(kDefaultBorderRadius),
+              topRight: Radius.circular(kDefaultBorderRadius)),
         ),
       );
 

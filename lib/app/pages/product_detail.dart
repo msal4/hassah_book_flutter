@@ -75,7 +75,7 @@ class ProductDetailPage extends HookWidget {
 
         final data =
             result.data != null ? _productQuery.parse(result.data) : null;
-        final product = this.product ?? data.product;
+        final product = this.product ?? data?.product;
 
         final language = data?.product?.language ?? "...";
 
@@ -149,12 +149,12 @@ class ProductDetailPage extends HookWidget {
                       }
 
                       return GestureDetector(
-                        onTap: data.product != null
+                        onTap: product != null
                             ? () async {
                                 await box.put(
-                                  data.product.id,
+                                  product.id,
                                   CartItem.fromProduct(
-                                    data.product,
+                                    product,
                                     quantity.value,
                                   ),
                                 );
@@ -168,7 +168,7 @@ class ProductDetailPage extends HookWidget {
                             : null,
                         child: RoundContainer(
                           borderRadius: BorderRadius.circular(9999),
-                          color: data.product == null
+                          color: product == null
                               ? Colors.grey.shade800
                               : theme.primaryColor,
                           child: Text(

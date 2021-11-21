@@ -94,9 +94,10 @@ class _AppState extends State<App> {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        systemNavigationBarColor: theme.scaffoldBackgroundColor,
+        systemNavigationBarColor: theme.backgroundColor,
         statusBarIconBrightness: Brightness.dark,
         statusBarBrightness: Brightness.light,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: HassahGraphQLProvider(
         uri: path.join(kApiURLPrefix, "graphql"),
