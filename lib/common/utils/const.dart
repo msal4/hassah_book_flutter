@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 const kDefaultPadding = 20.0;

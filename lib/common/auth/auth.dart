@@ -60,7 +60,6 @@ abstract class Auth {
       throw AuthException();
     }
 
-    // TODO: get the url from the environment or a constant.
     final resp = await _client.post(
       path.join(kApiURLPrefix, "refresh_token"),
       body: jsonEncode({"token": refreshToken}),

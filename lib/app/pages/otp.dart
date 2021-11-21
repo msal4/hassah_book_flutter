@@ -7,6 +7,7 @@ import 'package:hassah_book_flutter/app/pages/signup.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
 import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
+import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hassah_book_flutter/main.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,8 @@ import 'package:hassah_book_flutter/common/utils/ext.dart';
 class OTPPage extends HookWidget {
   static const routeName = "/otp";
 
-  const OTPPage({@required this.form}) : assert(form != null, "form is required");
+  const OTPPage({@required this.form})
+      : assert(form != null, "form is required");
 
   final SignupForm form;
 
@@ -27,7 +29,8 @@ class OTPPage extends HookWidget {
 
     return UnfocusOnTap(
       child: Scaffold(
-        appBar: AppBar(iconTheme: theme.iconTheme.copyWith(color: theme.accentColor)),
+        appBar: AppBar(
+            iconTheme: theme.iconTheme.copyWith(color: theme.accentColor)),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(kDefaultPadding),
           child: IgnorePointer(
@@ -37,8 +40,10 @@ class OTPPage extends HookWidget {
                 children: [
                   Column(
                     children: [
-                      SvgPicture.asset("assets/svg/icon.svg", width: kAvatarRadius),
-                      Text(context.loc.appTitle, style: theme.textTheme.headline6),
+                      SvgPicture.asset("assets/svg/icon.svg",
+                          width: kAvatarRadius),
+                      Text(context.loc.appTitle,
+                          style: theme.textTheme.headline6),
                     ],
                   ),
                   SizedBox(height: kDefaultPadding * 2),
@@ -50,13 +55,16 @@ class OTPPage extends HookWidget {
                   SizedBox(height: kDefaultPadding),
                   RoundContainer(
                     color: isLoading ? Colors.grey.shade200 : null,
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: kDefaultPadding,
+                        vertical: kDefaultPadding / 2),
                     child: TextField(
                       enabled: !isLoading,
                       controller: otpController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
-                      style: theme.textTheme.bodyText1.copyWith(color: isLoading ? Colors.grey.shade600 : null),
+                      style: theme.textTheme.bodyText1.copyWith(
+                          color: isLoading ? Colors.grey.shade600 : null),
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
@@ -72,23 +80,37 @@ class OTPPage extends HookWidget {
                     child: InkWell(
                       onTap: !isLoading
                           ? () async {
-                              final input = RegisterInput(code: otpController.text, name: form.name, password: form.password, sessionInfo: form.sessionInfo);
+                              final input = RegisterInput(
+                                  code: otpController.text,
+                                  name: form.name,
+                                  password: form.password,
+                                  sessionInfo: form.sessionInfo);
                               await context.read<AuthProvider>().signup(input);
                               try {
-                                await context.read<AuthProvider>().login(phone: form.phoneNumber, password: form.password);
-                                Navigator.of(context).pushReplacementNamed(MainPage.routeName);
-                              } on OperationException catch (e) {
-                                // TODO: handle errors.
+                                await context.read<AuthProvider>().login(
+                                    phone: form.phoneNumber,
+                                    password: form.password);
+                                Navigator.of(context)
+                                    .pushReplacementNamed(MainPage.routeName);
+                              } on OperationException {
+                                showSnackBar(
+                                  context,
+                                  message: context.loc.somethingWentWrong,
+                                  type: SnackBarType.error,
+                                );
                               }
                             }
                           : null,
                       child: Ink(
                         width: double.maxFinite,
-                        padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding * 1.5, vertical: kDefaultPadding),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: kDefaultPadding * 1.5,
+                            vertical: kDefaultPadding),
                         child: Text(
                           context.loc.verify.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button.copyWith(color: Colors.white),
+                          style: theme.textTheme.button
+                              .copyWith(color: Colors.white),
                         ),
                       ),
                     ),
