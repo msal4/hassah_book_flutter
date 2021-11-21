@@ -34,6 +34,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
+import 'package:path/path.dart' as path;
 
 void main() async {
   await initHiveForFlutter();
@@ -98,7 +99,7 @@ class _AppState extends State<App> {
         statusBarBrightness: Brightness.light,
       ),
       child: HassahGraphQLProvider(
-        uri: 'https://book.hassah.me/graphql',
+        uri: path.join(kApiURLPrefix, "graphql"),
         builder: (context, client) {
           return MultiProvider(
             providers: [

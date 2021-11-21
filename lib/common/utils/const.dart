@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 const kDefaultPadding = 20.0;
@@ -16,6 +17,9 @@ const kDefaultImageHeight = 220.0;
 
 const kSmallProductImageWidth = kDefaultImageWidth / 2;
 const kSmallProductImageHeight = kDefaultImageHeight / 2;
-const kImageCDN = "https://hassahbook.imgix.net";
-
 const kCoverAspectRatio = 6 / 9;
+
+const kImageCDN = String.fromEnvironment("CDN_URL",
+    defaultValue: "https://hassahbook.imgix.net");
+const kApiURLPrefix =
+    String.fromEnvironment("API_URL", defaultValue: "https://book.hassah.me");

@@ -2,7 +2,7 @@ name: hassah_book_flutter
 description: The client for Hassah Book.
 
 publish_to: "none"
-version: 1.0.1+2
+version: 1.0.2+3
 
 environment:
   sdk: ">=2.10.0 <3.0.0"

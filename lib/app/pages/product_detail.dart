@@ -45,7 +45,6 @@ class ProductDetailPage extends HookWidget {
   static const routeName = "/product_detail";
 
   final _productQuery = ProductDetailQuery();
-  ProductMixin productData;
 
   @override
   Widget build(BuildContext context) {
@@ -57,142 +56,144 @@ class ProductDetailPage extends HookWidget {
     final overviewClipped = useState(true);
     final quantity = useState(defaultQuantity);
 
-    return Scaffold(
-      bottomSheet: Container(
-        color: Colors.white.withAlpha(150),
-        padding: EdgeInsets.only(
-          bottom: padding.bottom + kDefaultPadding,
-          right: padding.right + kDefaultPadding,
-          left: padding.left + kDefaultPadding,
-        ),
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: RoundContainer(
-                borderRadius: BorderRadius.circular(9999),
-                child: Row(
-                  children: [
-                    Text(context.loc.qty),
-                    const Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        if (quantity.value > 1) {
-                          quantity.value--;
-                        }
-                      },
-                      child: Icon(Icons.remove),
-                    ),
-                    const SizedBox(width: kDefaultPadding),
-                    Text(quantity.value.toString(),
-                        style: theme.textTheme.subtitle1.copyWith(
-                            color: theme.accentColor,
-                            fontWeight: FontWeight.bold)),
-                    const SizedBox(width: kDefaultPadding),
-                    GestureDetector(
-                      onTap: () {
-                        quantity.value++;
-                      },
-                      child: Icon(Icons.add),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(width: kDefaultPadding),
-            Expanded(
-              flex: 1,
-              child: ValueListenableBuilder<Box<CartItem>>(
-                valueListenable: Hive.box<CartItem>(kCartBoxName).listenable(),
-                builder: (context, box, child) {
-                  final inCartItem = box.get(id ?? product.id);
-
-                  if (inCartItem != null &&
-                      inCartItem.quantity == quantity.value) {
-                    return GestureDetector(
-                      onTap: () =>
-                          Navigator.of(context).pushNamed(CartPage.routeName),
-                      child: RoundContainer(
-                        borderRadius: BorderRadius.circular(9999),
-                        color: theme.accentColor,
-                        child: Text(
-                          context.loc.goToCart,
-                          style: theme.textTheme.button
-                              .copyWith(color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    );
-                  }
-
-                  return GestureDetector(
-                    onTap: productData != null
-                        ? () async {
-                            await box.put(
-                              productData.id,
-                              CartItem.fromProduct(
-                                productData,
-                                quantity.value,
-                              ),
-                            );
-                            showSnackBar(
-                              context,
-                              message: context.loc.productAddedToCart,
-                              type: SnackBarType.success,
-                              margin: EdgeInsets.only(bottom: 90),
-                            );
-                          }
-                        : null,
-                    child: RoundContainer(
-                      borderRadius: BorderRadius.circular(9999),
-                      color: productData == null
-                          ? Colors.grey.shade800
-                          : theme.primaryColor,
-                      child: Text(
-                        context.loc.addToCart,
-                        style: theme.textTheme.button
-                            .copyWith(color: Colors.white),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
+    return Query(
+      options: QueryOptions(
+        document: _productQuery.document,
+        variables: {"id": id ?? product.id},
       ),
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            title: Text(context.loc.productDetails),
-            floating: true,
-            snap: true,
+      builder: (result, {fetchMore, refetch}) {
+        if (this.product == null) {
+          if (result.isLoading) return Scaffold(body: const LoadingIndicator());
+          if (result.hasException)
+            return Scaffold(
+              body: Retry(
+                message: context.loc.somethingWentWrong,
+                onRetry: refetch,
+              ),
+            );
+        }
+
+        final data =
+            result.data != null ? _productQuery.parse(result.data) : null;
+        final product = this.product ?? data.product;
+
+        final language = data?.product?.language ?? "...";
+
+        return Scaffold(
+          bottomSheet: Container(
+            color: Colors.white.withAlpha(150),
+            padding: EdgeInsets.only(
+              bottom: padding.bottom + kDefaultPadding,
+              right: padding.right + kDefaultPadding,
+              left: padding.left + kDefaultPadding,
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: RoundContainer(
+                    borderRadius: BorderRadius.circular(9999),
+                    child: Row(
+                      children: [
+                        Text(context.loc.qty),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            if (quantity.value > 1) {
+                              quantity.value--;
+                            }
+                          },
+                          child: Icon(Icons.remove),
+                        ),
+                        const SizedBox(width: kDefaultPadding),
+                        Text(quantity.value.toString(),
+                            style: theme.textTheme.subtitle1.copyWith(
+                                color: theme.accentColor,
+                                fontWeight: FontWeight.bold)),
+                        const SizedBox(width: kDefaultPadding),
+                        GestureDetector(
+                          onTap: () {
+                            quantity.value++;
+                          },
+                          child: Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: kDefaultPadding),
+                Expanded(
+                  flex: 1,
+                  child: ValueListenableBuilder<Box<CartItem>>(
+                    valueListenable:
+                        Hive.box<CartItem>(kCartBoxName).listenable(),
+                    builder: (context, box, child) {
+                      final inCartItem = box.get(id ?? product.id);
+
+                      if (inCartItem != null &&
+                          inCartItem.quantity == quantity.value) {
+                        return GestureDetector(
+                          onTap: () => Navigator.of(context)
+                              .pushNamed(CartPage.routeName),
+                          child: RoundContainer(
+                            borderRadius: BorderRadius.circular(9999),
+                            color: theme.accentColor,
+                            child: Text(
+                              context.loc.goToCart,
+                              style: theme.textTheme.button
+                                  .copyWith(color: Colors.white),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        );
+                      }
+
+                      return GestureDetector(
+                        onTap: data.product != null
+                            ? () async {
+                                await box.put(
+                                  data.product.id,
+                                  CartItem.fromProduct(
+                                    data.product,
+                                    quantity.value,
+                                  ),
+                                );
+                                showSnackBar(
+                                  context,
+                                  message: context.loc.productAddedToCart,
+                                  type: SnackBarType.success,
+                                  margin: EdgeInsets.only(bottom: 90),
+                                );
+                              }
+                            : null,
+                        child: RoundContainer(
+                          borderRadius: BorderRadius.circular(9999),
+                          color: data.product == null
+                              ? Colors.grey.shade800
+                              : theme.primaryColor,
+                          child: Text(
+                            context.loc.addToCart,
+                            style: theme.textTheme.button
+                                .copyWith(color: Colors.white),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                )
+              ],
+            ),
           ),
-          SliverToBoxAdapter(
-            child: Query(
-              options: QueryOptions(
-                  document: _productQuery.document,
-                  variables: {"id": id ?? product.id}),
-              builder: (result, {fetchMore, refetch}) {
-                if (this.product == null) {
-                  if (result.isLoading) return const LoadingIndicator();
-                  if (result.hasException)
-                    return Retry(
-                      message: context.loc.somethingWentWrong,
-                      onRetry: refetch,
-                    );
-                }
-
-                final data = result.data != null
-                    ? _productQuery.parse(result.data)
-                    : null;
-                productData = data?.product;
-                final product = this.product ?? data.product;
-
-                final language = data?.product?.language ?? "...";
-
-                return Container(
+          body: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                title: Text(context.loc.productDetails),
+                floating: true,
+                snap: true,
+              ),
+              SliverToBoxAdapter(
+                child: Container(
                   padding: const EdgeInsets.all(kDefaultPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,12 +272,12 @@ class ProductDetailPage extends HookWidget {
                       SizedBox(height: padding.bottom + 100),
                     ],
                   ),
-                );
-              },
-            ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

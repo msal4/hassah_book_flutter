@@ -6,6 +6,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/models/auth_response.dart';
 import 'package:hive/hive.dart';
 import 'package:http/http.dart';
+import 'package:path/path.dart' as path;
 
 enum TokenType { Refresh, Access }
 
@@ -31,7 +32,8 @@ abstract class Auth {
 
   /// Stores the provided tokens. Doesn't store null values.
   /// If you want to remove a token use `removeToken`.
-  static Future<void> storeToken({String refreshToken, String accessToken}) async {
+  static Future<void> storeToken(
+      {String refreshToken, String accessToken}) async {
     if (refreshToken != null) {
       await _box.put(TokenType.Refresh.value, refreshToken);
     }
@@ -60,14 +62,16 @@ abstract class Auth {
 
     // TODO: get the url from the environment or a constant.
     final resp = await _client.post(
-      "http://localhost:4000/refresh_token",
+      path.join(kApiURLPrefix, "refresh_token"),
       body: jsonEncode({"token": refreshToken}),
       headers: {'content-type': 'application/json'},
     );
 
     if (resp.statusCode == 200) {
       final authResponse = AuthResponse.fromJson(resp.body);
-      await storeToken(refreshToken: authResponse.refreshToken, accessToken: authResponse.accessToken);
+      await storeToken(
+          refreshToken: authResponse.refreshToken,
+          accessToken: authResponse.accessToken);
 
       return authResponse;
     } else if (resp.statusCode == 401) {
@@ -112,7 +116,9 @@ class AuthClient extends BaseClient {
         ..encoding = request.encoding
         ..bodyBytes = request.bodyBytes;
     } else if (request is MultipartRequest) {
-      requestCopy = MultipartRequest(request.method, request.url)..fields.addAll(request.fields)..files.addAll(request.files);
+      requestCopy = MultipartRequest(request.method, request.url)
+        ..fields.addAll(request.fields)
+        ..files.addAll(request.files);
     } else if (request is StreamedRequest) {
       throw Exception('copying streamed requests is not supported');
     } else {
