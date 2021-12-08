@@ -25,7 +25,10 @@ class PersonalInformationPage extends HookWidget {
             return const LoadingIndicator();
           }
           if (result.hasException) {
-            return const Retry(message: "Failed to get profile information");
+            return Retry(
+              message: context.loc.somethingWentWrong,
+              onRetry: refetch,
+            );
           }
 
           final data = _meQuery.parse(result.data);
