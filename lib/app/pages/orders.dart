@@ -112,7 +112,10 @@ class _OrdersList extends HookWidget {
     }
 
     if (result.hasException) {
-      return Retry(message: result.exception.toString(), onRetry: refetch);
+      return Retry(
+        message: context.loc.somethingWentWrong,
+        onRetry: refetch,
+      );
     }
 
     if (result.isLoading && result.data == null) {

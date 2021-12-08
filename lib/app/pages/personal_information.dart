@@ -30,7 +30,6 @@ class PersonalInformationPage extends HookWidget {
 
           final data = _meQuery.parse(result.data);
 
-          print("address is: ${data.me.address}");
           return Scaffold(
             appBar: AppBar(title: Text(context.loc.personalInformation)),
             body: ProfileForm(profile: data.me),

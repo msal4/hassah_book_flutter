@@ -27,7 +27,9 @@ class CategoriesPage extends HookWidget {
 
         if (result.hasException) {
           return Retry(
-              message: context.loc.somethingWentWrong, onRetry: refetch);
+            message: context.loc.somethingWentWrong,
+            onRetry: refetch,
+          );
         }
 
         final data = _categoriesQuery.parse(result.data);

@@ -61,7 +61,9 @@ class AuthorPage extends HookWidget {
 
               if (result.hasException) {
                 return Retry(
-                    message: result.exception.toString(), onRetry: refetch);
+                  message: context.loc.somethingWentWrong,
+                  onRetry: refetch,
+                );
               }
             }
 

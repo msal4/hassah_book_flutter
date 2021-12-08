@@ -88,8 +88,10 @@ class OrderDetailPage extends StatelessWidget {
           if (result.hasException) {
             return Scaffold(
               appBar: AppBar(title: appBarTitle),
-              body:
-                  Retry(message: result.exception.toString(), onRetry: refetch),
+              body: Retry(
+                message: context.loc.somethingWentWrong,
+                onRetry: refetch,
+              ),
             );
           }
 

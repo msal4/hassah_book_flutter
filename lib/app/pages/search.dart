@@ -117,7 +117,10 @@ class _SearchPageState extends State<SearchPage> {
                 options: options,
                 builder: (result, {fetchMore, refetch}) {
                   if (result.hasException) {
-                    return Retry(message: context.loc.somethingWentWrong);
+                    return Retry(
+                      message: context.loc.somethingWentWrong,
+                      onRetry: refetch,
+                    );
                   }
 
                   if (result.data == null && result.isLoading) {
