@@ -28,15 +28,24 @@ class ProductCard extends HookWidget {
         borderRadius: BorderRadius.circular(kDefaultBorderRadius),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
-          onTap: () {
-            Navigator.pushNamed(
-              context,
-              ProductDetailPage.routeName,
-              arguments: ProductDetailPageArguments(
+          onTap: () async {
+            final page = await Future.microtask(
+              () => ProductDetailPage(
                 product: product,
                 heroTagPrefix: heroTagPrefix,
               ),
             );
+
+            Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+
+            // Navigator.pushNamed(
+            //   context,
+            //   ProductDetailPage.routeName,
+            //   arguments: ProductDetailPageArguments(
+            //     product: product,
+            //     heroTagPrefix: heroTagPrefix,
+            //   ),
+            // );
           },
           child: Container(
             width: width,
