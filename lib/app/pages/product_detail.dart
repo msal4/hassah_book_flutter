@@ -391,11 +391,13 @@ class Bookmark extends StatefulWidget {
 }
 
 class _BookmarkState extends State<Bookmark> {
-  _BookmarkState() {
-    _product = widget.product;
-  }
-
   late Fragment$ProductDetail _product;
+
+  @override
+  void initState() {
+    _product = widget.product;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
