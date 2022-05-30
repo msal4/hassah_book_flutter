@@ -84,7 +84,7 @@ class BookmarksPage extends HookWidget {
     return RefreshIndicator(
       onRefresh: bookmarks.getBookmarks,
       child: PaginationHandler(
-        enabled: !isLoading && data?.items.length != data?.total,
+        enabled: !isLoading && data?.items?.length != data?.total,
         fetchMore: bookmarks.fetchMore,
         child: _buildBookmarksList(context, bookmarks),
       ),

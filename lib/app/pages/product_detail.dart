@@ -231,7 +231,7 @@ class ProductDetailPage extends HookWidget {
                             _buildInfoColumn(
                               title: context.loc!.publishedIn,
                               value:
-                                  data?.product?.publishedAt.year.toString() ??
+                                  data?.product?.publishedAt?.year.toString() ??
                                       "...",
                               theme: theme,
                             ),

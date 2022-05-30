@@ -173,7 +173,7 @@ class AuthorPage extends HookWidget {
                           style: theme.textTheme.headline6!
                               .copyWith(fontWeight: FontWeight.w500),
                         ),
-                        if (currentProduct.value?.categories.isNotEmpty ??
+                        if (currentProduct.value?.categories?.isNotEmpty ??
                             false)
                           const SizedBox(height: kDefaultPadding),
                         Chips(
@@ -183,8 +183,8 @@ class AuthorPage extends HookWidget {
                             arguments: SearchPageArguments(categoryID: item.id),
                           ),
                           items: currentProduct.value?.categories
-                              .map((e) => ChipItem(id: e.id, label: e.name))
-                              .toList(),
+                              ?.map((e) => ChipItem(id: e.id, label: e.name))
+                              ?.toList(),
                         ),
                         const SizedBox(height: kDefaultPadding),
                         GestureDetector(
