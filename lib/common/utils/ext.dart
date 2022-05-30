@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
-
-import '../../main.dart';
+import 'package:hassah_book_flutter/main.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 
 extension LocalizationsExt on BuildContext {
   AppLocalizations? get loc => AppLocalizations.of(this);
@@ -13,16 +12,16 @@ extension LocalizationsExt on BuildContext {
   Locale get locale => Localizations.localeOf(this);
 }
 
-extension OrderStatusExt on OrderStatus {
+extension OrderStatusExt on Enum$OrderStatus {
   Color get color {
     switch (this) {
-      case OrderStatus.pending:
+      case Enum$OrderStatus.Pending:
         return Colors.yellow.shade700;
-      case OrderStatus.canceled:
+      case Enum$OrderStatus.Canceled:
         return Colors.grey;
-      case OrderStatus.failed:
+      case Enum$OrderStatus.Failed:
         return kDangerColor;
-      case OrderStatus.processed:
+      case Enum$OrderStatus.Processed:
         return Colors.blue;
       default:
         return Colors.green;

@@ -4,7 +4,7 @@ import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
 
 class BookmarksProvider extends ChangeNotifier {
-  BookmarksProvider({required this.client}) : assert(client != null);
+  BookmarksProvider({required this.client});
 
   final GraphQLClient client;
 
@@ -33,7 +33,9 @@ class BookmarksProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    _options = QueryOptions(document: _bookmarksQuery.document, fetchPolicy: FetchPolicy.cacheAndNetwork);
+    _options = QueryOptions(
+        document: _bookmarksQuery.document,
+        fetchPolicy: FetchPolicy.cacheAndNetwork);
 
     _result = await client.query(_options);
 
@@ -54,11 +56,13 @@ class BookmarksProvider extends ChangeNotifier {
   Future<void> fetchMore() async {
     final options = FetchMoreOptions(
       document: _bookmarksQuery.document,
-      updateQuery: (oldData, newData) => updatePaginatedResponse(oldData!, newData!, "bookmarks"),
+      updateQuery: (oldData, newData) =>
+          updatePaginatedResponse(oldData!, newData!, "bookmarks"),
       variables: {"skip": bookmarks!.items.length},
     );
 
-    final result = await client.fetchMore(options, originalOptions: _options, previousResult: _result!);
+    final result = await client.fetchMore(options,
+        originalOptions: _options, previousResult: _result!);
     if (result.hasException) {
       return;
     }
@@ -68,12 +72,16 @@ class BookmarksProvider extends ChangeNotifier {
   }
 
   Future<void> addBookmark(String? productId) async {
-    await client.mutate(MutationOptions(document: _addBookmarkMutation.document, variables: {"productId": productId}));
+    await client.mutate(MutationOptions(
+        document: _addBookmarkMutation.document,
+        variables: {"productId": productId}));
     await getBookmarks();
   }
 
   Future<void> removeBookmark(String? productId) async {
-    await client.mutate(MutationOptions(document: _removeBookmarkMutation.document, variables: {"productId": productId}));
+    await client.mutate(MutationOptions(
+        document: _removeBookmarkMutation.document,
+        variables: {"productId": productId}));
     await getBookmarks();
   }
 }

@@ -5,18 +5,18 @@ targets:
       - graphql/**
       - schema.graphql
     builders:
-      artemis:
-        options:
-          fragments_glob: graphql/**.fragment.graphql
-          schema_mapping:
-            - schema: schema.graphql
-              queries_glob: graphql/**.query.graphql
-              output: lib/common/api/api.dart
-          scalar_mapping:
-            - custom_parser_import: "package:hassah_book_flutter/common/utils/coercers.dart"
-              graphql_type: DateTime
-              dart_type: DateTime
-          type_name_field: __typename
+      # artemis:
+      #   options:
+      #     fragments_glob: graphql/**.fragment.graphql
+      #     schema_mapping:
+      #       - schema: schema.graphql
+      #         queries_glob: graphql/**.query.graphql
+      #         output: lib/common/api/api.dart
+      #     scalar_mapping:
+      #       - custom_parser_import: "package:hassah_book_flutter/common/utils/coercers.dart"
+      #         graphql_type: DateTime
+      #         dart_type: DateTime
+      #     type_name_field: __typename
       #            - custom_parser_import: 'package:hassah_book_flutter/common/utils/coercers.dart'
       #              graphql_type: Upload
       #              dart_type:
@@ -25,6 +25,12 @@ targets:
       #                  - 'package:http/http.dart'
       graphql_codegen:
         options:
+          scalars:
+            DateTime:
+              type: DateTime
+              fromJsonFunctionName: dateTimeFromJson
+              toJsonFunctionName: dateTimeToJson
+              import: "package:hassah_book_flutter/common/utils/coercers.dart"
           clients:
             - graphql
             - graphql_flutter

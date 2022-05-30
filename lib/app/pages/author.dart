@@ -26,9 +26,7 @@ class AuthorPageArguments {
 class AuthorPage extends HookWidget {
   static const routeName = "/author";
 
-  AuthorPage({Key? key, required this.id})
-      : assert(id != null),
-        super(key: key);
+  AuthorPage({Key? key, required this.id}) : super(key: key);
 
   final String id;
 

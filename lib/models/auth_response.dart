@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:meta/meta.dart';
-
 class AuthResponse {
   const AuthResponse({required this.refreshToken, required this.accessToken});
 

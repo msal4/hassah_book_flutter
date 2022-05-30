@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/models/cart_item.dart';
@@ -18,7 +17,6 @@ import 'package:hassah_book_flutter/common/utils/price.dart';
 import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -165,9 +163,13 @@ class _CartPageState extends State<CartPage> {
               child: Icon(Icons.remove),
             ),
             const SizedBox(width: kDefaultPadding),
-            Text(item.quantity.toString(),
-                style: theme.textTheme.subtitle1!.copyWith(
-                    color: theme.accentColor, fontWeight: FontWeight.bold)),
+            Text(
+              item.quantity.toString(),
+              style: theme.textTheme.subtitle1!.copyWith(
+                color: theme.colorScheme.secondary,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(width: kDefaultPadding),
             GestureDetector(
               onTap: () {
@@ -181,7 +183,7 @@ class _CartPageState extends State<CartPage> {
               "${formatPrice(item.price * item.quantity)} ${context.loc!.iqd}",
               style: theme.textTheme.subtitle1!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: theme.accentColor,
+                color: theme.colorScheme.secondary,
               ),
             ),
           ],
@@ -304,7 +306,8 @@ class OrderSheet extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final TextEditingController? phoneController = useTextEditingController();
-    final TextEditingController? provinceController = useTextEditingController();
+    final TextEditingController? provinceController =
+        useTextEditingController();
     final TextEditingController? addressController = useTextEditingController();
 
     final double totalPrice =
@@ -396,7 +399,8 @@ class OrderSheet extends HookWidget {
                 children: [
                   Row(
                     children: [
-                      Text(context.loc!.total, style: theme.textTheme.headline6),
+                      Text(context.loc!.total,
+                          style: theme.textTheme.headline6),
                       const Spacer(),
                       Text("${formatPrice(totalPrice)} ${context.loc!.iqd}",
                           style: theme.textTheme.headline6!
