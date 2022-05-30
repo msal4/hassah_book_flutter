@@ -21,18 +21,19 @@ class CategoriesPage extends HookWidget {
       options: QueryOptions(
           document: _categoriesQuery.document, variables: {"take": 100}),
       builder: (result, {fetchMore, refetch}) {
-        if (result.isLoading && result.data == null) {
+        if (result.isLoading && result.data == null ||
+            result.data!["categories"] == null) {
           return const LoadingIndicator();
         }
 
         if (result.hasException) {
           return Retry(
-            message: context.loc.somethingWentWrong,
+            message: context.loc!.somethingWentWrong,
             onRetry: refetch,
           );
         }
 
-        final data = _categoriesQuery.parse(result.data);
+        final data = _categoriesQuery.parse(result.data!);
 
         return PaginationHandler(
           enabled: !result.isLoading &&
@@ -44,7 +45,7 @@ class CategoriesPage extends HookWidget {
               variables: {"skip": data.categories.items.length, "take": 100},
             );
 
-            fetchMore(options);
+            fetchMore!(options);
           },
           child: ListView.separated(
             padding: EdgeInsets.all(kDefaultPadding).copyWith(
@@ -99,7 +100,7 @@ class CategoriesPage extends HookWidget {
           children: [
             Text(
               cat.name,
-              style: textTheme.subtitle1.copyWith(color: Colors.grey.shade800),
+              style: textTheme.subtitle1!.copyWith(color: Colors.grey.shade800),
             ),
             Icon(Icons.chevron_right, color: Colors.grey.shade800)
           ],

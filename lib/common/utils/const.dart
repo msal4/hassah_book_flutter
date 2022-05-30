@@ -18,7 +18,11 @@ const kSmallProductImageWidth = kDefaultImageWidth / 2;
 const kSmallProductImageHeight = kDefaultImageHeight / 2;
 const kCoverAspectRatio = 6 / 9;
 
-const kImageCDN = String.fromEnvironment("CDN_URL",
-    defaultValue: "https://hassahbook.imgix.net");
-const kApiURLPrefix =
-    String.fromEnvironment("API_URL", defaultValue: "https://book.hassah.me");
+const kImageCDN = String.fromEnvironment(
+  "CDN_URL",
+  defaultValue: "https://hassahbook.imgix.net",
+);
+const kApiURLPrefix = String.fromEnvironment(
+  "API_URL",
+  defaultValue: "https://book.hassah.me",
+);

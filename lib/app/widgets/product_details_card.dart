@@ -17,8 +17,8 @@ const _kBookmarkIconHeight = 35.0;
 
 class ProductDetailsCard extends HookWidget {
   const ProductDetailsCard({
-    Key key,
-    @required this.product,
+    Key? key,
+    required this.product,
     this.isBookmarked = false,
     this.onBookmarkTap,
   })  : assert(product != null),
@@ -27,7 +27,7 @@ class ProductDetailsCard extends HookWidget {
 
   final ProductMixin product;
   final bool isBookmarked;
-  final FutureOr<void> Function() onBookmarkTap;
+  final FutureOr<void> Function()? onBookmarkTap;
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +69,7 @@ class ProductDetailsCard extends HookWidget {
                       Text(product.name,
                           style: theme.textTheme.headline6,
                           overflow: TextOverflow.ellipsis),
-                      Text("${context.loc.by} ${product.author.name}",
+                      Text("${context.loc!.by} ${product.author.name}",
                           style: theme.textTheme.bodyText2,
                           overflow: TextOverflow.ellipsis),
                       const SizedBox(height: kDefaultPadding / 2),
@@ -84,7 +84,7 @@ class ProductDetailsCard extends HookWidget {
                             .toList(),
                         collapsable: false,
                         backgroundColor: theme.scaffoldBackgroundColor,
-                        textColor: theme.textTheme.bodyText1.color,
+                        textColor: theme.textTheme.bodyText1!.color,
                         maxNumChips: 2,
                       )
                     ],
@@ -100,7 +100,7 @@ class ProductDetailsCard extends HookWidget {
             child: GestureDetector(
               onTap: () async {
                 isLoading.value = true;
-                await onBookmarkTap();
+                await onBookmarkTap!();
                 isLoading.value = false;
               },
               child: Container(

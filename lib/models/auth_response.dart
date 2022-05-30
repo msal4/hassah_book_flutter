@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:meta/meta.dart';
 
 class AuthResponse {
-  const AuthResponse({@required this.refreshToken, @required this.accessToken});
+  const AuthResponse({required this.refreshToken, required this.accessToken});
 
-  final String refreshToken;
-  final String accessToken;
+  final String? refreshToken;
+  final String? accessToken;
 
   factory AuthResponse.fromJson(String json) {
     return AuthResponse.fromMap(Map<String, dynamic>.from(jsonDecode(json)));

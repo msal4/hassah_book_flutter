@@ -3,8 +3,12 @@
   "schemaPath": "schema.graphql",
   "extensions": {
     "endpoints": {
-      "Default": {
+      "Local": {
         "url": "http://localhost:4000/graphql",
+        "introspect": true
+      },
+      "Production": {
+        "url": "https://book.hassah.me/graphql",
         "introspect": true
       }
     }

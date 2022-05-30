@@ -18,28 +18,27 @@ import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailPageArguments {
   const ProductDetailPageArguments(
-      {this.product, this.id, @required this.heroTagPrefix})
+      {this.product, this.id, required this.heroTagPrefix})
       : assert(product != null || id != null, "a product or an id is required"),
         assert(heroTagPrefix != null, "heroTagPrefix is required");
 
-  final String id;
-  final ProductMixin product;
+  final String? id;
+  final ProductMixin? product;
   final String heroTagPrefix;
 }
 
 class ProductDetailPage extends HookWidget {
-  ProductDetailPage({this.product, this.id, @required this.heroTagPrefix})
+  ProductDetailPage({this.product, this.id, required this.heroTagPrefix})
       : assert(product != null || id != null, "a product or an id is required"),
         assert(heroTagPrefix != null, "heroTagPrefix must not be null");
 
-  final String id;
-  final ProductMixin product;
+  final String? id;
+  final ProductMixin? product;
   final String heroTagPrefix;
 
   static const routeName = "/product_detail";
@@ -52,14 +51,15 @@ class ProductDetailPage extends HookWidget {
     final padding = MediaQuery.of(context).padding;
 
     final defaultQuantity =
-        Hive.box<CartItem>(kCartBoxName).get(id ?? product.id)?.quantity ?? 1;
+        Hive.box<CartItem>(kCartBoxName).get(id ?? product!.id)?.quantity ?? 1;
     final overviewClipped = useState(true);
     final quantity = useState(defaultQuantity);
 
     return Query(
       options: QueryOptions(
         document: _productQuery.document,
-        variables: {"id": id ?? product.id},
+        variables: {"id": id ?? product!.id},
+        fetchPolicy: FetchPolicy.noCache,
       ),
       builder: (result, {fetchMore, refetch}) {
         if (this.product == null) {
@@ -67,15 +67,15 @@ class ProductDetailPage extends HookWidget {
           if (result.hasException)
             return Scaffold(
               body: Retry(
-                message: context.loc.somethingWentWrong,
+                message: context.loc!.somethingWentWrong,
                 onRetry: refetch,
               ),
             );
         }
 
         final data =
-            result.data != null ? _productQuery.parse(result.data) : null;
-        final product = this.product ?? data?.product;
+            result.data != null ? _productQuery.parse(result.data!) : null;
+        final product = (this.product ?? data?.product!)!;
 
         final language = data?.product?.language ?? "...";
 
@@ -95,7 +95,7 @@ class ProductDetailPage extends HookWidget {
                     borderRadius: BorderRadius.circular(9999),
                     child: Row(
                       children: [
-                        Text(context.loc.qty),
+                        Text(context.loc!.qty),
                         const Spacer(),
                         GestureDetector(
                           onTap: () {
@@ -107,7 +107,7 @@ class ProductDetailPage extends HookWidget {
                         ),
                         const SizedBox(width: kDefaultPadding),
                         Text(quantity.value.toString(),
-                            style: theme.textTheme.subtitle1.copyWith(
+                            style: theme.textTheme.subtitle1!.copyWith(
                                 color: theme.accentColor,
                                 fontWeight: FontWeight.bold)),
                         const SizedBox(width: kDefaultPadding),
@@ -139,8 +139,8 @@ class ProductDetailPage extends HookWidget {
                             borderRadius: BorderRadius.circular(9999),
                             color: theme.accentColor,
                             child: Text(
-                              context.loc.goToCart,
-                              style: theme.textTheme.button
+                              context.loc!.goToCart,
+                              style: theme.textTheme.button!
                                   .copyWith(color: Colors.white),
                               textAlign: TextAlign.center,
                             ),
@@ -160,7 +160,7 @@ class ProductDetailPage extends HookWidget {
                                 );
                                 showSnackBar(
                                   context,
-                                  message: context.loc.productAddedToCart,
+                                  message: context.loc!.productAddedToCart,
                                   type: SnackBarType.success,
                                   margin: EdgeInsets.only(bottom: 90),
                                 );
@@ -172,8 +172,8 @@ class ProductDetailPage extends HookWidget {
                               ? Colors.grey.shade800
                               : theme.primaryColor,
                           child: Text(
-                            context.loc.addToCart,
-                            style: theme.textTheme.button
+                            context.loc!.addToCart,
+                            style: theme.textTheme.button!
                                 .copyWith(color: Colors.white),
                             textAlign: TextAlign.center,
                           ),
@@ -188,7 +188,7 @@ class ProductDetailPage extends HookWidget {
           body: CustomScrollView(
             slivers: [
               SliverAppBar(
-                title: Text(context.loc.productDetails),
+                title: Text(context.loc!.productDetails),
                 floating: true,
                 snap: true,
               ),
@@ -229,7 +229,7 @@ class ProductDetailPage extends HookWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             _buildInfoColumn(
-                              title: context.loc.publishedIn,
+                              title: context.loc!.publishedIn,
                               value:
                                   data?.product?.publishedAt?.year.toString() ??
                                       "...",
@@ -237,17 +237,17 @@ class ProductDetailPage extends HookWidget {
                             ),
                             _buildDivider(),
                             _buildInfoColumn(
-                              title: context.loc.pages,
+                              title: context.loc!.pages,
                               value: data?.product?.pages.toString() ?? "...",
                               theme: theme,
                             ),
                             _buildDivider(),
                             _buildInfoColumn(
-                              title: context.loc.language,
+                              title: context.loc!.language,
                               value: (language == "ar"
-                                  ? context.loc.ar
+                                  ? context.loc!.ar
                                   : language == "en"
-                                      ? context.loc.en
+                                      ? context.loc!.en
                                       : language),
                               theme: theme,
                             )
@@ -261,7 +261,7 @@ class ProductDetailPage extends HookWidget {
                         },
                         child: Text(
                           data?.product?.overview ?? "...",
-                          style: theme.textTheme.bodyText1
+                          style: theme.textTheme.bodyText1!
                               .copyWith(color: Colors.grey.shade800),
                           maxLines: overviewClipped.value ? 2 : null,
                           overflow: overviewClipped.value
@@ -282,7 +282,7 @@ class ProductDetailPage extends HookWidget {
   }
 
   Row _buildProductHeader(BuildContext context, ProductMixin product,
-      ProductDetailMixin productDetail, VoidCallback refetch) {
+      ProductDetailMixin? productDetail, VoidCallback? refetch) {
     final theme = Theme.of(context);
 
     return Row(
@@ -292,8 +292,8 @@ class ProductDetailPage extends HookWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                "${formatPrice(product.price)} ${context.loc.iqd}",
-                style: theme.textTheme.headline5.copyWith(
+                "${formatPrice(product.price)} ${context.loc!.iqd}",
+                style: theme.textTheme.headline5!.copyWith(
                     fontWeight: FontWeight.bold, color: theme.accentColor),
               ),
               Text(
@@ -308,12 +308,12 @@ class ProductDetailPage extends HookWidget {
                 child: RichText(
                   text: TextSpan(children: [
                     TextSpan(
-                      text: "${context.loc.by} ",
+                      text: "${context.loc!.by} ",
                       style: theme.textTheme.bodyText1,
                     ),
                     TextSpan(
                       text: product.author.name,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                         color: theme.accentColor,
                       ),
                     ),
@@ -343,17 +343,21 @@ class ProductDetailPage extends HookWidget {
   }
 
   Column _buildInfoColumn(
-      {@required String title,
-      @required String value,
-      @required ThemeData theme}) {
+      {required String title,
+      required String value,
+      required ThemeData theme}) {
     return Column(
       children: [
-        Text(title,
-            style: theme.textTheme.bodyText1
-                .copyWith(color: Colors.grey.shade800)),
-        Text(value ?? "...",
-            style: theme.textTheme.bodyText1
-                .copyWith(fontWeight: FontWeight.bold)),
+        Text(
+          title,
+          style:
+              theme.textTheme.bodyText1!.copyWith(color: Colors.grey.shade800),
+        ),
+        Text(
+          value,
+          style:
+              theme.textTheme.bodyText1!.copyWith(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }
@@ -373,9 +377,7 @@ class ProductDetailPage extends HookWidget {
 }
 
 class Bookmark extends StatefulWidget {
-  const Bookmark({Key key, @required this.product})
-      : assert(product != null),
-        super(key: key);
+  const Bookmark({Key? key, required this.product}) : super(key: key);
 
   final ProductDetailMixin product;
 
@@ -414,14 +416,14 @@ class _BookmarkState extends State<Bookmark> {
               await bookmarks.removeBookmark(productId);
               showSnackBar(
                 context,
-                message: context.loc.productRemovedFromBookmarks,
+                message: context.loc!.productRemovedFromBookmarks,
                 margin: EdgeInsets.only(bottom: 90),
               );
             } else {
               await bookmarks.addBookmark(productId);
               showSnackBar(
                 context,
-                message: context.loc.productAddedToBookmarks,
+                message: context.loc!.productAddedToBookmarks,
                 type: SnackBarType.success,
                 margin: EdgeInsets.only(bottom: 90),
               );
@@ -430,10 +432,11 @@ class _BookmarkState extends State<Bookmark> {
           icon: Container(
             padding: const EdgeInsets.all(kDefaultPadding / 2),
             decoration: BoxDecoration(
-                color: product.isFavorite
-                    ? theme.accentColor
-                    : theme.backgroundColor,
-                borderRadius: BorderRadius.circular(9999)),
+              color: product.isFavorite
+                  ? theme.accentColor
+                  : theme.backgroundColor,
+              borderRadius: BorderRadius.circular(9999),
+            ),
             child: Icon(
               product.isFavorite ? Icons.bookmark : Icons.bookmark_border,
               color: product.isFavorite ? Colors.white : Colors.grey.shade800,

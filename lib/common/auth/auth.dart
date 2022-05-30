@@ -23,17 +23,17 @@ extension on TokenType {
 abstract class Auth {
   static final _box = Hive.box(kAuthBoxName);
   static final _client = Client();
-  static AuthProvider provider;
+  static late AuthProvider provider;
 
   /// Gets the token of the provided type.
-  static String getToken(TokenType tokenType) {
+  static String? getToken(TokenType tokenType) {
     return _box.get(tokenType.value);
   }
 
   /// Stores the provided tokens. Doesn't store null values.
   /// If you want to remove a token use `removeToken`.
   static Future<void> storeToken(
-      {String refreshToken, String accessToken}) async {
+      {String? refreshToken, String? accessToken}) async {
     if (refreshToken != null) {
       await _box.put(TokenType.Refresh.value, refreshToken);
     }
@@ -43,7 +43,7 @@ abstract class Auth {
   }
 
   /// Removes all stored tokens if no token type is provided.
-  static Future<void> removeToken([TokenType tokenType]) async {
+  static Future<void> removeToken([TokenType? tokenType]) async {
     if (tokenType == null) {
       await _box.deleteAll([TokenType.Refresh.value, TokenType.Access.value]);
       return;
@@ -61,7 +61,7 @@ abstract class Auth {
     }
 
     final resp = await _client.post(
-      path.join(kApiURLPrefix, "refresh_token"),
+      Uri.parse(path.join(kApiURLPrefix, "refresh_token")),
       body: jsonEncode({"token": refreshToken}),
       headers: {'content-type': 'application/json'},
     );

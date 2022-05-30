@@ -36,7 +36,7 @@ class OrderStatusInfo {
 
   final OrderStatus status;
 
-  int get index => _indexes[status];
+  int? get index => _indexes[status];
 
   final _indexes = const {
     OrderStatus.canceled: -2,
@@ -49,14 +49,14 @@ class OrderStatusInfo {
 }
 
 class OrderDetailPageArguments {
-  const OrderDetailPageArguments({@required this.orderId})
+  const OrderDetailPageArguments({required this.orderId})
       : assert(orderId != null);
 
   final String orderId;
 }
 
 class OrderDetailPage extends StatelessWidget {
-  OrderDetailPage({@required this.orderId}) : assert(orderId != null);
+  OrderDetailPage({required this.orderId}) : assert(orderId != null);
 
   final String orderId;
 
@@ -83,13 +83,13 @@ class OrderDetailPage extends StatelessWidget {
           pollInterval: _kQueryPollInterval,
         ),
         builder: (result, {refetch, fetchMore}) {
-          final appBarTitle = Text(context.loc.orderDetails);
+          final appBarTitle = Text(context.loc!.orderDetails);
 
           if (result.hasException) {
             return Scaffold(
               appBar: AppBar(title: appBarTitle),
               body: Retry(
-                message: context.loc.somethingWentWrong,
+                message: context.loc!.somethingWentWrong,
                 onRetry: refetch,
               ),
             );
@@ -102,7 +102,7 @@ class OrderDetailPage extends StatelessWidget {
             );
           }
 
-          final order = _orderQuery.parse(result.data).order;
+          final order = _orderQuery.parse(result.data!).order!;
 
           return Scaffold(
             bottomSheet: _buildBottomSheet(
@@ -110,7 +110,7 @@ class OrderDetailPage extends StatelessWidget {
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 SliverAppBar(
-                    title: Text("${context.loc.order} #${order.orderNumber}"),
+                    title: Text("${context.loc!.order} #${order.orderNumber}"),
                     floating: true,
                     snap: true),
               ],
@@ -141,7 +141,7 @@ class OrderDetailPage extends StatelessWidget {
       double initialSheetHeight,
       double minSheetSize,
       OrderMixin order,
-      Future<QueryResult> Function() refetch) {
+      Future<QueryResult?> Function()? refetch) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
 
@@ -181,11 +181,11 @@ class OrderDetailPage extends StatelessWidget {
                     children: [
                       Row(
                         children: [
-                          Text(context.loc.total,
+                          Text(context.loc!.total,
                               style: theme.textTheme.headline6),
                           const Spacer(),
                           Text(
-                              "${formatPrice(order.totalPrice)} ${context.loc.iqd}",
+                              "${formatPrice(order.totalPrice)} ${context.loc!.iqd}",
                               style: theme.textTheme.headline6),
                         ],
                       ),
@@ -227,13 +227,13 @@ class OrderDetailPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  context.loc.status,
-                                  style: theme.textTheme.bodyText1
+                                  context.loc!.status,
+                                  style: theme.textTheme.bodyText1!
                                       .copyWith(color: Colors.grey.shade600),
                                   textAlign: TextAlign.center,
                                 ),
                                 Text(humanizeOrderStatus(context, order.status),
-                                    style: theme.textTheme.subtitle1
+                                    style: theme.textTheme.subtitle1!
                                         .copyWith(color: order.status.color),
                                     textAlign: TextAlign.center),
                               ],
@@ -245,8 +245,8 @@ class OrderDetailPage extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 Text(
-                                  context.loc.orderedOn,
-                                  style: theme.textTheme.bodyText1
+                                  context.loc!.orderedOn,
+                                  style: theme.textTheme.bodyText1!
                                       .copyWith(color: Colors.grey.shade600),
                                   textAlign: TextAlign.center,
                                 ),
@@ -263,7 +263,7 @@ class OrderDetailPage extends StatelessWidget {
                       const SizedBox(height: kDefaultPadding * 2),
                       if (order.status == OrderStatus.pending)
                         GestureDetector(
-                          onTap: result.isNotLoading
+                          onTap: result!.isNotLoading
                               ? () =>
                                   _cancelOrder(context, runMutation, refetch)
                               : null,
@@ -274,9 +274,9 @@ class OrderDetailPage extends StatelessWidget {
                                 : theme.scaffoldBackgroundColor,
                             borderRadius: BorderRadius.circular(9999),
                             child: Text(
-                              context.loc.cancel.toUpperCase(),
+                              context.loc!.cancel.toUpperCase(),
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.button.copyWith(
+                              style: theme.textTheme.button!.copyWith(
                                   color: result.isLoading
                                       ? Colors.grey.shade200
                                       : Colors.grey.shade800),
@@ -321,7 +321,7 @@ class OrderDetailPage extends StatelessWidget {
     if (status.status == OrderStatus.pending &&
         currentStatus.status == OrderStatus.pending) {
       return _kPendingStatusColor;
-    } else if (status.index <= currentStatus.index) {
+    } else if (status.index! <= currentStatus.index!) {
       return _kGreenStatusColor;
     } else {
       return _kDefaultStatusColor;
@@ -359,9 +359,9 @@ class OrderDetailPage extends StatelessWidget {
 
   Future<void> _cancelOrder(
     BuildContext context,
-    MultiSourceResult Function(Map<String, dynamic>, {Object optimisticResult})
+    MultiSourceResult Function(Map<String, dynamic>, {Object? optimisticResult})
         runMutation,
-    Future<QueryResult> Function() refetch,
+    Future<QueryResult?> Function()? refetch,
   ) async {
     final theme = Theme.of(context);
 
@@ -383,7 +383,7 @@ class OrderDetailPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  context.loc.cancelOrderConfirmation,
+                  context.loc!.cancelOrderConfirmation,
                   style: theme.textTheme.subtitle1,
                 ),
                 const SizedBox(height: kDefaultPadding),
@@ -404,9 +404,9 @@ class OrderDetailPage extends StatelessWidget {
                                 horizontal: kDefaultPadding * 1.5,
                                 vertical: kDefaultPadding),
                             child: Text(
-                              context.loc.no.toUpperCase(),
+                              context.loc!.no.toUpperCase(),
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.button
+                              style: theme.textTheme.button!
                                   .copyWith(color: Colors.white),
                             ),
                           ),
@@ -423,17 +423,17 @@ class OrderDetailPage extends StatelessWidget {
                         child: InkWell(
                           onTap: () async {
                             final result = await runMutation({"id": orderId})
-                                .networkResult;
+                                .networkResult!;
 
                             if (result.hasException) {
-                              refetch();
+                              refetch!();
                               Navigator.pop(context);
                               return;
                             }
                             if (result.isConcrete) {
                               debugPrint(result.data.toString());
                             }
-                            refetch();
+                            refetch!();
                             Navigator.pop(context);
                           },
                           child: Ink(
@@ -441,7 +441,7 @@ class OrderDetailPage extends StatelessWidget {
                                 horizontal: kDefaultPadding * 1.5,
                                 vertical: kDefaultPadding),
                             child: Text(
-                              context.loc.yes.toUpperCase(),
+                              context.loc!.yes.toUpperCase(),
                               textAlign: TextAlign.center,
                               style: theme.textTheme.button,
                             ),
@@ -474,7 +474,7 @@ class OrderDetailPage extends StatelessWidget {
 }
 
 class PurchaseCard extends HookWidget {
-  const PurchaseCard({@required this.purchase}) : assert(purchase != null);
+  const PurchaseCard({required this.purchase}) : assert(purchase != null);
 
   final PurchaseMixin purchase;
 
@@ -528,16 +528,16 @@ class PurchaseCard extends HookWidget {
       children: [
         Text(item.product.name,
             style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("${context.loc.by} ${item.product.author.name}",
+        Text("${context.loc!.by} ${item.product.author.name}",
             style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
         const SizedBox(height: kDefaultPadding / 2),
         Row(
           children: [
-            Text("${item.quantity} ${context.loc.items}"),
+            Text("${item.quantity} ${context.loc!.items}"),
             const Spacer(),
             Text(
-              "${formatPrice(item.product.price * item.quantity)} ${context.loc.iqd}",
-              style: theme.textTheme.subtitle1.copyWith(
+              "${formatPrice(item.product.price * item.quantity)} ${context.loc!.iqd}",
+              style: theme.textTheme.subtitle1!.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.accentColor,
               ),

@@ -6,9 +6,9 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 import '../../main.dart';
 
 extension LocalizationsExt on BuildContext {
-  AppLocalizations get loc => AppLocalizations.of(this);
+  AppLocalizations? get loc => AppLocalizations.of(this);
 
-  void Function(Locale) get setLocale => App.of(this).setLocale;
+  void Function(Locale) get setLocale => App.of(this)!.setLocale;
 
   Locale get locale => Localizations.localeOf(this);
 }

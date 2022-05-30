@@ -18,5 +18,5 @@ MaterialColor createMaterialColor(Color color) {
     );
   });
 
-  return MaterialColor(color.value, swatch);
+  return MaterialColor(color.value, swatch as Map<int, Color>);
 }

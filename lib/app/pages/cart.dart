@@ -58,7 +58,7 @@ class _CartPageState extends State<CartPage> {
             body: NestedScrollView(
               headerSliverBuilder: (context, innerBoxIsScrolled) => [
                 SliverAppBar(
-                  title: Text(context.loc.cart),
+                  title: Text(context.loc!.cart),
                   floating: true,
                   snap: true,
                 ),
@@ -88,8 +88,17 @@ class _CartPageState extends State<CartPage> {
           key: Key(item.id),
           borderRadius: BorderRadius.circular(kDefaultBorderRadius),
           child: Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: kSlidableActionExtentRatio,
+            startActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              extentRatio: kSlidableActionExtentRatio,
+              children: [
+                SlidableAction(
+                  backgroundColor: kDangerColor,
+                  icon: Icons.delete,
+                  onPressed: (context) => _deleteItem(context, item),
+                )
+              ],
+            ),
             child: GestureDetector(
               onTap: () {
                 Navigator.of(context).pushNamed(
@@ -112,16 +121,6 @@ class _CartPageState extends State<CartPage> {
                 ),
               ),
             ),
-            secondaryActions: <Widget>[
-              IconSlideAction(
-                color: kDangerColor,
-                iconWidget: SvgPicture.asset(
-                  "assets/svg/trash.svg",
-                  width: kDefaultIconSize,
-                ),
-                onTap: () => _deleteItem(context, item),
-              )
-            ],
           ),
         );
       },
@@ -136,8 +135,8 @@ class _CartPageState extends State<CartPage> {
     return Container(
       padding: const EdgeInsets.all(kDefaultPadding),
       child: Text(
-        context.loc.yourCartIsEmpty + ".",
-        style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.w300),
+        context.loc!.yourCartIsEmpty + ".",
+        style: theme.textTheme.headline5!.copyWith(fontWeight: FontWeight.w300),
         textAlign: TextAlign.center,
       ),
     );
@@ -150,7 +149,7 @@ class _CartPageState extends State<CartPage> {
       children: [
         Text(item.name,
             style: theme.textTheme.headline6, overflow: TextOverflow.ellipsis),
-        Text("${context.loc.by} ${item.authorName}",
+        Text("${context.loc!.by} ${item.authorName}",
             style: theme.textTheme.bodyText2, overflow: TextOverflow.ellipsis),
         const SizedBox(height: kDefaultPadding / 2),
         Row(
@@ -167,7 +166,7 @@ class _CartPageState extends State<CartPage> {
             ),
             const SizedBox(width: kDefaultPadding),
             Text(item.quantity.toString(),
-                style: theme.textTheme.subtitle1.copyWith(
+                style: theme.textTheme.subtitle1!.copyWith(
                     color: theme.accentColor, fontWeight: FontWeight.bold)),
             const SizedBox(width: kDefaultPadding),
             GestureDetector(
@@ -179,8 +178,8 @@ class _CartPageState extends State<CartPage> {
             ),
             const Spacer(),
             Text(
-              "${formatPrice(item.price * item.quantity)} ${context.loc.iqd}",
-              style: theme.textTheme.subtitle1.copyWith(
+              "${formatPrice(item.price * item.quantity)} ${context.loc!.iqd}",
+              style: theme.textTheme.subtitle1!.copyWith(
                 fontWeight: FontWeight.bold,
                 color: theme.accentColor,
               ),
@@ -220,7 +219,7 @@ class _CartPageState extends State<CartPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  context.loc.removeItemFromCartConfirmation,
+                  context.loc!.removeItemFromCartConfirmation,
                   style: theme.textTheme.subtitle1,
                 ),
                 const SizedBox(height: kDefaultPadding),
@@ -241,9 +240,9 @@ class _CartPageState extends State<CartPage> {
                                 horizontal: kDefaultPadding * 1.5,
                                 vertical: kDefaultPadding),
                             child: Text(
-                              context.loc.cancel.toUpperCase(),
+                              context.loc!.cancel.toUpperCase(),
                               textAlign: TextAlign.center,
-                              style: theme.textTheme.button
+                              style: theme.textTheme.button!
                                   .copyWith(color: Colors.white),
                             ),
                           ),
@@ -267,7 +266,7 @@ class _CartPageState extends State<CartPage> {
                                 horizontal: kDefaultPadding * 1.5,
                                 vertical: kDefaultPadding),
                             child: Text(
-                              context.loc.yes.toUpperCase(),
+                              context.loc!.yes.toUpperCase(),
                               textAlign: TextAlign.center,
                               style: theme.textTheme.button,
                             ),
@@ -288,11 +287,11 @@ class _CartPageState extends State<CartPage> {
 
 class OrderSheet extends HookWidget {
   OrderSheet({
-    Key key,
-    @required this.initialSheetHeight,
-    @required this.minSheetSize,
-    @required this.box,
-    @required this.padding,
+    Key? key,
+    required this.initialSheetHeight,
+    required this.minSheetSize,
+    required this.box,
+    required this.padding,
   }) : super(key: key);
 
   final _orderMutation = PlaceOrderMutation();
@@ -304,9 +303,9 @@ class OrderSheet extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final phoneController = useTextEditingController();
-    final provinceController = useTextEditingController();
-    final addressController = useTextEditingController();
+    final TextEditingController? phoneController = useTextEditingController();
+    final TextEditingController? provinceController = useTextEditingController();
+    final TextEditingController? addressController = useTextEditingController();
 
     final double totalPrice =
         box.values.fold(0.0, (acc, item) => acc += item.price * item.quantity);
@@ -327,10 +326,10 @@ class OrderSheet extends HookWidget {
                 options: QueryOptions(document: _meQuery.document),
                 builder: (meResult, {refetch, fetchMore}) {
                   if (!meResult.hasException && meResult.isNotLoading) {
-                    final me = _meQuery.parse(meResult.data).me;
-                    phoneController.text = me.phone;
-                    provinceController.text = me.province;
-                    addressController.text = me.address;
+                    final me = _meQuery.parse(meResult.data!).me;
+                    phoneController!.text = me.phone;
+                    provinceController!.text = me.province!;
+                    addressController!.text = me.address!;
                   }
 
                   return _buildSheet(
@@ -360,14 +359,14 @@ class OrderSheet extends HookWidget {
   }
 
   Widget _buildSheet(BuildContext context,
-      {@required ScrollController scrollController,
-      @required double totalPrice,
+      {required ScrollController scrollController,
+      required double totalPrice,
       bool isLoading = false,
-      @required TextEditingController phoneController,
-      @required TextEditingController provinceController,
-      @required TextEditingController addressController,
-      @required AuthProvider auth,
-      @required List<PurchasePartialInput> purchases}) {
+      required TextEditingController? phoneController,
+      required TextEditingController? provinceController,
+      required TextEditingController? addressController,
+      required AuthProvider auth,
+      required List<PurchasePartialInput> purchases}) {
     final theme = Theme.of(context);
 
     return Mutation(
@@ -397,10 +396,10 @@ class OrderSheet extends HookWidget {
                 children: [
                   Row(
                     children: [
-                      Text(context.loc.total, style: theme.textTheme.headline6),
+                      Text(context.loc!.total, style: theme.textTheme.headline6),
                       const Spacer(),
-                      Text("${formatPrice(totalPrice)} ${context.loc.iqd}",
-                          style: theme.textTheme.headline6
+                      Text("${formatPrice(totalPrice)} ${context.loc!.iqd}",
+                          style: theme.textTheme.headline6!
                               .copyWith(fontWeight: FontWeight.bold)),
                     ],
                   ),
@@ -410,7 +409,7 @@ class OrderSheet extends HookWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                     child: TextField(
-                      enabled: !isLoading && result.isNotLoading,
+                      enabled: !isLoading && result!.isNotLoading,
                       controller: phoneController,
                       textInputAction: TextInputAction.next,
                       decoration: InputDecoration(
@@ -418,7 +417,7 @@ class OrderSheet extends HookWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding / 1.5),
                         border: InputBorder.none,
-                        labelText: context.loc.phoneNumber,
+                        labelText: context.loc!.phoneNumber,
                         filled: true,
                       ),
                     ),
@@ -427,14 +426,14 @@ class OrderSheet extends HookWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                     child: TextField(
-                      enabled: !isLoading && result.isNotLoading,
+                      enabled: !isLoading && result!.isNotLoading,
                       controller: provinceController,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding / 1.5),
                         border: InputBorder.none,
-                        labelText: context.loc.province,
+                        labelText: context.loc!.province,
                         filled: true,
                       ),
                     ),
@@ -443,21 +442,21 @@ class OrderSheet extends HookWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                     child: TextField(
-                      enabled: !isLoading && result.isNotLoading,
+                      enabled: !isLoading && result!.isNotLoading,
                       controller: addressController,
                       decoration: InputDecoration(
                         contentPadding: const EdgeInsets.symmetric(
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding / 1.5),
                         border: InputBorder.none,
-                        labelText: context.loc.address,
+                        labelText: context.loc!.address,
                         filled: true,
                       ),
                     ),
                   ),
                   const SizedBox(height: kDefaultPadding),
                   GestureDetector(
-                    onTap: box.isNotEmpty && result.isNotLoading && !isLoading
+                    onTap: box.isNotEmpty && result!.isNotLoading && !isLoading
                         ? () async {
                             if (!auth.isAuthenticated) {
                               Navigator.pushNamed(
@@ -467,17 +466,17 @@ class OrderSheet extends HookWidget {
                               return;
                             }
                             final input = PlaceOrderInput(
-                              phone: phoneController.text,
-                              province: provinceController.text,
-                              address: addressController.text,
+                              phone: phoneController!.text,
+                              province: provinceController!.text,
+                              address: addressController!.text,
                               purchases: purchases,
                             );
                             final result = await runMutation({'data': input})
-                                .networkResult;
+                                .networkResult!;
                             if (result.hasException) {
                               showSnackBar(
                                 context,
-                                message: context.loc.somethingWentWrong,
+                                message: context.loc!.somethingWentWrong,
                                 type: SnackBarType.error,
                               );
                               return;
@@ -492,14 +491,14 @@ class OrderSheet extends HookWidget {
                         : null,
                     child: RoundContainer(
                       padding: const EdgeInsets.all(kDefaultPadding),
-                      color: box.isEmpty || result.isLoading
+                      color: box.isEmpty || result!.isLoading
                           ? Colors.grey.shade800
                           : theme.accentColor,
                       borderRadius: BorderRadius.circular(9999),
                       child: Text(
-                        context.loc.orderNow.toUpperCase(),
+                        context.loc!.orderNow.toUpperCase(),
                         textAlign: TextAlign.center,
-                        style: theme.textTheme.button
+                        style: theme.textTheme.button!
                             .copyWith(color: Colors.white),
                       ),
                     ),

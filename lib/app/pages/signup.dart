@@ -17,11 +17,11 @@ import 'package:provider/provider.dart';
 
 class SignupForm {
   SignupForm({
-    @required this.name,
-    @required this.phoneNumber,
-    @required this.province,
-    @required this.address,
-    @required this.password,
+    required this.name,
+    required this.phoneNumber,
+    required this.province,
+    required this.address,
+    required this.password,
     this.sessionInfo,
   });
 
@@ -30,7 +30,7 @@ class SignupForm {
   final String province;
   final String address;
   final String password;
-  String sessionInfo;
+  String? sessionInfo;
 }
 
 class SignupPage extends HookWidget {
@@ -40,12 +40,12 @@ class SignupPage extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final nameController = useTextEditingController();
+    final TextEditingController? nameController = useTextEditingController();
 
-    final phoneController = useTextEditingController();
-    final provinceController = useTextEditingController();
-    final addressController = useTextEditingController();
-    final passwordController = useTextEditingController();
+    final TextEditingController? phoneController = useTextEditingController();
+    final TextEditingController? provinceController = useTextEditingController();
+    final TextEditingController? addressController = useTextEditingController();
+    final TextEditingController? passwordController = useTextEditingController();
 
     final isLoading = context.watch<AuthProvider>().isLoading;
     final error = useState("");
@@ -65,7 +65,7 @@ class SignupPage extends HookWidget {
                     children: [
                       SvgPicture.asset("assets/svg/icon.svg",
                           width: kAvatarRadius),
-                      Text(context.loc.appTitle,
+                      Text(context.loc!.appTitle,
                           style: theme.textTheme.headline6),
                     ],
                   ),
@@ -80,13 +80,13 @@ class SignupPage extends HookWidget {
                       controller: nameController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.name,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                           color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
                         icon: SvgPicture.asset("assets/svg/name.svg",
                             width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: context.loc.fullName,
+                        hintText: context.loc!.fullName,
                       ),
                     ),
                   ),
@@ -101,13 +101,13 @@ class SignupPage extends HookWidget {
                       controller: phoneController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                           color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
                         icon: SvgPicture.asset("assets/svg/person.svg",
                             width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: context.loc.phoneNumber,
+                        hintText: context.loc!.phoneNumber,
                       ),
                     ),
                   ),
@@ -122,13 +122,13 @@ class SignupPage extends HookWidget {
                       controller: provinceController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.streetAddress,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                           color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
                         icon: SvgPicture.asset("assets/svg/pin.svg",
                             width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: context.loc.province,
+                        hintText: context.loc!.province,
                       ),
                     ),
                   ),
@@ -143,13 +143,13 @@ class SignupPage extends HookWidget {
                       controller: addressController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.streetAddress,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                           color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
                         icon: SvgPicture.asset("assets/svg/building.svg",
                             width: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: context.loc.address,
+                        hintText: context.loc!.address,
                       ),
                     ),
                   ),
@@ -164,13 +164,13 @@ class SignupPage extends HookWidget {
                       controller: passwordController,
                       textInputAction: TextInputAction.next,
                       obscureText: true,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                           color: isLoading ? Colors.grey.shade600 : null),
                       decoration: InputDecoration(
                         icon: SvgPicture.asset("assets/svg/lock.svg",
                             width: kDefaultIconSize, height: kDefaultIconSize),
                         border: InputBorder.none,
-                        hintText: context.loc.password,
+                        hintText: context.loc!.password,
                       ),
                     ),
                   ),
@@ -179,7 +179,7 @@ class SignupPage extends HookWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       error.value,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                         color: Colors.red,
                       ),
                     ),
@@ -194,11 +194,11 @@ class SignupPage extends HookWidget {
                           ? () => _onSignup(
                                 context,
                                 SignupForm(
-                                  name: nameController.text,
-                                  phoneNumber: phoneController.text,
-                                  province: provinceController.text,
-                                  address: addressController.text,
-                                  password: passwordController.text,
+                                  name: nameController!.text,
+                                  phoneNumber: phoneController!.text,
+                                  province: provinceController!.text,
+                                  address: addressController!.text,
+                                  password: passwordController!.text,
                                 ),
                                 error: error,
                               )
@@ -209,9 +209,9 @@ class SignupPage extends HookWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding),
                         child: Text(
-                          context.loc.signup.toUpperCase(),
+                          context.loc!.signup.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button
+                          style: theme.textTheme.button!
                               .copyWith(color: Colors.white),
                         ),
                       ),
@@ -226,11 +226,11 @@ class SignupPage extends HookWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(context.loc.alreadyHaveAnAccount),
+                        Text(context.loc!.alreadyHaveAnAccount),
                         const SizedBox(width: kDefaultPadding / 2),
                         Text(
-                          context.loc.login,
-                          style: theme.textTheme.button
+                          context.loc!.login,
+                          style: theme.textTheme.button!
                               .copyWith(color: theme.accentColor),
                         ),
                       ],
@@ -246,7 +246,7 @@ class SignupPage extends HookWidget {
   }
 
   Future<void> _onSignup(BuildContext context, SignupForm arguments,
-      {@required ValueNotifier<String> error}) async {
+      {required ValueNotifier<String> error}) async {
     void onMessage(String token) async {
       try {
         final input = SendVerificationCodeInput(
@@ -259,10 +259,10 @@ class SignupPage extends HookWidget {
             .pushNamed(OTPPage.routeName, arguments: arguments);
       } on OperationException catch (e) {
         if (e.graphqlErrors
-            .any((err) => err.extensions["code"] == "ALREADY_EXISTS")) {
-          error.value = context.loc.userWithThisPhoneAlreadyExists;
+            .any((err) => err.extensions!["code"] == "ALREADY_EXISTS")) {
+          error.value = context.loc!.userWithThisPhoneAlreadyExists;
         } else {
-          error.value = context.loc.somethingWentWrong;
+          error.value = context.loc!.somethingWentWrong;
         }
       }
     }

@@ -26,15 +26,15 @@ class PersonalInformationPage extends HookWidget {
           }
           if (result.hasException) {
             return Retry(
-              message: context.loc.somethingWentWrong,
+              message: context.loc!.somethingWentWrong,
               onRetry: refetch,
             );
           }
 
-          final data = _meQuery.parse(result.data);
+          final data = _meQuery.parse(result.data!);
 
           return Scaffold(
-            appBar: AppBar(title: Text(context.loc.personalInformation)),
+            appBar: AppBar(title: Text(context.loc!.personalInformation)),
             body: ProfileForm(profile: data.me),
           );
         },
@@ -44,7 +44,7 @@ class PersonalInformationPage extends HookWidget {
 }
 
 class ProfileForm extends HookWidget {
-  ProfileForm({Key key, @required this.profile}) : super(key: key);
+  ProfileForm({Key? key, required this.profile}) : super(key: key);
 
   final UserMixin profile;
 
@@ -54,14 +54,14 @@ class ProfileForm extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
-    final nameController = useTextEditingController(text: profile.name);
-    final provinceController = useTextEditingController(text: profile.province);
-    final addressController = useTextEditingController(text: profile.address);
+    final TextEditingController? nameController = useTextEditingController(text: profile.name);
+    final TextEditingController? provinceController = useTextEditingController(text: profile.province!);
+    final TextEditingController? addressController = useTextEditingController(text: profile.address!);
 
     useEffect(() {
-      nameController.text = profile.name;
-      provinceController.text = profile.province;
-      addressController.text = profile.address;
+      nameController!.text = profile.name;
+      provinceController!.text = profile.province!;
+      addressController!.text = profile.address!;
       return () {};
     }, [profile.name, profile.province, profile.address]);
 
@@ -78,7 +78,7 @@ class ProfileForm extends HookWidget {
             ClipRRect(
               borderRadius: BorderRadius.circular(kDefaultBorderRadius),
               child: TextField(
-                enabled: result.isNotLoading,
+                enabled: result!.isNotLoading,
                 controller: nameController,
                 textInputAction: TextInputAction.next,
                 decoration: InputDecoration(
@@ -87,7 +87,7 @@ class ProfileForm extends HookWidget {
                     vertical: kDefaultPadding / 1.5,
                   ),
                   border: InputBorder.none,
-                  labelText: context.loc.fullName,
+                  labelText: context.loc!.fullName,
                   filled: true,
                 ),
               ),
@@ -104,7 +104,7 @@ class ProfileForm extends HookWidget {
                       horizontal: kDefaultPadding * 1.5,
                       vertical: kDefaultPadding / 1.5),
                   border: InputBorder.none,
-                  labelText: context.loc.province,
+                  labelText: context.loc!.province,
                   filled: true,
                 ),
               ),
@@ -122,7 +122,7 @@ class ProfileForm extends HookWidget {
                     vertical: kDefaultPadding / 1.5,
                   ),
                   border: InputBorder.none,
-                  labelText: context.loc.address,
+                  labelText: context.loc!.address,
                   filled: true,
                 ),
               ),
@@ -131,16 +131,16 @@ class ProfileForm extends HookWidget {
             GestureDetector(
               onTap: () async {
                 final input = UpdateProfileInput(
-                  name: nameController.text,
-                  address: addressController.text,
-                  province: provinceController.text,
+                  name: nameController!.text,
+                  address: addressController!.text,
+                  province: provinceController!.text,
                 );
 
-                final res = await updateProfile({"data": input}).networkResult;
+                final res = await updateProfile({"data": input}).networkResult!;
                 if (res.hasException) {
                   return showSnackBar(
                     context,
-                    message: context.loc.somethingWentWrong,
+                    message: context.loc!.somethingWentWrong,
                     type: SnackBarType.error,
                   );
                 }
@@ -154,9 +154,9 @@ class ProfileForm extends HookWidget {
                     ? theme.accentColor
                     : theme.disabledColor,
                 child: Text(
-                  context.loc.apply.toUpperCase(),
+                  context.loc!.apply.toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.button.copyWith(color: Colors.white),
+                  style: theme.textTheme.button!.copyWith(color: Colors.white),
                 ),
               ),
             )

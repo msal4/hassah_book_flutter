@@ -27,7 +27,7 @@ class OrdersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(context.loc.myOrders)),
+      appBar: AppBar(title: Text(context.loc!.myOrders)),
       body: Query(
         options: QueryOptions(document: _myOrdersQuery.document),
         builder: (result, {fetchMore, refetch}) {
@@ -35,8 +35,8 @@ class OrdersPage extends StatelessWidget {
             child: _OrdersList(
               query: _myOrdersQuery,
               result: result,
-              fetchMore: fetchMore,
-              refetch: refetch,
+              fetchMore: fetchMore!,
+              refetch: refetch!,
             ),
           );
         },
@@ -47,10 +47,10 @@ class OrdersPage extends StatelessWidget {
 
 class _OrdersList extends HookWidget {
   const _OrdersList(
-      {@required this.query,
-      @required this.result,
-      @required this.fetchMore,
-      @required this.refetch})
+      {required this.query,
+      required this.result,
+      required this.fetchMore,
+      required this.refetch})
       : assert(query != null),
         assert(result != null),
         assert(fetchMore != null),
@@ -58,7 +58,7 @@ class _OrdersList extends HookWidget {
 
   final MyOrdersQuery query;
   final QueryResult result;
-  final Future<QueryResult> Function() refetch;
+  final Future<QueryResult?> Function() refetch;
   final Future<QueryResult> Function(FetchMoreOptions) fetchMore;
 
   @override
@@ -80,7 +80,7 @@ class _OrdersList extends HookWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              context.loc.loginToSeeYourOrders,
+              context.loc!.loginToSeeYourOrders,
               style: theme.textTheme.subtitle1,
             ),
             const SizedBox(height: kDefaultPadding),
@@ -99,9 +99,9 @@ class _OrdersList extends HookWidget {
                     vertical: kDefaultPadding,
                   ),
                   child: Text(
-                    context.loc.login.toUpperCase(),
+                    context.loc!.login.toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.button.copyWith(color: Colors.white),
+                    style: theme.textTheme.button!.copyWith(color: Colors.white),
                   ),
                 ),
               ),
@@ -113,7 +113,7 @@ class _OrdersList extends HookWidget {
 
     if (result.hasException) {
       return Retry(
-        message: context.loc.somethingWentWrong,
+        message: context.loc!.somethingWentWrong,
         onRetry: refetch,
       );
     }
@@ -122,7 +122,7 @@ class _OrdersList extends HookWidget {
       return const LoadingIndicator();
     }
 
-    final orders = query.parse(result.data).myOrders;
+    final orders = query.parse(result.data!).myOrders;
 
     if (orders.items.length == 0) {
       return _buildPlaceholder(context);
@@ -136,7 +136,7 @@ class _OrdersList extends HookWidget {
           final options = FetchMoreOptions(
             document: query.document,
             updateQuery: (oldData, newData) =>
-                updatePaginatedResponse(oldData, newData, "myOrders"),
+                updatePaginatedResponse(oldData!, newData!, "myOrders"),
             variables: {"skip": orders.items.length},
           );
 
@@ -169,15 +169,15 @@ class _OrdersList extends HookWidget {
   }
 
   Widget _buildOrder(BuildContext context,
-      {@required OrderMixin order,
-      @required int morePurchasesCount,
-      @required String productImage}) {
+      {required OrderMixin order,
+      required int morePurchasesCount,
+      required String productImage}) {
     final theme = Theme.of(context);
     final onCopy = () {
       Clipboard.setData(
         ClipboardData(text: "#${order.orderNumber}"),
       );
-      showSnackBar(context, message: context.loc.copiedToClipboard);
+      showSnackBar(context, message: context.loc!.copiedToClipboard);
     };
 
     return GestureDetector(
@@ -221,8 +221,8 @@ class _OrdersList extends HookWidget {
                 Column(
                   children: [
                     Text(
-                      context.loc.status,
-                      style: theme.textTheme.bodyText1
+                      context.loc!.status,
+                      style: theme.textTheme.bodyText1!
                           .copyWith(color: Colors.grey.shade600),
                     ),
                     Text(humanizeOrderStatus(context, order.status),
@@ -235,13 +235,13 @@ class _OrdersList extends HookWidget {
                 Column(
                   children: [
                     Text(
-                      context.loc.total,
-                      style: theme.textTheme.bodyText1
+                      context.loc!.total,
+                      style: theme.textTheme.bodyText1!
                           .copyWith(color: Colors.grey.shade600),
                     ),
                     Text(
-                      "${formatPrice(order.totalPrice)} ${context.loc.iqd}",
-                      style: theme.textTheme.subtitle1.copyWith(fontSize: 13),
+                      "${formatPrice(order.totalPrice)} ${context.loc!.iqd}",
+                      style: theme.textTheme.subtitle1!.copyWith(fontSize: 13),
                     ),
                   ],
                 ),
@@ -250,7 +250,7 @@ class _OrdersList extends HookWidget {
           ),
           Positioned(
             top: -15,
-            left: -(theme.textTheme.headline6.fontSize / 2),
+            left: -(theme.textTheme.headline6!.fontSize! / 2),
             child: GestureDetector(
               onTap: onCopy,
               child: Container(
@@ -261,7 +261,7 @@ class _OrdersList extends HookWidget {
                 ),
                 child: Text(
                   "#${order.orderNumber}",
-                  style: theme.textTheme.bodyText1.copyWith(
+                  style: theme.textTheme.bodyText1!.copyWith(
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -298,8 +298,8 @@ class _OrdersList extends HookWidget {
     final theme = Theme.of(context);
 
     return Text(
-      context.loc.youHaveNoOrders,
-      style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.w300),
+      context.loc!.youHaveNoOrders,
+      style: theme.textTheme.headline5!.copyWith(fontWeight: FontWeight.w300),
       textAlign: TextAlign.center,
     );
   }

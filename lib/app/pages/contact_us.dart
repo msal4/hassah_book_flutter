@@ -5,7 +5,7 @@ import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ContactUsPage extends StatelessWidget {
-  const ContactUsPage({Key key}) : super(key: key);
+  const ContactUsPage({Key? key}) : super(key: key);
 
   static const routeName = "/contact_us";
 
@@ -14,7 +14,7 @@ class ContactUsPage extends StatelessWidget {
     final padding = MediaQuery.of(context).padding;
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.loc.contactUs)),
+      appBar: AppBar(title: Text(context.loc!.contactUs)),
       body: ListView(
         padding: EdgeInsets.only(
           top: kDefaultPadding,
@@ -25,7 +25,7 @@ class ContactUsPage extends StatelessWidget {
         children: [
           _buildLinkItem(
             context,
-            name: context.loc.facebook,
+            name: context.loc!.facebook,
             icon: "assets/svg/facebook.svg",
             url: "https://facebook.com/hassahbook",
             color: Colors.blue,
@@ -33,7 +33,7 @@ class ContactUsPage extends StatelessWidget {
           const SizedBox(height: kDefaultPadding),
           _buildLinkItem(
             context,
-            name: context.loc.instagram,
+            name: context.loc!.instagram,
             icon: "assets/svg/instagram.svg",
             url: "https://instagram.com/hassahbook",
             color: Colors.red,
@@ -41,7 +41,7 @@ class ContactUsPage extends StatelessWidget {
           const SizedBox(height: kDefaultPadding),
           _buildLinkItem(
             context,
-            name: context.loc.twitter,
+            name: context.loc!.twitter,
             icon: "assets/svg/twitter.svg",
             url: "https://twitter.com/hassahbook",
             color: Colors.cyan,
@@ -49,7 +49,7 @@ class ContactUsPage extends StatelessWidget {
           const SizedBox(height: kDefaultPadding),
           _buildLinkItem(
             context,
-            name: context.loc.email,
+            name: context.loc!.email,
             icon: "assets/svg/email.svg",
             url: "mailto:sal@hassah.me",
             color: Colors.amber,
@@ -57,7 +57,7 @@ class ContactUsPage extends StatelessWidget {
           const SizedBox(height: kDefaultPadding),
           _buildLinkItem(
             context,
-            name: context.loc.phone,
+            name: context.loc!.phone,
             icon: "assets/svg/phone.svg",
             url: "tel:07838378968",
             color: Colors.green,
@@ -68,10 +68,10 @@ class ContactUsPage extends StatelessWidget {
   }
 
   ClipRRect _buildLinkItem(BuildContext context,
-      {@required String name,
-      @required String icon,
-      @required String url,
-      @required Color color}) {
+      {required String name,
+      required String icon,
+      required String url,
+      required Color color}) {
     final theme = Theme.of(context);
 
     return ClipRRect(

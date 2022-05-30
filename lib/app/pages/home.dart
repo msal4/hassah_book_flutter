@@ -20,13 +20,16 @@ class HomePage extends HookWidget {
     final rightPadding = padding.right + kDefaultPadding;
     final topSafeAreaPadding = padding.top + kAppBarHeight;
 
+    return MyHomePage();
+
     return Query(
       options: QueryOptions(document: _homeQuery.document),
       builder: (QueryResult result,
-          {Future<QueryResult> Function() refetch, FetchMore fetchMore}) {
+          {Future<QueryResult?> Function()? refetch, FetchMore? fetchMore}) {
         if (result.hasException) {
+          print(result.exception);
           return Retry(
-            message: context.loc.somethingWentWrong,
+            message: context.loc!.somethingWentWrong,
             onRetry: refetch,
           );
         }
@@ -35,7 +38,9 @@ class HomePage extends HookWidget {
           return const LoadingIndicator();
         }
 
-        final home = _homeQuery.parse(result.data);
+        print(result.data);
+
+        final home = _homeQuery.parse(result.data!);
         // Remove empty rows
         home.categories.items = home.categories.items
             .where((cat) => cat.products.items.isNotEmpty)
@@ -46,13 +51,13 @@ class HomePage extends HookWidget {
               EdgeInsets.only(top: topSafeAreaPadding, bottom: kDefaultPadding),
           separatorBuilder: (ctx, idx) =>
               const SizedBox(height: kDefaultPadding / 2),
-          itemCount: home.categories.items.length + 1,
+          itemCount: (home.categories.items.length) + 1,
           itemBuilder: (_, index) {
             if (index == 0) {
               return Padding(
                 padding:
                     EdgeInsets.only(right: rightPadding, left: leftPadding),
-                child: SearchBox(),
+                child: const SearchBox(),
               );
             }
 
@@ -69,6 +74,8 @@ class HomePage extends HookWidget {
 }
 
 class SearchBox extends HookWidget {
+  const SearchBox();
+
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
@@ -86,10 +93,44 @@ class SearchBox extends HookWidget {
         readOnly: true,
         style: textTheme.headline6,
         decoration: InputDecoration(
-            icon: Icon(Icons.search, color: Colors.grey.shade800),
-            hintText: context.loc.search,
-            border: InputBorder.none),
+          icon: Icon(Icons.search, color: Colors.grey.shade800),
+          hintText: context.loc!.search,
+          border: InputBorder.none,
+        ),
       ),
+    );
+  }
+}
+
+class MyHomePage extends StatelessWidget {
+  const MyHomePage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    print("definitions:");
+    print(HomeQuery().document.definitions[0].span);
+    return Query(
+      options: QueryOptions(document: gql(r'''
+        {
+          latestProducts: products(order: [{field: "createdAt", order: DESC}]) {
+        items {
+          id
+          name
+        }
+    }
+
+    categories {
+        items {
+          id
+          name
+        }
+    }
+        }''')),
+      builder: (result, {fetchMore, refetch}) {
+        print(result.data);
+        print(result.source);
+        return Container();
+      },
     );
   }
 }

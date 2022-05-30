@@ -6,9 +6,9 @@ enum SnackBarType { error, success, casual }
 
 void showSnackBar(
   BuildContext context, {
-  @required String message,
+  required String message,
   SnackBarType type = SnackBarType.casual,
-  EdgeInsets margin,
+  EdgeInsets? margin,
 }) {
   final theme = Theme.of(context);
 
@@ -28,7 +28,7 @@ void showSnackBar(
       content: Text(
         message,
         textAlign: TextAlign.center,
-        style: theme.textTheme.bodyText1.copyWith(color: Colors.white),
+        style: theme.textTheme.bodyText1!.copyWith(color: Colors.white),
       ),
     ),
   );

@@ -18,7 +18,7 @@ const kImageWidth = kDefaultImageWidth * 1.2;
 const kImageHeight = kDefaultImageHeight * 1.2;
 
 class AuthorPageArguments {
-  const AuthorPageArguments({@required this.id}) : assert(id != null);
+  const AuthorPageArguments({required this.id}) : assert(id != null);
 
   final String id;
 }
@@ -26,7 +26,7 @@ class AuthorPageArguments {
 class AuthorPage extends HookWidget {
   static const routeName = "/author";
 
-  AuthorPage({Key key, @required this.id})
+  AuthorPage({Key? key, required this.id})
       : assert(id != null),
         super(key: key);
 
@@ -38,14 +38,14 @@ class AuthorPage extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final currentProduct = useState<ProductMixin>(null);
+    final currentProduct = useState<ProductMixin?>(null);
     final authorOverviewClipped = useState(true);
     final overviewClipped = useState(true);
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [
           SliverAppBar(
-            title: Text(context.loc.authorDetails),
+            title: Text(context.loc!.authorDetails),
             floating: true,
             snap: true,
           ),
@@ -61,13 +61,13 @@ class AuthorPage extends HookWidget {
 
               if (result.hasException) {
                 return Retry(
-                  message: context.loc.somethingWentWrong,
+                  message: context.loc!.somethingWentWrong,
                   onRetry: refetch,
                 );
               }
             }
 
-            final author = _authorQuery.parse(result.data).author;
+            final author = _authorQuery.parse(result.data!).author!;
 
             if (currentProduct.value == null &&
                 author.products.items.length > 0) {
@@ -91,7 +91,7 @@ class AuthorPage extends HookWidget {
                   author.name,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.headline6
+                  style: theme.textTheme.headline6!
                       .copyWith(fontWeight: FontWeight.w500),
                 ),
                 GestureDetector(
@@ -139,11 +139,11 @@ class AuthorPage extends HookWidget {
                         final options = FetchMoreOptions(
                           document: _authorQuery.document,
                           updateQuery: (oldData, newData) =>
-                              _updatePaginatedResponse(oldData, newData),
+                              _updatePaginatedResponse(oldData!, newData!),
                           variables: {"skip": products.length},
                         );
 
-                        fetchMore(options);
+                        fetchMore!(options);
                       }
                     },
                   ),
@@ -173,7 +173,7 @@ class AuthorPage extends HookWidget {
                           currentProduct.value?.name ?? "...",
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.headline6
+                          style: theme.textTheme.headline6!
                               .copyWith(fontWeight: FontWeight.w500),
                         ),
                         if (currentProduct.value?.categories?.isNotEmpty ??
@@ -202,7 +202,7 @@ class AuthorPage extends HookWidget {
                             textAlign: overviewClipped.value
                                 ? TextAlign.center
                                 : TextAlign.justify,
-                            style: theme.textTheme.bodyText1
+                            style: theme.textTheme.bodyText1!
                                 .copyWith(color: Colors.grey.shade700),
                           ),
                         ),
@@ -241,17 +241,17 @@ class AuthorPage extends HookWidget {
             children: [
               Text(
                 authorOverviewClipped.value
-                    ? context.loc.readMore
-                    : context.loc.readLess,
-                style:
-                    theme.textTheme.button.copyWith(color: theme.accentColor),
+                    ? context.loc!.readMore
+                    : context.loc!.readLess,
+                style: theme.textTheme.button!
+                    .copyWith(color: theme.colorScheme.secondary),
               ),
               const SizedBox(width: 5),
               Icon(
                 authorOverviewClipped.value
                     ? Icons.keyboard_arrow_down_outlined
                     : Icons.keyboard_arrow_up_outlined,
-                color: theme.accentColor,
+                color: theme.colorScheme.secondary,
               ),
             ],
           ),
@@ -271,7 +271,7 @@ class AuthorPage extends HookWidget {
 }
 
 class ProductImage extends HookWidget {
-  const ProductImage({Key key, @required this.product})
+  const ProductImage({Key? key, required this.product})
       : assert(product != null),
         super(key: key);
 
@@ -287,7 +287,9 @@ class ProductImage extends HookWidget {
           context,
           ProductDetailPage.routeName,
           arguments: ProductDetailPageArguments(
-              product: product, heroTagPrefix: heroTagPrefix),
+            product: product,
+            heroTagPrefix: heroTagPrefix,
+          ),
         );
       },
       child: Align(

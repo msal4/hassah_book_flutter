@@ -16,7 +16,7 @@ import 'package:hassah_book_flutter/common/utils/ext.dart';
 class OTPPage extends HookWidget {
   static const routeName = "/otp";
 
-  const OTPPage({@required this.form})
+  const OTPPage({required this.form})
       : assert(form != null, "form is required");
 
   final SignupForm form;
@@ -24,7 +24,7 @@ class OTPPage extends HookWidget {
   @override
   Widget build(context) {
     final theme = Theme.of(context);
-    final otpController = useTextEditingController();
+    final TextEditingController? otpController = useTextEditingController();
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return UnfocusOnTap(
@@ -42,13 +42,13 @@ class OTPPage extends HookWidget {
                     children: [
                       SvgPicture.asset("assets/svg/icon.svg",
                           width: kAvatarRadius),
-                      Text(context.loc.appTitle,
+                      Text(context.loc!.appTitle,
                           style: theme.textTheme.headline6),
                     ],
                   ),
                   SizedBox(height: kDefaultPadding * 2),
                   Text(
-                    "${context.loc.verificationCodeExplanation} ${form.phoneNumber}",
+                    "${context.loc!.verificationCodeExplanation} ${form.phoneNumber}",
                     style: theme.textTheme.subtitle1,
                     textAlign: TextAlign.center,
                   ),
@@ -63,12 +63,12 @@ class OTPPage extends HookWidget {
                       controller: otpController,
                       textInputAction: TextInputAction.next,
                       keyboardType: TextInputType.number,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                           color: isLoading ? Colors.grey.shade600 : null),
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: context.loc.verificationCode,
+                        hintText: context.loc!.verificationCode,
                       ),
                     ),
                   ),
@@ -81,10 +81,10 @@ class OTPPage extends HookWidget {
                       onTap: !isLoading
                           ? () async {
                               final input = RegisterInput(
-                                  code: otpController.text,
+                                  code: otpController!.text,
                                   name: form.name,
                                   password: form.password,
-                                  sessionInfo: form.sessionInfo);
+                                  sessionInfo: form.sessionInfo!);
                               await context.read<AuthProvider>().signup(input);
                               try {
                                 await context.read<AuthProvider>().login(
@@ -95,7 +95,7 @@ class OTPPage extends HookWidget {
                               } on OperationException {
                                 showSnackBar(
                                   context,
-                                  message: context.loc.somethingWentWrong,
+                                  message: context.loc!.somethingWentWrong,
                                   type: SnackBarType.error,
                                 );
                               }
@@ -107,9 +107,9 @@ class OTPPage extends HookWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding),
                         child: Text(
-                          context.loc.verify.toUpperCase(),
+                          context.loc!.verify.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button
+                          style: theme.textTheme.button!
                               .copyWith(color: Colors.white),
                         ),
                       ),

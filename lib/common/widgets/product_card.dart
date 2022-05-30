@@ -9,7 +9,7 @@ import 'package:hassah_book_flutter/common/utils/rand.dart';
 
 class ProductCard extends HookWidget {
   const ProductCard(
-      {Key key, @required this.product, this.width = kDefaultImageWidth})
+      {Key? key, required this.product, this.width = kDefaultImageWidth})
       : super(key: key);
 
   final ProductMixin product;
@@ -22,7 +22,7 @@ class ProductCard extends HookWidget {
     final heroTagPrefix = useMemoized(generateRandomString);
 
     return Tooltip(
-      message: "${product.name} ${context.loc.by} ${product.author.name}",
+      message: "${product.name} ${context.loc!.by} ${product.author.name}",
       child: Material(
         color: Colors.transparent,
         borderRadius: BorderRadius.circular(kDefaultBorderRadius),
@@ -81,8 +81,8 @@ class ProductCard extends HookWidget {
 
 class ProductCoverImage extends StatelessWidget {
   const ProductCoverImage(
-      {Key key,
-      @required this.image,
+      {Key? key,
+      required this.image,
       this.width = kDefaultImageWidth,
       this.resolution = 500})
       : super(key: key);

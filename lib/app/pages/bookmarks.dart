@@ -39,7 +39,7 @@ class BookmarksPage extends HookWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              context.loc.loginToSeeYourBookmarks,
+              context.loc!.loginToSeeYourBookmarks,
               style: theme.textTheme.subtitle1,
             ),
             const SizedBox(height: kDefaultPadding),
@@ -58,9 +58,9 @@ class BookmarksPage extends HookWidget {
                     vertical: kDefaultPadding,
                   ),
                   child: Text(
-                    context.loc.login.toUpperCase(),
+                    context.loc!.login.toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.button.copyWith(color: Colors.white),
+                    style: theme.textTheme.button!.copyWith(color: Colors.white),
                   ),
                 ),
               ),
@@ -72,7 +72,7 @@ class BookmarksPage extends HookWidget {
 
     if (hasException) {
       return Retry(
-        message: context.loc.somethingWentWrong,
+        message: context.loc!.somethingWentWrong,
         onRetry: bookmarks.getBookmarks,
       );
     }
@@ -121,24 +121,24 @@ class BookmarksPage extends HookWidget {
       child: GraphQLConsumer(
         builder: (client) {
           return Slidable(
-            actionPane: SlidableDrawerActionPane(),
-            actionExtentRatio: kSlidableActionExtentRatio,
+            startActionPane: ActionPane(
+              motion: const DrawerMotion(),
+              extentRatio: kSlidableActionExtentRatio,
+              children: [
+                SlidableAction(
+                  onPressed: (context) =>
+                      bookmarks.removeBookmark(bookmark.product.id),
+                  backgroundColor: kDangerColor,
+                  icon: Icons.delete,
+                )
+              ],
+            ),
             child: ProductDetailsCard(
               product: bookmark.product,
               isBookmarked: true,
               onBookmarkTap: () =>
                   bookmarks.removeBookmark(bookmark.product.id),
             ),
-            secondaryActions: <Widget>[
-              IconSlideAction(
-                onTap: () => bookmarks.removeBookmark(bookmark.product.id),
-                color: kDangerColor,
-                iconWidget: SvgPicture.asset(
-                  "assets/svg/trash.svg",
-                  width: kDefaultIconSize,
-                ),
-              )
-            ],
           );
         },
       ),
@@ -149,8 +149,8 @@ class BookmarksPage extends HookWidget {
     final theme = Theme.of(context);
 
     return Text(
-      context.loc.youDontHaveBookmarks,
-      style: theme.textTheme.headline5.copyWith(fontWeight: FontWeight.w300),
+      context.loc!.youDontHaveBookmarks,
+      style: theme.textTheme.headline5!.copyWith(fontWeight: FontWeight.w300),
       textAlign: TextAlign.center,
     );
   }

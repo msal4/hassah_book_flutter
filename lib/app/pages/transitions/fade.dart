@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-PageRouteBuilder createRouteWithFadeTransition({@required RoutePageBuilder builder}) {
+PageRouteBuilder createRouteWithFadeTransition({required RoutePageBuilder builder}) {
   return PageRouteBuilder(
     pageBuilder: builder,
     transitionsBuilder: (

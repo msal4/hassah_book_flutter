@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class CaptchaPageArguments {
-  const CaptchaPageArguments({@required this.onMessage}) : assert(onMessage != null, "onMessage is required");
+  const CaptchaPageArguments({required this.onMessage}) : assert(onMessage != null, "onMessage is required");
 
   final void Function(String message) onMessage;
 }
@@ -10,7 +10,7 @@ class CaptchaPageArguments {
 class CaptchaPage extends StatelessWidget {
   static const routeName = "/captcha";
 
-  CaptchaPage({@required this.onMessage});
+  CaptchaPage({required this.onMessage});
 
   final void Function(String message) onMessage;
 

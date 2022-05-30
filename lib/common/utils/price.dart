@@ -4,5 +4,5 @@ String formatPrice(num price) {
   return price
       .round()
       .toString()
-      .replaceAllMapped(priceRegexp, (m) => m.group(1) + ",");
+      .replaceAllMapped(priceRegexp, (m) => m.group(1)! + ",");
 }

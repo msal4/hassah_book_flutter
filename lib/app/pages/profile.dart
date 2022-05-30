@@ -26,7 +26,7 @@ class ProfilePage extends StatelessWidget {
     final auth = context.watch<AuthProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.loc.profile)),
+      appBar: AppBar(title: Text(context.loc!.profile)),
       body: ListView(
         padding: EdgeInsets.all(kDefaultPadding)
             .copyWith(bottom: padding.bottom + kDefaultPadding),
@@ -39,7 +39,7 @@ class ProfilePage extends StatelessWidget {
                   builder: (result, {refetch, fetchMore}) {
                     if (result.hasException) {
                       return Retry(
-                        message: context.loc.somethingWentWrong,
+                        message: context.loc!.somethingWentWrong,
                         onRetry: refetch,
                       );
                     }
@@ -48,7 +48,7 @@ class ProfilePage extends StatelessWidget {
                       return const LoadingIndicator();
                     }
 
-                    final me = _meQuery.parse(result.data).me;
+                    final me = _meQuery.parse(result.data!).me;
 
                     return Column(
                       children: [
@@ -82,7 +82,7 @@ class ProfilePage extends StatelessWidget {
                           horizontal: kDefaultPadding * 1.5,
                           vertical: kDefaultPadding),
                       child: Text(
-                        context.loc.logout.toUpperCase(),
+                        context.loc!.logout.toUpperCase(),
                         textAlign: TextAlign.center,
                         style: theme.textTheme.button,
                       ),
@@ -107,7 +107,7 @@ class ProfilePage extends StatelessWidget {
                         color: theme.primaryColor,
                       ),
                     ),
-                    title: Text(context.loc.personalInformation),
+                    title: Text(context.loc!.personalInformation),
                     trailing: Icon(Icons.chevron_right),
                     onTap: () {
                       Navigator.of(context)
@@ -134,7 +134,7 @@ class ProfilePage extends StatelessWidget {
                       child: Icon(Icons.shopping_bag_outlined,
                           color: theme.primaryColor),
                     ),
-                    title: Text(context.loc.myOrders),
+                    title: Text(context.loc!.myOrders),
                     trailing: Icon(Icons.chevron_right),
                   ),
                 ),
@@ -143,7 +143,7 @@ class ProfilePage extends StatelessWidget {
           else
             Column(
               children: [
-                Text(context.loc.loginToSeeYourProfile,
+                Text(context.loc!.loginToSeeYourProfile,
                     style: theme.textTheme.subtitle1),
                 const SizedBox(height: kDefaultPadding),
                 Material(
@@ -160,9 +160,9 @@ class ProfilePage extends StatelessWidget {
                           horizontal: kDefaultPadding * 1.5,
                           vertical: kDefaultPadding),
                       child: Text(
-                        context.loc.login.toUpperCase(),
+                        context.loc!.login.toUpperCase(),
                         textAlign: TextAlign.center,
-                        style: theme.textTheme.button
+                        style: theme.textTheme.button!
                             .copyWith(color: Colors.white),
                       ),
                     ),
@@ -184,7 +184,7 @@ class ProfilePage extends StatelessWidget {
                 child:
                     Icon(Icons.translate_outlined, color: theme.primaryColor),
               ),
-              title: Text(context.loc.language),
+              title: Text(context.loc!.language),
               trailing: Icon(Icons.chevron_right),
               onTap: () {
                 showModalBottomSheet<void>(
@@ -208,7 +208,7 @@ class ProfilePage extends StatelessWidget {
                 child: Icon(Icons.notifications_outlined,
                     color: theme.primaryColor),
               ),
-              title: Text(context.loc.notifications),
+              title: Text(context.loc!.notifications),
               trailing: Icon(Icons.chevron_right),
             ),
           ),
@@ -227,7 +227,7 @@ class ProfilePage extends StatelessWidget {
                 backgroundColor: theme.primaryColor.withOpacity(.2),
                 child: Icon(Icons.info_outline, color: theme.primaryColor),
               ),
-              title: Text(context.loc.contactUs),
+              title: Text(context.loc!.contactUs),
               trailing: Icon(Icons.chevron_right),
               onTap: () {
                 Navigator.pushNamed(context, ContactUsPage.routeName);
@@ -250,7 +250,7 @@ class ProfilePage extends StatelessWidget {
                 child:
                     Icon(Icons.privacy_tip_outlined, color: theme.primaryColor),
               ),
-              title: Text(context.loc.privacyPolicy),
+              title: Text(context.loc!.privacyPolicy),
               trailing: const Icon(Icons.chevron_right),
               onTap: () {
                 launch("https://hassah.netlify.app/privacy_policy");
@@ -267,7 +267,7 @@ class LanguageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isArabic = context.loc.localeName == "ar";
+    final isArabic = context.loc!.localeName == "ar";
 
     return GestureDetector(
       onTap: () {
@@ -303,7 +303,7 @@ class LanguageDialog extends StatelessWidget {
                   title: Text(
                     "العربية",
                     style: isArabic
-                        ? theme.textTheme.bodyText1
+                        ? theme.textTheme.bodyText1!
                             .copyWith(color: Colors.white)
                         : null,
                   ),
@@ -333,7 +333,7 @@ class LanguageDialog extends StatelessWidget {
                   title: Text(
                     "English",
                     style: !isArabic
-                        ? theme.textTheme.bodyText1
+                        ? theme.textTheme.bodyText1!
                             .copyWith(color: Colors.white)
                         : null,
                   ),
@@ -374,7 +374,7 @@ class LogoutDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              context.loc.logoutConfirmation,
+              context.loc!.logoutConfirmation,
               style: theme.textTheme.subtitle1,
             ),
             const SizedBox(height: kDefaultPadding),
@@ -395,9 +395,9 @@ class LogoutDialog extends StatelessWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding),
                         child: Text(
-                          context.loc.cancel.toUpperCase(),
+                          context.loc!.cancel.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button
+                          style: theme.textTheme.button!
                               .copyWith(color: Colors.white),
                         ),
                       ),
@@ -422,7 +422,7 @@ class LogoutDialog extends StatelessWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding),
                         child: Text(
-                          context.loc.yes,
+                          context.loc!.yes,
                           textAlign: TextAlign.center,
                           style: theme.textTheme.button,
                         ),

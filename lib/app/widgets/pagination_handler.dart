@@ -7,8 +7,8 @@ const _kDefaultFetchMoreThreshold = 100.0;
 /// Make sure to disable the widget when the pagination is not needed anymore using the [enabled] option.
 class PaginationHandler extends StatelessWidget {
   PaginationHandler({
-    @required this.child,
-    @required this.fetchMore,
+    required this.child,
+    required this.fetchMore,
     this.bottomThreshold = _kDefaultFetchMoreThreshold,
     this.axis = Axis.vertical,
     this.enabled = true,

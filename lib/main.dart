@@ -28,6 +28,7 @@ import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/pages/signup.dart';
 import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
+import 'package:hassah_book_flutter/common/api/api.graphql.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
@@ -46,17 +47,16 @@ void main() async {
   await Hive.openBox<CartItem>(kCartBoxName);
 
   final isAuthenticated = Auth.getToken(TokenType.Access) != null;
-  String locale = Hive.box(kLocaleBoxName).get("locale");
+  String? locale = Hive.box(kLocaleBoxName).get("locale");
   if (locale == null || locale.isEmpty) {
-    locale = (Platform.localeName?.startsWith("ar") ?? false) ? "ar" : "en";
+    locale = (Platform.localeName.startsWith("ar")) ? "ar" : "en";
   }
 
   runApp(App(isAuthenticated: isAuthenticated, locale: Locale(locale)));
 }
 
 class App extends StatefulWidget {
-  const App({@required this.isAuthenticated, @required this.locale})
-      : assert(isAuthenticated != null, "isAuthenticated is required");
+  const App({required this.isAuthenticated, required this.locale});
 
   final bool isAuthenticated;
   final Locale locale;
@@ -64,7 +64,7 @@ class App extends StatefulWidget {
   @override
   _AppState createState() => _AppState();
 
-  static _AppState of(BuildContext context) =>
+  static _AppState? of(BuildContext context) =>
       context.findAncestorStateOfType<_AppState>();
 }
 
@@ -72,7 +72,7 @@ const _kOrangeColor = Color(0xFFFA784A);
 const _kGreenColor = Color(0xFF45AE9E);
 
 class _AppState extends State<App> {
-  Locale _locale;
+  Locale? _locale;
 
   @override
   void initState() {
@@ -83,7 +83,7 @@ class _AppState extends State<App> {
   setLocale(Locale locale) {
     setState(() {
       _locale = locale;
-      Hive.box(kLocaleBoxName).put("locale", _locale.languageCode);
+      Hive.box(kLocaleBoxName).put("locale", _locale!.languageCode);
     });
   }
 
@@ -107,7 +107,9 @@ class _AppState extends State<App> {
               ChangeNotifierProvider(
                 create: (context) {
                   final provider = AuthProvider(
-                      client: client, isAuthenticated: widget.isAuthenticated);
+                    client: client,
+                    isAuthenticated: widget.isAuthenticated,
+                  );
                   Auth.provider = provider;
                   return provider;
                 },
@@ -118,7 +120,7 @@ class _AppState extends State<App> {
             child: MaterialApp(
               debugShowCheckedModeBanner: false,
               onGenerateTitle: (context) {
-                return context.loc.appTitle;
+                return context.loc!.appTitle;
               },
               theme: theme,
               locale: _locale,
@@ -130,7 +132,8 @@ class _AppState extends State<App> {
                 // I wanted it to be clearer and it's also easier to write this way.
                 switch (settings.name) {
                   case SearchPage.routeName:
-                    final arguments = settings.arguments as SearchPageArguments;
+                    final arguments =
+                        settings.arguments as SearchPageArguments?;
                     return createRouteWithFadeTransition(
                       builder: (context, _, __) => SearchPage(
                         categoryID: arguments?.categoryID,
@@ -139,36 +142,37 @@ class _AppState extends State<App> {
                     );
                   case CaptchaPage.routeName:
                     final arguments =
-                        settings.arguments as CaptchaPageArguments;
+                        settings.arguments as CaptchaPageArguments?;
                     return createRouteWithFadeTransition(
                       builder: (context, _, __) =>
-                          CaptchaPage(onMessage: arguments.onMessage),
+                          CaptchaPage(onMessage: arguments!.onMessage),
                     );
                   case OTPPage.routeName:
-                    final arguments = settings.arguments as SignupForm;
+                    final arguments = settings.arguments as SignupForm?;
                     return MaterialPageRoute(
-                      builder: (context) => OTPPage(form: arguments),
+                      builder: (context) => OTPPage(form: arguments!),
                     );
                   case ProductDetailPage.routeName:
                     final arguments =
-                        settings.arguments as ProductDetailPageArguments;
+                        settings.arguments as ProductDetailPageArguments?;
                     return MaterialPageRoute(
                       builder: (context) => ProductDetailPage(
-                          product: arguments.product,
+                          product: arguments!.product,
                           id: arguments.id,
                           heroTagPrefix: arguments.heroTagPrefix),
                     );
                   case OrderDetailPage.routeName:
                     final arguments =
-                        settings.arguments as OrderDetailPageArguments;
+                        settings.arguments as OrderDetailPageArguments?;
                     return MaterialPageRoute(
                       builder: (context) =>
-                          OrderDetailPage(orderId: arguments.orderId),
+                          OrderDetailPage(orderId: arguments!.orderId),
                     );
                   case AuthorPage.routeName:
-                    final arguments = settings.arguments as AuthorPageArguments;
+                    final arguments =
+                        settings.arguments as AuthorPageArguments?;
                     return MaterialPageRoute(
-                      builder: (context) => AuthorPage(id: arguments.id),
+                      builder: (context) => AuthorPage(id: arguments!.id),
                     );
                   default:
                     return null;
@@ -218,16 +222,16 @@ class _AppState extends State<App> {
         backgroundColor: Colors.transparent,
       ),
       textTheme: _theme.textTheme.copyWith(
-        button: _theme.textTheme.button.copyWith(
+        button: _theme.textTheme.button!.copyWith(
           color: Colors.grey.shade800,
           fontWeight: FontWeight.w500,
           fontSize: 14,
         ),
-        headline6: _theme.textTheme.headline6.copyWith(
+        headline6: _theme.textTheme.headline6!.copyWith(
           fontWeight: FontWeight.w500,
           fontSize: 20,
         ),
-        bodyText1: _theme.textTheme.bodyText1.copyWith(
+        bodyText1: _theme.textTheme.bodyText1!.copyWith(
           fontWeight: FontWeight.w500,
           fontSize: 14,
         ),
@@ -295,10 +299,10 @@ class MainPage extends HookWidget {
     // it causes issues when switching between tabs.
     if (notification is ScrollUpdateNotification &&
         notification.dragDetails != null) {
-      if (notification.scrollDelta > _kMinVelocityToHideAppBar &&
+      if (notification.scrollDelta! > _kMinVelocityToHideAppBar &&
           notification.metrics.pixels > kAppBarHeight / 2) {
         appBarVisible.value = false;
-      } else if (notification.scrollDelta < _kMaxVelocityToShowAdapter) {
+      } else if (notification.scrollDelta! < _kMaxVelocityToShowAdapter) {
         appBarVisible.value = true;
       }
     }
@@ -338,7 +342,7 @@ class MainPage extends HookWidget {
                   onPressed: () {
                     Navigator.of(context).pushNamed(CartPage.routeName);
                   },
-                  tooltip: context.loc.cart,
+                  tooltip: context.loc!.cart,
                   icon: SvgPicture.asset("assets/svg/bag.svg",
                       color: Colors.grey.shade800),
                 ),
@@ -348,7 +352,7 @@ class MainPage extends HookWidget {
                   onPressed: () {
                     Navigator.of(context).pushNamed(ProfilePage.routeName);
                   },
-                  tooltip: context.loc.profile,
+                  tooltip: context.loc!.profile,
                   icon: CircleAvatar(
                     radius: kAppBarHeight / 2,
                     child: !isAuthed
@@ -394,7 +398,7 @@ class MainPage extends HookWidget {
             _buildIcon(
               context,
               name: "home",
-              description: context.loc.home,
+              description: context.loc!.home,
               idx: 0,
               currentIdx: currentTab,
               appBarVisible: appBarVisible,
@@ -402,7 +406,7 @@ class MainPage extends HookWidget {
             _buildIcon(
               context,
               name: "categories",
-              description: context.loc.categoriesAndCollections,
+              description: context.loc!.categoriesAndCollections,
               idx: 1,
               currentIdx: currentTab,
               appBarVisible: appBarVisible,
@@ -410,7 +414,7 @@ class MainPage extends HookWidget {
             _buildIcon(
               context,
               name: "bookmark",
-              description: context.loc.bookmarks,
+              description: context.loc!.bookmarks,
               idx: 2,
               currentIdx: currentTab,
               appBarVisible: appBarVisible,
@@ -423,11 +427,11 @@ class MainPage extends HookWidget {
 
   Widget _buildIcon(
     BuildContext context, {
-    @required String name,
-    @required String description,
-    @required int idx,
-    @required ValueNotifier<int> currentIdx,
-    @required ValueNotifier<bool> appBarVisible,
+    required String name,
+    required String description,
+    required int idx,
+    required ValueNotifier<int> currentIdx,
+    required ValueNotifier<bool> appBarVisible,
   }) {
     final theme = Theme.of(context);
     final selected = idx == currentIdx.value;

@@ -24,8 +24,8 @@ class LoginPage extends HookWidget {
     final phoneErr = useState("");
     final passwordErr = useState("");
 
-    final phoneController = useTextEditingController();
-    final passwordController = useTextEditingController();
+    final TextEditingController? phoneController = useTextEditingController();
+    final TextEditingController? passwordController = useTextEditingController();
 
     final isLoading = context.watch<AuthProvider>().isLoading;
 
@@ -48,7 +48,7 @@ class LoginPage extends HookWidget {
                       ),
                       const SizedBox(height: kDefaultPadding / 2),
                       Text(
-                        context.loc.appTitle,
+                        context.loc!.appTitle,
                         style: theme.textTheme.headline6,
                       ),
                     ],
@@ -67,17 +67,17 @@ class LoginPage extends HookWidget {
                       keyboardType: TextInputType.number,
                       onChanged: (v) {
                         if (v.isEmpty) {
-                          phoneErr.value = context.loc.phoneNumberIsRequired;
+                          phoneErr.value = context.loc!.phoneNumberIsRequired;
                           return;
                         }
 
                         if (!countryCodeRegexp.hasMatch(v)) {
-                          phoneErr.value = context.loc.invalidPhoneNumber;
+                          phoneErr.value = context.loc!.invalidPhoneNumber;
                           return;
                         } else {
                           final phone = v.replaceFirst(countryCodeRegexp, "");
                           if (!phoneRegexp.hasMatch(phone)) {
-                            phoneErr.value = context.loc.invalidPhoneNumber;
+                            phoneErr.value = context.loc!.invalidPhoneNumber;
                             return;
                           }
                         }
@@ -86,7 +86,7 @@ class LoginPage extends HookWidget {
                           phoneErr.value = "";
                         }
                       },
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                         color: isLoading ? Colors.grey.shade600 : null,
                       ),
                       decoration: InputDecoration(
@@ -96,7 +96,7 @@ class LoginPage extends HookWidget {
                           color: phoneErr.value.isNotEmpty ? Colors.red : null,
                         ),
                         border: InputBorder.none,
-                        hintText: context.loc.phoneNumber,
+                        hintText: context.loc!.phoneNumber,
                       ),
                     ),
                   ),
@@ -105,7 +105,7 @@ class LoginPage extends HookWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       phoneErr.value,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                         color: Colors.red,
                       ),
                     ),
@@ -122,7 +122,7 @@ class LoginPage extends HookWidget {
                       controller: passwordController,
                       textInputAction: TextInputAction.go,
                       obscureText: true,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                         color: isLoading ? Colors.grey.shade600 : null,
                       ),
                       onChanged: (v) {
@@ -138,7 +138,7 @@ class LoginPage extends HookWidget {
                               passwordErr.value.isNotEmpty ? Colors.red : null,
                         ),
                         border: InputBorder.none,
-                        hintText: context.loc.password,
+                        hintText: context.loc!.password,
                       ),
                     ),
                   ),
@@ -147,7 +147,7 @@ class LoginPage extends HookWidget {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       passwordErr.value,
-                      style: theme.textTheme.bodyText1.copyWith(
+                      style: theme.textTheme.bodyText1!.copyWith(
                         color: Colors.red,
                       ),
                     ),
@@ -156,8 +156,8 @@ class LoginPage extends HookWidget {
                   GestureDetector(
                     onTap: () {},
                     child: Text(
-                      context.loc.forgotPassword,
-                      style: theme.textTheme.button
+                      context.loc!.forgotPassword,
+                      style: theme.textTheme.button!
                           .copyWith(color: theme.accentColor),
                     ),
                   ),
@@ -170,8 +170,8 @@ class LoginPage extends HookWidget {
                       onTap: !isLoading
                           ? () => _onLogin(
                                 context,
-                                phone: phoneController.text,
-                                password: passwordController.text,
+                                phone: phoneController!.text,
+                                password: passwordController!.text,
                                 phoneError: phoneErr,
                                 passwordError: passwordErr,
                               )
@@ -182,9 +182,9 @@ class LoginPage extends HookWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding),
                         child: Text(
-                          context.loc.login.toUpperCase(),
+                          context.loc!.login.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button.copyWith(
+                          style: theme.textTheme.button!.copyWith(
                             color: Colors.white,
                           ),
                         ),
@@ -200,11 +200,11 @@ class LoginPage extends HookWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(context.loc.dontHaveAnAccount),
+                        Text(context.loc!.dontHaveAnAccount),
                         const SizedBox(width: kDefaultPadding / 2),
                         Text(
-                          context.loc.signup.toUpperCase(),
-                          style: theme.textTheme.button.copyWith(
+                          context.loc!.signup.toUpperCase(),
+                          style: theme.textTheme.button!.copyWith(
                             color: theme.accentColor,
                           ),
                         ),
@@ -232,9 +232,9 @@ class LoginPage extends HookWidget {
                             horizontal: kDefaultPadding * 1.5,
                             vertical: kDefaultPadding),
                         child: Text(
-                          context.loc.skip.toUpperCase(),
+                          context.loc!.skip.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button.copyWith(
+                          style: theme.textTheme.button!.copyWith(
                             color: Colors.grey.shade800,
                           ),
                         ),
@@ -252,10 +252,10 @@ class LoginPage extends HookWidget {
 
   Future<void> _onLogin(
     BuildContext context, {
-    @required String phone,
-    @required String password,
-    @required ValueNotifier<String> phoneError,
-    @required ValueNotifier<String> passwordError,
+    required String phone,
+    required String password,
+    required ValueNotifier<String> phoneError,
+    required ValueNotifier<String> passwordError,
   }) async {
     try {
       await context
@@ -268,13 +268,13 @@ class LoginPage extends HookWidget {
       }
     } on OperationException catch (e) {
       if (e.graphqlErrors
-          .any((err) => err.extensions["code"] == "INVALID_CREDENTIALS")) {
-        passwordError.value = context.loc.invalidCredentials;
+          .any((err) => err.extensions!["code"] == "INVALID_CREDENTIALS")) {
+        passwordError.value = context.loc!.invalidCredentials;
       } else if (e.graphqlErrors
-          .any((err) => err.extensions["code"] == "NOT_FOUND")) {
-        phoneError.value = context.loc.phoneNotFound;
+          .any((err) => err.extensions!["code"] == "NOT_FOUND")) {
+        phoneError.value = context.loc!.phoneNotFound;
       } else {
-        passwordError.value = context.loc.somethingWentWrong;
+        passwordError.value = context.loc!.somethingWentWrong;
         phoneError.value = " ";
       }
     }

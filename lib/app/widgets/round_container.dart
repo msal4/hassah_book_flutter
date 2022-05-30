@@ -3,7 +3,7 @@ import 'package:hassah_book_flutter/common/utils/const.dart';
 
 class RoundContainer extends StatelessWidget {
   const RoundContainer({
-    Key key,
+    Key? key,
     this.child,
     this.color,
     this.padding = const EdgeInsets.symmetric(horizontal: kDefaultPadding, vertical: kDefaultPadding / 2),
@@ -11,11 +11,11 @@ class RoundContainer extends StatelessWidget {
     this.borderRadius,
   }) : super(key: key);
 
-  final Widget child;
-  final Color color;
+  final Widget? child;
+  final Color? color;
   final EdgeInsetsGeometry padding;
-  final EdgeInsetsGeometry margin;
-  final BorderRadius borderRadius;
+  final EdgeInsetsGeometry? margin;
+  final BorderRadius? borderRadius;
 
   @override
   Widget build(BuildContext context) {

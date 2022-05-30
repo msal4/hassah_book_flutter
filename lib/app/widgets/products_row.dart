@@ -6,7 +6,7 @@ import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 const _kDefaultRowHeight = 280.0;
 
 class ProductsRow extends StatelessWidget {
-  const ProductsRow({Key key, @required this.title, @required this.items})
+  const ProductsRow({Key? key, required this.title, required this.items})
       : assert(title != null && items != null),
         super(key: key);
 
@@ -30,7 +30,7 @@ class ProductsRow extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
           child: Text(title,
-              style: textTheme.headline6.copyWith(color: Colors.grey.shade800)),
+              style: textTheme.headline6!.copyWith(color: Colors.grey.shade800)),
         ),
         const SizedBox(height: kDefaultPadding / 2),
         Container(

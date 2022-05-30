@@ -9,7 +9,7 @@ import 'package:hassah_book_flutter/models/auth_response.dart';
 const _kTokenRefreshPeriod = Duration(minutes: 3);
 
 class AuthProvider extends ChangeNotifier {
-  AuthProvider({@required this.client, bool isAuthenticated = false}) : this._isAuthenticated = isAuthenticated {
+  AuthProvider({required this.client, bool isAuthenticated = false}) : this._isAuthenticated = isAuthenticated {
     refresh().then((resp) {
       if (_isAuthenticated) {
         _initTimer();
@@ -31,7 +31,7 @@ class AuthProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
-  Timer _timer;
+  Timer? _timer;
 
   void _initTimer() {
     if (!(_timer?.isActive ?? false)) {
@@ -43,7 +43,7 @@ class AuthProvider extends ChangeNotifier {
 
   void _cancelTimer() {
     if (_timer?.isActive ?? false) {
-      _timer.cancel();
+      _timer!.cancel();
     }
   }
 
@@ -57,13 +57,13 @@ class AuthProvider extends ChangeNotifier {
     if (result.hasException) {
       _isLoading = false;
       notifyListeners();
-      throw result.exception;
+      throw result.exception!;
     }
 
     _isLoading = false;
     notifyListeners();
 
-    return _sendCodeMutation.parse(result.data).sendVerificationCode.sessionInfo;
+    return _sendCodeMutation.parse(result.data!).sendVerificationCode.sessionInfo;
   }
 
   Future<void> signup(RegisterInput input) async {
@@ -74,14 +74,14 @@ class AuthProvider extends ChangeNotifier {
     if (result.hasException) {
       _isLoading = false;
       notifyListeners();
-      throw result.exception;
+      throw result.exception!;
     }
 
     _isLoading = false;
     notifyListeners();
   }
 
-  Future<void> login({@required String phone, @required String password}) async {
+  Future<void> login({required String phone, required String password}) async {
     _initTimer();
     _isLoading = true;
     notifyListeners();
@@ -93,10 +93,10 @@ class AuthProvider extends ChangeNotifier {
       _isAuthenticated = false;
       _isLoading = false;
       notifyListeners();
-      throw result.exception;
+      throw result.exception!;
     }
 
-    final data = _loginMutation.parse(result.data).login;
+    final data = _loginMutation.parse(result.data!).login;
     await Auth.storeToken(accessToken: data.accessToken, refreshToken: data.refreshToken);
 
     _isAuthenticated = true;
@@ -117,7 +117,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<AuthResponse> refresh() async {
+  Future<AuthResponse?> refresh() async {
     _isLoading = true;
     notifyListeners();
 

@@ -28,15 +28,15 @@ const _kSearchQueryKey = "searchQuery";
 class SearchPageArguments {
   const SearchPageArguments({this.categoryID, this.searchQuery});
 
-  final String categoryID;
-  final String searchQuery;
+  final String? categoryID;
+  final String? searchQuery;
 }
 
 class SearchPage extends StatefulWidget {
   const SearchPage({this.categoryID, this.searchQuery});
 
-  final String categoryID;
-  final String searchQuery;
+  final String? categoryID;
+  final String? searchQuery;
 
   static const routeName = "/search";
 
@@ -50,12 +50,12 @@ class _SearchPageState extends State<SearchPage> {
 
   TextEditingController _searchController = TextEditingController();
 
-  String _currentCategoryID;
-  OrderBy _currentSort;
+  String? _currentCategoryID;
+  OrderBy? _currentSort;
 
   String _query = "";
 
-  Timer _timer;
+  Timer? _timer;
 
   final _heroTagPrefix = generateRandomString();
 
@@ -88,7 +88,7 @@ class _SearchPageState extends State<SearchPage> {
         "id": _currentCategoryID,
         _kSearchQueryKey: _query,
         "order": _currentSort != null
-            ? [OrderByMap(field: "createdAt", order: _currentSort)]
+            ? [OrderByMap(field: "createdAt", order: _currentSort!)]
             : null
       },
     );
@@ -118,7 +118,7 @@ class _SearchPageState extends State<SearchPage> {
                 builder: (result, {fetchMore, refetch}) {
                   if (result.hasException) {
                     return Retry(
-                      message: context.loc.somethingWentWrong,
+                      message: context.loc!.somethingWentWrong,
                       onRetry: refetch,
                     );
                   }
@@ -128,10 +128,10 @@ class _SearchPageState extends State<SearchPage> {
                   }
 
                   if (_currentCategoryID != null) {
-                    final data = _categorySearchQuery.parse(result.data);
-                    if (data?.category?.products == null) return SizedBox();
+                    final data = _categorySearchQuery.parse(result.data!);
+                    if (data.category?.products == null) return SizedBox();
 
-                    if (data.category.products.items.length == 0) {
+                    if (data.category!.products.items.length == 0) {
                       return SingleChildScrollView(
                         child: _buildNoItemsFound(context, _query),
                       );
@@ -139,22 +139,22 @@ class _SearchPageState extends State<SearchPage> {
 
                     return PaginationHandler(
                       enabled: !result.isLoading &&
-                          data.category.products.items.length !=
-                              data.category.products.total,
+                          data.category!.products.items.length !=
+                              data.category!.products.total,
                       fetchMore: () {
                         final options = FetchMoreOptions(
                           document: _searchQuery.document,
                           updateQuery: (oldData, newData) =>
                               updatePaginatedResponse(
-                                  oldData, newData, "products"),
+                                  oldData!, newData!, "products"),
                           variables: {
                             "id": _currentCategoryID,
                             _kSearchQueryKey: _query,
-                            "skip": data.category.products.items.length
+                            "skip": data.category!.products.items.length
                           },
                         );
 
-                        fetchMore(options);
+                        fetchMore!(options);
                       },
                       child: ListView.separated(
                         padding: EdgeInsets.only(
@@ -162,12 +162,12 @@ class _SearchPageState extends State<SearchPage> {
                           bottom: kDefaultPadding + padding.top,
                         ),
                         itemBuilder: (context, idx) {
-                          final product = data.category.products.items[idx];
+                          final product = data.category!.products.items[idx];
 
                           return Tooltip(
                             key: Key(product.id),
                             message:
-                                "${product.name} ${context.loc.by} ${product.author.name}",
+                                "${product.name} ${context.loc!.by} ${product.author.name}",
                             child: GestureDetector(
                               onTap: () {
                                 Navigator.of(context).pushNamed(
@@ -201,13 +201,13 @@ class _SearchPageState extends State<SearchPage> {
                         },
                         separatorBuilder: (context, idx) =>
                             const SizedBox(height: kDefaultPadding),
-                        itemCount: data.category.products.items.length,
+                        itemCount: data.category!.products.items.length,
                       ),
                     );
                   }
 
-                  final data = _searchQuery.parse(result.data);
-                  if (data?.products == null) return SizedBox();
+                  final data = _searchQuery.parse(result.data!);
+                  if (data.products == null) return SizedBox();
 
                   return PaginationHandler(
                     enabled: !result.isLoading &&
@@ -217,14 +217,14 @@ class _SearchPageState extends State<SearchPage> {
                         document: _searchQuery.document,
                         updateQuery: (oldData, newData) =>
                             updatePaginatedResponse(
-                                oldData, newData, "products"),
+                                oldData!, newData!, "products"),
                         variables: {
                           "searchQuery": _query,
                           "skip": data.products.items.length
                         },
                       );
 
-                      fetchMore(options);
+                      fetchMore!(options);
                     },
                     child: ListView.separated(
                       padding: EdgeInsets.only(
@@ -245,7 +245,7 @@ class _SearchPageState extends State<SearchPage> {
                         return Tooltip(
                           key: Key(product.id),
                           message:
-                              "${product.name} ${context.loc.by} ${product.author.name}",
+                              "${product.name} ${context.loc!.by} ${product.author.name}",
                           child: GestureDetector(
                             onTap: () {
                               Navigator.of(context).pushNamed(
@@ -336,7 +336,7 @@ class _SearchPageState extends State<SearchPage> {
                 author.name,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,
-                style: theme.textTheme.bodyText1
+                style: theme.textTheme.bodyText1!
                     .copyWith(fontWeight: FontWeight.w500),
               ),
             ],
@@ -410,7 +410,7 @@ class _SearchPageState extends State<SearchPage> {
       );
 
       setState(() {
-        _currentSort = result.sort;
+        _currentSort = result!.sort;
         _currentCategoryID = result.categoryID;
       });
     };
@@ -444,7 +444,7 @@ class _SearchPageState extends State<SearchPage> {
               autofocus: true,
               style: theme.textTheme.headline6,
               decoration: InputDecoration(
-                hintText: context.loc.search,
+                hintText: context.loc!.search,
                 border: InputBorder.none,
               ),
             ),
@@ -455,7 +455,7 @@ class _SearchPageState extends State<SearchPage> {
           Stack(
             children: [
               IconButton(
-                tooltip: context.loc.filter,
+                tooltip: context.loc!.filter,
                 icon: Icon(Icons.filter_list),
                 onPressed: onFilter,
                 padding: EdgeInsets.only(
@@ -509,7 +509,7 @@ class _SearchPageState extends State<SearchPage> {
       children: [
         const Icon(Icons.error_outline),
         const SizedBox(height: kDefaultPadding / 2),
-        Text(context.loc.noResultsFound),
+        Text(context.loc!.noResultsFound),
         Padding(
           padding: const EdgeInsets.all(kDefaultPadding),
           child: Material(
@@ -535,9 +535,9 @@ class _SearchPageState extends State<SearchPage> {
                   vertical: kDefaultPadding,
                 ),
                 child: Text(
-                  context.loc.requestUnavailableBook.toUpperCase(),
+                  context.loc!.requestUnavailableBook.toUpperCase(),
                   textAlign: TextAlign.center,
-                  style: theme.textTheme.button.copyWith(color: Colors.white),
+                  style: theme.textTheme.button!.copyWith(color: Colors.white),
                 ),
               ),
             ),
@@ -551,22 +551,22 @@ class _SearchPageState extends State<SearchPage> {
 class FilterResults {
   const FilterResults({this.categoryID, this.sort});
 
-  final String categoryID;
-  final OrderBy sort;
+  final String? categoryID;
+  final OrderBy? sort;
 }
 
 class FilterDialog extends HookWidget {
   FilterDialog({this.initialCategoryID, this.initialSort});
 
-  final String initialCategoryID;
-  final OrderBy initialSort;
+  final String? initialCategoryID;
+  final OrderBy? initialSort;
 
   final _categoriesQuery = CategoriesQuery();
 
   @override
   Widget build(BuildContext context) {
-    final currentCategory = useState<String>(initialCategoryID);
-    final currentSort = useState<OrderBy>(initialSort);
+    final currentCategory = useState<String?>(initialCategoryID);
+    final currentSort = useState<OrderBy?>(initialSort);
     final theme = Theme.of(context);
     final isRTL = context.locale.languageCode == "ar";
 
@@ -577,7 +577,7 @@ class FilterDialog extends HookWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              context.loc.filter,
+              context.loc!.filter,
               textAlign: TextAlign.center,
               style: theme.textTheme.headline6,
             ),
@@ -586,7 +586,7 @@ class FilterDialog extends HookWidget {
             const SizedBox(height: kDefaultPadding),
             Row(
               children: [
-                Text(context.loc.category + ":"),
+                Text(context.loc!.category + ":"),
                 const SizedBox(width: kDefaultPadding),
                 Query(
                   options: QueryOptions(
@@ -595,7 +595,7 @@ class FilterDialog extends HookWidget {
                   ),
                   builder: (result, {refetch, fetchMore}) {
                     final data = result.data != null
-                        ? _categoriesQuery.parse(result.data)
+                        ? _categoriesQuery.parse(result.data!)
                         : null;
 
                     return Container(
@@ -617,9 +617,9 @@ class FilterDialog extends HookWidget {
                         items: [
                           DropdownMenuItem(
                             value: null,
-                            child: Text(context.loc.category),
+                            child: Text(context.loc!.category),
                           ),
-                          for (final c in data?.categories?.items)
+                          for (final c in (data?.categories.items) ?? [])
                             DropdownMenuItem(
                               value: c.id,
                               child: Text(c.name),
@@ -634,7 +634,7 @@ class FilterDialog extends HookWidget {
             const SizedBox(height: kDefaultPadding),
             Row(
               children: [
-                Text(context.loc.sort + ":"),
+                Text(context.loc!.sort + ":"),
                 const SizedBox(width: kDefaultPadding),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -661,15 +661,15 @@ class FilterDialog extends HookWidget {
                     items: [
                       DropdownMenuItem(
                         value: null,
-                        child: Text(context.loc.sort),
+                        child: Text(context.loc!.sort),
                       ),
                       DropdownMenuItem(
                         value: OrderBy.desc,
-                        child: Text(context.loc.latest),
+                        child: Text(context.loc!.latest),
                       ),
                       DropdownMenuItem(
                         value: OrderBy.asc,
-                        child: Text(context.loc.oldest),
+                        child: Text(context.loc!.oldest),
                       ),
                     ],
                   ),
@@ -705,7 +705,7 @@ class FilterDialog extends HookWidget {
                           ),
                           const SizedBox(width: kDefaultPadding),
                           Text(
-                            context.loc.clear.toUpperCase(),
+                            context.loc!.clear.toUpperCase(),
                             textAlign: TextAlign.center,
                             style: theme.textTheme.button,
                           ),
@@ -736,9 +736,9 @@ class FilterDialog extends HookWidget {
                           vertical: kDefaultPadding,
                         ),
                         child: Text(
-                          context.loc.apply.toUpperCase(),
+                          context.loc!.apply.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button.copyWith(
+                          style: theme.textTheme.button!.copyWith(
                             color: Colors.white,
                           ),
                         ),
@@ -761,16 +761,16 @@ class RequestBookDialog extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final contentController = useTextEditingController();
+    final TextEditingController? contentController = useTextEditingController();
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
     return Mutation(
       options: MutationOptions(document: _requestMutation.document),
       builder: (sendRequest, res) {
         final onSubmit = () async {
-          if (contentController.text.isNotEmpty) {
+          if (contentController!.text.isNotEmpty) {
             final res = await sendRequest({"content": contentController.text})
-                .networkResult;
+                .networkResult!;
             if (res.hasException) return;
 
             Navigator.pop(context);
@@ -791,7 +791,7 @@ class RequestBookDialog extends HookWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   Text(
-                    context.loc.requestUnavailableBook,
+                    context.loc!.requestUnavailableBook,
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headline6,
                   ),
@@ -815,7 +815,7 @@ class RequestBookDialog extends HookWidget {
                       enableSuggestions: true,
                       decoration: InputDecoration(
                         border: InputBorder.none,
-                        hintText: context.loc.requestBookName,
+                        hintText: context.loc!.requestBookName,
                       ),
                     ),
                   ),
@@ -835,9 +835,9 @@ class RequestBookDialog extends HookWidget {
                           vertical: kDefaultPadding,
                         ),
                         child: Text(
-                          context.loc.requestBook.toUpperCase(),
+                          context.loc!.requestBook.toUpperCase(),
                           textAlign: TextAlign.center,
-                          style: theme.textTheme.button
+                          style: theme.textTheme.button!
                               .copyWith(color: Colors.white),
                         ),
                       ),
