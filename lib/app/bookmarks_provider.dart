@@ -1,19 +1,18 @@
 import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/pagination.dart';
+import 'package:hassah_book_flutter/graphql/add_bookmark.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/bookmark.fragment.graphql.dart';
+import 'package:hassah_book_flutter/graphql/bookmarks.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/remove_bookmark.query.graphql.dart';
 
 class BookmarksProvider extends ChangeNotifier {
   BookmarksProvider({required this.client});
 
   final GraphQLClient client;
 
-  final _bookmarksQuery = BookmarksQuery();
-  final _removeBookmarkMutation = RemoveBookmarkMutation();
-  final _addBookmarkMutation = AddBookmarkMutation();
-
-  PaginatedBookmarkResponseMixin? _bookmarks;
-  PaginatedBookmarkResponseMixin? get bookmarks => _bookmarks;
+  Fragment$PaginatedBookmarkResponse? _bookmarks;
+  Fragment$PaginatedBookmarkResponse? get bookmarks => _bookmarks;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
@@ -24,20 +23,20 @@ class BookmarksProvider extends ChangeNotifier {
   OperationException? _exception;
   OperationException? get exception => _exception;
 
-  QueryResult? _result;
-  QueryResult? get result => _result;
+  QueryResult<Query$Bookmarks>? _result;
+  QueryResult<Query$Bookmarks>? get result => _result;
 
-  late QueryOptions _options;
+  late Options$Query$Bookmarks _options;
 
   Future<void> getBookmarks() async {
     _isLoading = true;
     notifyListeners();
 
-    _options = QueryOptions(
-        document: _bookmarksQuery.document,
-        fetchPolicy: FetchPolicy.cacheAndNetwork);
+    _options = Options$Query$Bookmarks(
+      fetchPolicy: FetchPolicy.cacheAndNetwork,
+    );
 
-    _result = await client.query(_options);
+    _result = await client.query$Bookmarks(_options);
 
     if (_result!.hasException) {
       _exception = _result!.exception;
@@ -47,18 +46,17 @@ class BookmarksProvider extends ChangeNotifier {
       return;
     }
 
-    _bookmarks = _bookmarksQuery.parse(_result!.data!).bookmarks;
+    _bookmarks = result!.parsedData!.bookmarks;
     _hasException = false;
     _isLoading = false;
     notifyListeners();
   }
 
   Future<void> fetchMore() async {
-    final options = FetchMoreOptions(
-      document: _bookmarksQuery.document,
+    final options = FetchMoreOptions$Query$Bookmarks(
       updateQuery: (oldData, newData) =>
           updatePaginatedResponse(oldData!, newData!, "bookmarks"),
-      variables: {"skip": bookmarks!.items.length},
+      variables: Variables$Query$Bookmarks(skip: bookmarks!.items.length),
     );
 
     final result = await client.fetchMore(options,
@@ -67,21 +65,25 @@ class BookmarksProvider extends ChangeNotifier {
       return;
     }
 
-    _bookmarks = _bookmarksQuery.parse(result.data!).bookmarks;
+    _bookmarks = result.parsedData!.bookmarks;
     notifyListeners();
   }
 
-  Future<void> addBookmark(String? productId) async {
-    await client.mutate(MutationOptions(
-        document: _addBookmarkMutation.document,
-        variables: {"productId": productId}));
+  Future<void> addBookmark(String productId) async {
+    await client.mutate$AddBookmark(
+      Options$Mutation$AddBookmark(
+        variables: Variables$Mutation$AddBookmark(productId: productId),
+      ),
+    );
     await getBookmarks();
   }
 
-  Future<void> removeBookmark(String? productId) async {
-    await client.mutate(MutationOptions(
-        document: _removeBookmarkMutation.document,
-        variables: {"productId": productId}));
+  Future<void> removeBookmark(String productId) async {
+    await client.mutate$RemoveBookmark(
+      Options$Mutation$RemoveBookmark(
+        variables: Variables$Mutation$RemoveBookmark(productId: productId),
+      ),
+    );
     await getBookmarks();
   }
 }

@@ -7,7 +7,6 @@ import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/order_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
@@ -17,23 +16,22 @@ import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hassah_book_flutter/graphql/my_orders.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/order.fragment.graphql.dart';
 import 'package:provider/provider.dart';
 
 class OrdersPage extends StatelessWidget {
   static const routeName = "/orders";
-
-  final _myOrdersQuery = MyOrdersQuery();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(context.loc!.myOrders)),
       body: Query(
-        options: QueryOptions(document: _myOrdersQuery.document),
+        options: QueryOptions(document: queryDocumentMyOrders),
         builder: (result, {fetchMore, refetch}) {
           return Center(
             child: _OrdersList(
-              query: _myOrdersQuery,
               result: result,
               fetchMore: fetchMore!,
               refetch: refetch!,
@@ -46,17 +44,12 @@ class OrdersPage extends StatelessWidget {
 }
 
 class _OrdersList extends HookWidget {
-  const _OrdersList(
-      {required this.query,
-      required this.result,
-      required this.fetchMore,
-      required this.refetch})
-      : assert(query != null),
-        assert(result != null),
-        assert(fetchMore != null),
-        assert(refetch != null);
+  const _OrdersList({
+    required this.result,
+    required this.fetchMore,
+    required this.refetch,
+  });
 
-  final MyOrdersQuery query;
   final QueryResult result;
   final Future<QueryResult?> Function() refetch;
   final Future<QueryResult> Function(FetchMoreOptions) fetchMore;
@@ -85,7 +78,7 @@ class _OrdersList extends HookWidget {
             ),
             const SizedBox(height: kDefaultPadding),
             Material(
-              color: theme.accentColor,
+              color: theme.colorScheme.secondary,
               borderRadius: BorderRadius.circular(9999),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
@@ -101,7 +94,8 @@ class _OrdersList extends HookWidget {
                   child: Text(
                     context.loc!.login.toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.button!.copyWith(color: Colors.white),
+                    style:
+                        theme.textTheme.button!.copyWith(color: Colors.white),
                   ),
                 ),
               ),
@@ -122,7 +116,7 @@ class _OrdersList extends HookWidget {
       return const LoadingIndicator();
     }
 
-    final orders = query.parse(result.data!).myOrders;
+    final orders = Query$MyOrders.fromJson(result.data!).myOrders;
 
     if (orders.items.length == 0) {
       return _buildPlaceholder(context);
@@ -134,7 +128,7 @@ class _OrdersList extends HookWidget {
         enabled: result.isNotLoading && orders.hasMore,
         fetchMore: () {
           final options = FetchMoreOptions(
-            document: query.document,
+            document: queryDocumentMyOrders,
             updateQuery: (oldData, newData) =>
                 updatePaginatedResponse(oldData!, newData!, "myOrders"),
             variables: {"skip": orders.items.length},
@@ -169,7 +163,7 @@ class _OrdersList extends HookWidget {
   }
 
   Widget _buildOrder(BuildContext context,
-      {required OrderMixin order,
+      {required Fragment$Order order,
       required int morePurchasesCount,
       required String productImage}) {
     final theme = Theme.of(context);

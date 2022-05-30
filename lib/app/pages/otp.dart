@@ -5,19 +5,18 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/pages/signup.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
 import 'package:hassah_book_flutter/main.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 import 'package:provider/provider.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 
 class OTPPage extends HookWidget {
   static const routeName = "/otp";
 
-  const OTPPage({required this.form})
-      : assert(form != null, "form is required");
+  const OTPPage({required this.form});
 
   final SignupForm form;
 
@@ -80,11 +79,12 @@ class OTPPage extends HookWidget {
                     child: InkWell(
                       onTap: !isLoading
                           ? () async {
-                              final input = RegisterInput(
-                                  code: otpController!.text,
-                                  name: form.name,
-                                  password: form.password,
-                                  sessionInfo: form.sessionInfo!);
+                              final input = Input$RegisterInput(
+                                code: otpController!.text,
+                                name: form.name,
+                                password: form.password,
+                                sessionInfo: form.sessionInfo!,
+                              );
                               await context.read<AuthProvider>().signup(input);
                               try {
                                 await context.read<AuthProvider>().login(

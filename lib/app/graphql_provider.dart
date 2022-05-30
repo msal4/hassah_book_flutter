@@ -4,10 +4,12 @@ import 'package:hassah_book_flutter/common/auth/auth.dart';
 
 ValueNotifier<GraphQLClient> clientFor(
     {required String uri, String? subscriptionUri}) {
-  final authLink = AuthLink(getToken: () {
-    final token = Auth.getToken(TokenType.Access);
-    return token != null ? "Bearer $token" : "";
-  });
+  final authLink = AuthLink(
+    getToken: () {
+      final token = Auth.getToken(TokenType.Access);
+      return token != null ? "Bearer $token" : "";
+    },
+  );
 
   Link link = authLink.concat(HttpLink(uri, httpClient: AuthClient()));
   if (subscriptionUri != null) {

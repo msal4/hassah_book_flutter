@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 
-String humanizeOrderStatus(BuildContext context, OrderStatus status) {
+String humanizeOrderStatus(BuildContext context, Enum$OrderStatus status) {
   switch (status) {
-    case OrderStatus.pending:
+    case Enum$OrderStatus.Pending:
       return context.loc!.pending;
-    case OrderStatus.processed:
+    case Enum$OrderStatus.Processed:
       return context.loc!.processed;
-    case OrderStatus.delivering:
+    case Enum$OrderStatus.Delivering:
       return context.loc!.delivering;
-    case OrderStatus.delivered:
+    case Enum$OrderStatus.Delivered:
       return context.loc!.delivered;
-    case OrderStatus.canceled:
+    case Enum$OrderStatus.Canceled:
       return context.loc!.canceled;
-    case OrderStatus.failed:
+    case Enum$OrderStatus.Failed:
       return context.loc!.failed;
     default:
       return "Unknown";

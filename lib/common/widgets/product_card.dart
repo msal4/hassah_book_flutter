@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/image.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
+import 'package:hassah_book_flutter/graphql/product.fragment.graphql.dart';
 
 class ProductCard extends HookWidget {
   const ProductCard(
       {Key? key, required this.product, this.width = kDefaultImageWidth})
       : super(key: key);
 
-  final ProductMixin product;
+  final Fragment$Product product;
   final double width;
 
   @override

@@ -1,8 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
@@ -11,7 +8,6 @@ import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/image.dart';
@@ -20,6 +16,13 @@ import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hassah_book_flutter/graphql/author.fragment.graphql.dart';
+import 'package:hassah_book_flutter/graphql/categories.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/category.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/create_request.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/product.fragment.graphql.dart';
+import 'package:hassah_book_flutter/graphql/search.query.graphql.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 
 const _kDebounceDuration = 500;
 const _kAuthorRadius = 50.0;
@@ -45,13 +48,10 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  final _searchQuery = SearchQuery();
-  final _categorySearchQuery = CategorySearchQuery();
-
   TextEditingController _searchController = TextEditingController();
 
   String? _currentCategoryID;
-  OrderBy? _currentSort;
+  Enum$OrderBy? _currentSort;
 
   String _query = "";
 
@@ -82,13 +82,13 @@ class _SearchPageState extends State<SearchPage> {
 
     final options = QueryOptions(
       document: _currentCategoryID != null
-          ? _categorySearchQuery.document
-          : _searchQuery.document,
+          ? queryDocumentCategorySearch
+          : queryDocumentSearch,
       variables: {
         "id": _currentCategoryID,
         _kSearchQueryKey: _query,
         "order": _currentSort != null
-            ? [OrderByMap(field: "createdAt", order: _currentSort!)]
+            ? [Input$OrderByMap(field: "createdAt", order: _currentSort!)]
             : null
       },
     );
@@ -128,7 +128,7 @@ class _SearchPageState extends State<SearchPage> {
                   }
 
                   if (_currentCategoryID != null) {
-                    final data = _categorySearchQuery.parse(result.data!);
+                    final data = Query$CategorySearch.fromJson(result.data!);
                     if (data.category?.products == null) return SizedBox();
 
                     if (data.category!.products.items.length == 0) {
@@ -143,7 +143,7 @@ class _SearchPageState extends State<SearchPage> {
                               data.category!.products.total,
                       fetchMore: () {
                         final options = FetchMoreOptions(
-                          document: _searchQuery.document,
+                          document: queryDocumentSearch,
                           updateQuery: (oldData, newData) =>
                               updatePaginatedResponse(
                                   oldData!, newData!, "products"),
@@ -206,7 +206,7 @@ class _SearchPageState extends State<SearchPage> {
                     );
                   }
 
-                  final data = _searchQuery.parse(result.data!);
+                  final data = Query$Search.fromJson(result.data!);
                   if (data.products == null) return SizedBox();
 
                   return PaginationHandler(
@@ -214,7 +214,7 @@ class _SearchPageState extends State<SearchPage> {
                         data.products.items.length != data.products.total,
                     fetchMore: () {
                       final options = FetchMoreOptions(
-                        document: _searchQuery.document,
+                        document: queryDocumentSearch,
                         updateQuery: (oldData, newData) =>
                             updatePaginatedResponse(
                                 oldData!, newData!, "products"),
@@ -291,7 +291,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildAuthorsRow(BuildContext context, List<AuthorMixin> authors) {
+  Widget _buildAuthorsRow(BuildContext context, List<Fragment$Author> authors) {
     final theme = Theme.of(context);
 
     if (authors.length == 0) {
@@ -312,7 +312,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildAuthor(ThemeData theme, AuthorMixin author) {
+  Widget _buildAuthor(ThemeData theme, Fragment$Author author) {
     return GestureDetector(
       onTap: () {
         Navigator.pushNamed(context, AuthorPage.routeName,
@@ -346,7 +346,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildProductInfo(TextTheme textTheme, ProductMixin product) {
+  Widget _buildProductInfo(TextTheme textTheme, Fragment$Product product) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -378,7 +378,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildImage(ProductMixin product) {
+  Widget _buildImage(Fragment$Product product) {
     return Hero(
       tag: "image-$_heroTagPrefix-${product.id}",
       child: ProductCoverImage(
@@ -404,8 +404,9 @@ class _SearchPageState extends State<SearchPage> {
         isScrollControlled: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(kDefaultBorderRadius),
-              topRight: Radius.circular(kDefaultBorderRadius)),
+            topLeft: Radius.circular(kDefaultBorderRadius),
+            topRight: Radius.circular(kDefaultBorderRadius),
+          ),
         ),
       );
 
@@ -552,21 +553,19 @@ class FilterResults {
   const FilterResults({this.categoryID, this.sort});
 
   final String? categoryID;
-  final OrderBy? sort;
+  final Enum$OrderBy? sort;
 }
 
 class FilterDialog extends HookWidget {
   FilterDialog({this.initialCategoryID, this.initialSort});
 
   final String? initialCategoryID;
-  final OrderBy? initialSort;
-
-  final _categoriesQuery = CategoriesQuery();
+  final Enum$OrderBy? initialSort;
 
   @override
   Widget build(BuildContext context) {
     final currentCategory = useState<String?>(initialCategoryID);
-    final currentSort = useState<OrderBy?>(initialSort);
+    final currentSort = useState<Enum$OrderBy?>(initialSort);
     final theme = Theme.of(context);
     final isRTL = context.locale.languageCode == "ar";
 
@@ -588,15 +587,12 @@ class FilterDialog extends HookWidget {
               children: [
                 Text(context.loc!.category + ":"),
                 const SizedBox(width: kDefaultPadding),
-                Query(
-                  options: QueryOptions(
-                    document: _categoriesQuery.document,
-                    variables: {"take": 100},
+                Query$Categories$Widget(
+                  options: Options$Query$Categories(
+                    variables: Variables$Query$Categories(take: 100),
                   ),
                   builder: (result, {refetch, fetchMore}) {
-                    final data = result.data != null
-                        ? _categoriesQuery.parse(result.data!)
-                        : null;
+                    final data = result.parsedData;
 
                     return Container(
                       padding: const EdgeInsets.symmetric(
@@ -645,7 +641,7 @@ class FilterDialog extends HookWidget {
                     color: theme.scaffoldBackgroundColor,
                     borderRadius: BorderRadius.circular(9999),
                   ),
-                  child: DropdownButton<OrderBy>(
+                  child: DropdownButton<Enum$OrderBy>(
                     icon: Padding(
                       padding: EdgeInsets.only(
                         left: isRTL ? 0 : kDefaultPadding,
@@ -664,11 +660,11 @@ class FilterDialog extends HookWidget {
                         child: Text(context.loc!.sort),
                       ),
                       DropdownMenuItem(
-                        value: OrderBy.desc,
+                        value: Enum$OrderBy.DESC,
                         child: Text(context.loc!.latest),
                       ),
                       DropdownMenuItem(
-                        value: OrderBy.asc,
+                        value: Enum$OrderBy.ASC,
                         child: Text(context.loc!.oldest),
                       ),
                     ],
@@ -717,7 +713,7 @@ class FilterDialog extends HookWidget {
                 const SizedBox(width: kDefaultPadding),
                 Expanded(
                   child: Material(
-                    color: theme.accentColor,
+                    color: theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(9999),
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(
@@ -756,21 +752,18 @@ class FilterDialog extends HookWidget {
 }
 
 class RequestBookDialog extends HookWidget {
-  final _requestMutation = CreateRequestMutation();
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final TextEditingController? contentController = useTextEditingController();
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
-
-    return Mutation(
-      options: MutationOptions(document: _requestMutation.document),
+    return Mutation$CreateRequest$Widget(
       builder: (sendRequest, res) {
         final onSubmit = () async {
           if (contentController!.text.isNotEmpty) {
-            final res = await sendRequest({"content": contentController.text})
-                .networkResult!;
+            final res = await sendRequest(
+              Variables$Mutation$CreateRequest(content: contentController.text),
+            ).networkResult!;
             if (res.hasException) return;
 
             Navigator.pop(context);

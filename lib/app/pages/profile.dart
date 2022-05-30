@@ -5,18 +5,16 @@ import 'package:hassah_book_flutter/app/pages/contact_us.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/personal_information.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hassah_book_flutter/graphql/me.query.graphql.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ProfilePage extends StatelessWidget {
   static const routeName = "/profile";
-
-  final _meQuery = MeQuery();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +33,7 @@ class ProfilePage extends StatelessWidget {
             Column(
               children: [
                 Query(
-                  options: QueryOptions(document: _meQuery.document),
+                  options: QueryOptions(document: queryDocumentMe),
                   builder: (result, {refetch, fetchMore}) {
                     if (result.hasException) {
                       return Retry(
@@ -48,7 +46,7 @@ class ProfilePage extends StatelessWidget {
                       return const LoadingIndicator();
                     }
 
-                    final me = _meQuery.parse(result.data!).me;
+                    final me = Query$Me.fromJson(result.data!).me;
 
                     return Column(
                       children: [
@@ -147,7 +145,7 @@ class ProfilePage extends StatelessWidget {
                     style: theme.textTheme.subtitle1),
                 const SizedBox(height: kDefaultPadding),
                 Material(
-                  color: theme.accentColor,
+                  color: theme.colorScheme.secondary,
                   borderRadius: BorderRadius.circular(9999),
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
@@ -290,12 +288,13 @@ class LanguageDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                 child: ListTile(
                   selected: isArabic,
-                  selectedTileColor: theme.accentColor,
+                  selectedTileColor: theme.colorScheme.secondary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                   ),
-                  tileColor:
-                      isArabic ? theme.accentColor : theme.backgroundColor,
+                  tileColor: isArabic
+                      ? theme.colorScheme.secondary
+                      : theme.backgroundColor,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: kDefaultPadding,
                     vertical: kDefaultPadding / 2,

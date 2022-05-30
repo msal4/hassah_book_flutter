@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/products_row.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hassah_book_flutter/graphql/home.query.graphql.dart';
 
 class HomePage extends HookWidget {
-  final _homeQuery = HomeQuery();
-
   @override
   Widget build(BuildContext context) {
     final padding = MediaQuery.of(context).padding;
@@ -20,10 +17,8 @@ class HomePage extends HookWidget {
     final rightPadding = padding.right + kDefaultPadding;
     final topSafeAreaPadding = padding.top + kAppBarHeight;
 
-    return MyHomePage();
-
     return Query(
-      options: QueryOptions(document: _homeQuery.document),
+      options: QueryOptions(document: queryDocumentHome),
       builder: (QueryResult result,
           {Future<QueryResult?> Function()? refetch, FetchMore? fetchMore}) {
         if (result.hasException) {
@@ -40,11 +35,11 @@ class HomePage extends HookWidget {
 
         print(result.data);
 
-        final home = _homeQuery.parse(result.data!);
-        // Remove empty rows
-        home.categories.items = home.categories.items
-            .where((cat) => cat.products.items.isNotEmpty)
-            .toList();
+        final home = Query$Home.fromJson(result.data!);
+        // // Remove empty rows
+        // home.categories.items = home.categories.items
+        //     .where((cat) => cat.products.items.isNotEmpty)
+        //     .toList();
 
         return ListView.separated(
           padding:
@@ -98,39 +93,6 @@ class SearchBox extends HookWidget {
           border: InputBorder.none,
         ),
       ),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    print("definitions:");
-    print(HomeQuery().document.definitions[0].span);
-    return Query(
-      options: QueryOptions(document: gql(r'''
-        {
-          latestProducts: products(order: [{field: "createdAt", order: DESC}]) {
-        items {
-          id
-          name
-        }
-    }
-
-    categories {
-        items {
-          id
-          name
-        }
-    }
-        }''')),
-      builder: (result, {fetchMore, refetch}) {
-        print(result.data);
-        print(result.source);
-        return Container();
-      },
     );
   }
 }

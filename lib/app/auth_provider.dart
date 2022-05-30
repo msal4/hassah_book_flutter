@@ -2,14 +2,18 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
+import 'package:hassah_book_flutter/graphql/login.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/send_verification_code.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/signup.query.graphql.dart';
 import 'package:hassah_book_flutter/models/auth_response.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 
 const _kTokenRefreshPeriod = Duration(minutes: 3);
 
 class AuthProvider extends ChangeNotifier {
-  AuthProvider({required this.client, bool isAuthenticated = false}) : this._isAuthenticated = isAuthenticated {
+  AuthProvider({required this.client, bool isAuthenticated = false})
+      : this._isAuthenticated = isAuthenticated {
     refresh().then((resp) {
       if (_isAuthenticated) {
         _initTimer();
@@ -18,10 +22,6 @@ class AuthProvider extends ChangeNotifier {
   }
 
   final GraphQLClient client;
-
-  final _loginMutation = LoginMutation();
-  final _sendCodeMutation = SendVerificationCodeMutation();
-  final _signupMutation = SignupMutation();
 
   bool _isAuthenticated;
 
@@ -49,11 +49,16 @@ class AuthProvider extends ChangeNotifier {
 
   /// sendVerificationCode sends a code using the provided phone number and returns the session info to be used when
   /// verifying the received code.
-  Future<String> sendVerificationCode(SendVerificationCodeInput input) async {
+  Future<String> sendVerificationCode(
+      Input$SendVerificationCodeInput input) async {
     _isLoading = true;
     notifyListeners();
 
-    final result = await client.mutate(MutationOptions(document: _sendCodeMutation.document, variables: {"data": input}));
+    final result = await client.mutate(
+      Options$Mutation$SendVerificationCode(
+        variables: Variables$Mutation$SendVerificationCode(data: input),
+      ),
+    );
     if (result.hasException) {
       _isLoading = false;
       notifyListeners();
@@ -63,14 +68,18 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
 
-    return _sendCodeMutation.parse(result.data!).sendVerificationCode.sessionInfo;
+    return result.parsedData!.sendVerificationCode.sessionInfo;
   }
 
-  Future<void> signup(RegisterInput input) async {
+  Future<void> signup(Input$RegisterInput input) async {
     _isLoading = true;
     notifyListeners();
 
-    final result = await client.mutate(MutationOptions(document: _signupMutation.document, variables: {"data": input}));
+    final result = await client.mutate(
+      Options$Mutation$Signup(
+        variables: Variables$Mutation$Signup(data: input),
+      ),
+    );
     if (result.hasException) {
       _isLoading = false;
       notifyListeners();
@@ -86,9 +95,11 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
 
-    final input = LoginInput(phone: phone, password: password);
+    final input = Input$LoginInput(phone: phone, password: password);
 
-    final result = await client.mutate(MutationOptions(document: _loginMutation.document, variables: {"data": input}));
+    final result = await client.mutate(
+      Options$Mutation$Login(variables: Variables$Mutation$Login(data: input)),
+    );
     if (result.hasException) {
       _isAuthenticated = false;
       _isLoading = false;
@@ -96,8 +107,11 @@ class AuthProvider extends ChangeNotifier {
       throw result.exception!;
     }
 
-    final data = _loginMutation.parse(result.data!).login;
-    await Auth.storeToken(accessToken: data.accessToken, refreshToken: data.refreshToken);
+    final data = result.parsedData!.login;
+    await Auth.storeToken(
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+    );
 
     _isAuthenticated = true;
     _isLoading = false;

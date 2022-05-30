@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/auth_provider.dart';
 import 'package:hassah_book_flutter/app/bookmarks_provider.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/product_details_card.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hassah_book_flutter/graphql/bookmark.fragment.graphql.dart';
 import 'package:provider/provider.dart';
 
 class BookmarksPage extends HookWidget {
@@ -44,7 +43,7 @@ class BookmarksPage extends HookWidget {
             ),
             const SizedBox(height: kDefaultPadding),
             Material(
-              color: theme.accentColor,
+              color: theme.colorScheme.secondary,
               borderRadius: BorderRadius.circular(9999),
               clipBehavior: Clip.antiAlias,
               child: InkWell(
@@ -60,7 +59,8 @@ class BookmarksPage extends HookWidget {
                   child: Text(
                     context.loc!.login.toUpperCase(),
                     textAlign: TextAlign.center,
-                    style: theme.textTheme.button!.copyWith(color: Colors.white),
+                    style:
+                        theme.textTheme.button!.copyWith(color: Colors.white),
                   ),
                 ),
               ),
@@ -84,7 +84,7 @@ class BookmarksPage extends HookWidget {
     return RefreshIndicator(
       onRefresh: bookmarks.getBookmarks,
       child: PaginationHandler(
-        enabled: !isLoading && data?.items?.length != data?.total,
+        enabled: !isLoading && data?.items.length != data?.total,
         fetchMore: bookmarks.fetchMore,
         child: _buildBookmarksList(context, bookmarks),
       ),
@@ -114,7 +114,7 @@ class BookmarksPage extends HookWidget {
     );
   }
 
-  Widget _buildItem(BookmarkMixin bookmark, BookmarksProvider bookmarks) {
+  Widget _buildItem(Fragment$Bookmark bookmark, BookmarksProvider bookmarks) {
     // ClipRRect is needed so that the action doesn't animate beyond the bound of the product container.
     return ClipRRect(
       borderRadius: BorderRadius.circular(kDefaultBorderRadius),

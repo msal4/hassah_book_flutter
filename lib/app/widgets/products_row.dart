@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
+import 'package:hassah_book_flutter/graphql/product.fragment.graphql.dart';
 
 const _kDefaultRowHeight = 280.0;
 
 class ProductsRow extends StatelessWidget {
   const ProductsRow({Key? key, required this.title, required this.items})
-      : assert(title != null && items != null),
-        super(key: key);
+      : super(key: key);
 
   final String title;
-  final List<ProductMixin> items;
+  final List<Fragment$Product> items;
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +29,8 @@ class ProductsRow extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
           child: Text(title,
-              style: textTheme.headline6!.copyWith(color: Colors.grey.shade800)),
+              style:
+                  textTheme.headline6!.copyWith(color: Colors.grey.shade800)),
         ),
         const SizedBox(height: kDefaultPadding / 2),
         Container(

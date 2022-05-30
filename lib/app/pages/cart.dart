@@ -10,13 +10,15 @@ import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/orders.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/price.dart';
 import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
+import 'package:hassah_book_flutter/graphql/me.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/place_order.query.graphql.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -296,8 +298,6 @@ class OrderSheet extends HookWidget {
     required this.padding,
   }) : super(key: key);
 
-  final _orderMutation = PlaceOrderMutation();
-  final _meQuery = MeQuery();
   final double initialSheetHeight;
   final double minSheetSize;
   final Box<CartItem> box;
@@ -314,8 +314,11 @@ class OrderSheet extends HookWidget {
         box.values.fold(0.0, (acc, item) => acc += item.price * item.quantity);
 
     final purchases = box.values
-        .map((item) => PurchasePartialInput(
-            product: ObjectIdInput(id: item.id), quantity: item.quantity))
+        .map(
+          (item) => Input$PurchasePartialInput(
+              product: Input$ObjectIdInput(id: item.id),
+              quantity: item.quantity),
+        )
         .toList();
     final auth = context.watch<AuthProvider>();
 
@@ -326,10 +329,10 @@ class OrderSheet extends HookWidget {
       builder: (BuildContext context, ScrollController scrollController) {
         return auth.isAuthenticated
             ? Query(
-                options: QueryOptions(document: _meQuery.document),
+                options: QueryOptions(document: queryDocumentMe),
                 builder: (meResult, {refetch, fetchMore}) {
                   if (!meResult.hasException && meResult.isNotLoading) {
-                    final me = _meQuery.parse(meResult.data!).me;
+                    final me = Query$Me.fromJson(meResult.data!).me;
                     phoneController!.text = me.phone;
                     provinceController!.text = me.province!;
                     addressController!.text = me.address!;
@@ -346,7 +349,8 @@ class OrderSheet extends HookWidget {
                     auth: auth,
                     purchases: purchases,
                   );
-                })
+                },
+              )
             : _buildSheet(
                 context,
                 scrollController: scrollController,
@@ -369,11 +373,11 @@ class OrderSheet extends HookWidget {
       required TextEditingController? provinceController,
       required TextEditingController? addressController,
       required AuthProvider auth,
-      required List<PurchasePartialInput> purchases}) {
+      required List<Input$PurchasePartialInput> purchases}) {
     final theme = Theme.of(context);
 
     return Mutation(
-      options: MutationOptions(document: _orderMutation.document),
+      options: MutationOptions(document: queryDocumentPlaceOrder),
       builder: (runMutation, result) {
         return Container(
           decoration: BoxDecoration(
@@ -469,7 +473,7 @@ class OrderSheet extends HookWidget {
                               );
                               return;
                             }
-                            final input = PlaceOrderInput(
+                            final input = Input$PlaceOrderInput(
                               phone: phoneController!.text,
                               province: provinceController!.text,
                               address: addressController!.text,

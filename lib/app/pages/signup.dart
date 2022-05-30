@@ -9,10 +9,10 @@ import 'package:hassah_book_flutter/app/pages/captcha.dart';
 import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/otp.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 import 'package:provider/provider.dart';
 
 class SignupForm {
@@ -43,9 +43,11 @@ class SignupPage extends HookWidget {
     final TextEditingController? nameController = useTextEditingController();
 
     final TextEditingController? phoneController = useTextEditingController();
-    final TextEditingController? provinceController = useTextEditingController();
+    final TextEditingController? provinceController =
+        useTextEditingController();
     final TextEditingController? addressController = useTextEditingController();
-    final TextEditingController? passwordController = useTextEditingController();
+    final TextEditingController? passwordController =
+        useTextEditingController();
 
     final isLoading = context.watch<AuthProvider>().isLoading;
     final error = useState("");
@@ -249,8 +251,10 @@ class SignupPage extends HookWidget {
       {required ValueNotifier<String> error}) async {
     void onMessage(String token) async {
       try {
-        final input = SendVerificationCodeInput(
-            phoneNumber: arguments.phoneNumber, recaptchaToken: token);
+        final input = Input$SendVerificationCodeInput(
+          phoneNumber: arguments.phoneNumber,
+          recaptchaToken: token,
+        );
         final sessionInfo =
             await context.read<AuthProvider>().sendVerificationCode(input);
         arguments.sessionInfo = sessionInfo;

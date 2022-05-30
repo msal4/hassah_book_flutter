@@ -2,24 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
+import 'package:hassah_book_flutter/graphql/me.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/update_user.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/user.fragment.graphql.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 
 class PersonalInformationPage extends HookWidget {
   static const routeName = "/profile/personal_information";
-
-  final _meQuery = MeQuery();
 
   @override
   Widget build(BuildContext context) {
     return UnfocusOnTap(
       child: Query(
-        options: QueryOptions(document: _meQuery.document),
+        options: QueryOptions(document: queryDocumentMe),
         builder: (result, {fetchMore, refetch}) {
           if (result.isLoading) {
             return const LoadingIndicator();
@@ -31,7 +32,7 @@ class PersonalInformationPage extends HookWidget {
             );
           }
 
-          final data = _meQuery.parse(result.data!);
+          final data = Query$Me.fromJson(result.data!);
 
           return Scaffold(
             appBar: AppBar(title: Text(context.loc!.personalInformation)),
@@ -46,17 +47,18 @@ class PersonalInformationPage extends HookWidget {
 class ProfileForm extends HookWidget {
   ProfileForm({Key? key, required this.profile}) : super(key: key);
 
-  final UserMixin profile;
-
-  final _updateProfileMutation = UpdateProfileMutation();
+  final Fragment$User profile;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
-    final TextEditingController? nameController = useTextEditingController(text: profile.name);
-    final TextEditingController? provinceController = useTextEditingController(text: profile.province!);
-    final TextEditingController? addressController = useTextEditingController(text: profile.address!);
+    final TextEditingController? nameController =
+        useTextEditingController(text: profile.name);
+    final TextEditingController? provinceController =
+        useTextEditingController(text: profile.province!);
+    final TextEditingController? addressController =
+        useTextEditingController(text: profile.address!);
 
     useEffect(() {
       nameController!.text = profile.name;
@@ -66,7 +68,7 @@ class ProfileForm extends HookWidget {
     }, [profile.name, profile.province, profile.address]);
 
     return Mutation(
-      options: MutationOptions(document: _updateProfileMutation.document),
+      options: MutationOptions(document: queryDocumentUpdateProfile),
       builder: (updateProfile, result) {
         return ListView(
           padding: const EdgeInsets.all(kDefaultPadding).copyWith(
@@ -130,7 +132,7 @@ class ProfileForm extends HookWidget {
             const SizedBox(height: kDefaultPadding * 2),
             GestureDetector(
               onTap: () async {
-                final input = UpdateProfileInput(
+                final input = Input$UpdateProfileInput(
                   name: nameController!.text,
                   address: addressController!.text,
                   province: provinceController!.text,
@@ -151,7 +153,7 @@ class ProfileForm extends HookWidget {
                 borderRadius: BorderRadius.circular(9999),
                 padding: const EdgeInsets.all(kDefaultPadding),
                 color: result.isNotLoading
-                    ? theme.accentColor
+                    ? theme.colorScheme.secondary
                     : theme.disabledColor,
                 child: Text(
                   context.loc!.apply.toUpperCase(),

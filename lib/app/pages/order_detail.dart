@@ -6,7 +6,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/order.dart';
@@ -16,6 +15,11 @@ import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
 import 'package:hassah_book_flutter/common/widgets/unfocus_on_tap.dart';
+import 'package:hassah_book_flutter/graphql/cancel_order.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/order.fragment.graphql.dart'
+    show Fragment$Order, Fragment$Purchase;
+import 'package:hassah_book_flutter/graphql/order.query.graphql.dart';
+import 'package:hassah_book_flutter/schema.graphql.dart';
 import 'package:intl/intl.dart';
 
 const _kBottomSheetMinExtent = 20.0;
@@ -31,39 +35,35 @@ final _kDefaultStatusColor = Colors.grey.shade800;
 const _kQueryPollInterval = Duration(seconds: 10);
 
 class OrderStatusInfo {
-  const OrderStatusInfo([this.status = OrderStatus.pending])
+  const OrderStatusInfo([this.status = Enum$OrderStatus.Pending])
       : assert(status != null);
 
-  final OrderStatus status;
+  final Enum$OrderStatus status;
 
   int? get index => _indexes[status];
 
   final _indexes = const {
-    OrderStatus.canceled: -2,
-    OrderStatus.failed: -1,
-    OrderStatus.pending: 0,
-    OrderStatus.processed: 1,
-    OrderStatus.delivering: 2,
-    OrderStatus.delivered: 3,
+    Enum$OrderStatus.Canceled: -2,
+    Enum$OrderStatus.Failed: -1,
+    Enum$OrderStatus.Pending: 0,
+    Enum$OrderStatus.Processed: 1,
+    Enum$OrderStatus.Delivering: 2,
+    Enum$OrderStatus.Delivered: 3,
   };
 }
 
 class OrderDetailPageArguments {
-  const OrderDetailPageArguments({required this.orderId})
-      : assert(orderId != null);
+  const OrderDetailPageArguments({required this.orderId});
 
   final String orderId;
 }
 
 class OrderDetailPage extends StatelessWidget {
-  OrderDetailPage({required this.orderId}) : assert(orderId != null);
+  OrderDetailPage({required this.orderId});
 
   final String orderId;
 
   static const routeName = "/order_detail";
-
-  final _orderQuery = OrderQuery();
-  final _cancelOrderMutation = CancelOrderMutation();
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +78,7 @@ class OrderDetailPage extends StatelessWidget {
     return UnfocusOnTap(
       child: Query(
         options: QueryOptions(
-          document: _orderQuery.document,
+          document: queryDocumentOrder,
           variables: {"id": orderId},
           pollInterval: _kQueryPollInterval,
         ),
@@ -102,7 +102,7 @@ class OrderDetailPage extends StatelessWidget {
             );
           }
 
-          final order = _orderQuery.parse(result.data!).order!;
+          final order = Query$Order.fromJson(result.data!).order!;
 
           return Scaffold(
             bottomSheet: _buildBottomSheet(
@@ -123,7 +123,7 @@ class OrderDetailPage extends StatelessWidget {
   }
 
   ListView _buildPurchasesList(
-      BuildContext context, List<PurchaseMixin> items) {
+      BuildContext context, List<Fragment$Purchase> items) {
     final padding = MediaQuery.of(context).padding;
 
     return ListView.separated(
@@ -140,7 +140,7 @@ class OrderDetailPage extends StatelessWidget {
       BuildContext context,
       double initialSheetHeight,
       double minSheetSize,
-      OrderMixin order,
+      Fragment$Order order,
       Future<QueryResult?> Function()? refetch) {
     final theme = Theme.of(context);
     final padding = MediaQuery.of(context).padding;
@@ -154,8 +154,9 @@ class OrderDetailPage extends StatelessWidget {
       builder: (BuildContext context, ScrollController scrollController) {
         return Mutation(
           options: MutationOptions(
-              document: _cancelOrderMutation.document,
-              variables: {"id": orderId}),
+            document: queryDocumentCancelOrder,
+            variables: Variables$Mutation$CancelOrder(id: orderId).toJson(),
+          ),
           builder: (runMutation, result, {refresh}) {
             return Container(
               decoration: BoxDecoration(
@@ -200,17 +201,17 @@ class OrderDetailPage extends StatelessWidget {
                           ),
                           ..._buildIconLine(
                             "processed",
-                            OrderStatusInfo(OrderStatus.processed),
+                            OrderStatusInfo(Enum$OrderStatus.Processed),
                             currentStatusInfo,
                           ),
                           ..._buildIconLine(
                             "car",
-                            OrderStatusInfo(OrderStatus.delivering),
+                            OrderStatusInfo(Enum$OrderStatus.Delivering),
                             currentStatusInfo,
                           ),
                           ..._buildIconLine(
                             "delivered",
-                            OrderStatusInfo(OrderStatus.delivered),
+                            OrderStatusInfo(Enum$OrderStatus.Delivered),
                             currentStatusInfo,
                           ),
                         ],
@@ -261,7 +262,7 @@ class OrderDetailPage extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: kDefaultPadding * 2),
-                      if (order.status == OrderStatus.pending)
+                      if (order.status == Enum$OrderStatus.Pending)
                         GestureDetector(
                           onTap: result!.isNotLoading
                               ? () =>
@@ -314,12 +315,12 @@ class OrderDetailPage extends StatelessWidget {
 
   Color _getColorByStatus(
       OrderStatusInfo status, OrderStatusInfo currentStatus) {
-    if (currentStatus.status == OrderStatus.failed) {
+    if (currentStatus.status == Enum$OrderStatus.Failed) {
       return kDangerColor;
     }
 
-    if (status.status == OrderStatus.pending &&
-        currentStatus.status == OrderStatus.pending) {
+    if (status.status == Enum$OrderStatus.Pending &&
+        currentStatus.status == Enum$OrderStatus.Pending) {
       return _kPendingStatusColor;
     } else if (status.index! <= currentStatus.index!) {
       return _kGreenStatusColor;
@@ -474,9 +475,9 @@ class OrderDetailPage extends StatelessWidget {
 }
 
 class PurchaseCard extends HookWidget {
-  const PurchaseCard({required this.purchase}) : assert(purchase != null);
+  const PurchaseCard({required this.purchase});
 
-  final PurchaseMixin purchase;
+  final Fragment$Purchase purchase;
 
   @override
   Widget build(BuildContext context) {
@@ -522,7 +523,7 @@ class PurchaseCard extends HookWidget {
   }
 
   Widget _buildProductInfo(
-      BuildContext context, ThemeData theme, PurchaseMixin item) {
+      BuildContext context, ThemeData theme, Fragment$Purchase item) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -539,7 +540,7 @@ class PurchaseCard extends HookWidget {
               "${formatPrice(item.product.price * item.quantity)} ${context.loc!.iqd}",
               style: theme.textTheme.subtitle1!.copyWith(
                 fontWeight: FontWeight.bold,
-                color: theme.accentColor,
+                color: theme.colorScheme.secondary,
               ),
             ),
           ],

@@ -10,7 +10,6 @@ import 'package:hassah_book_flutter/app/pages/login.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/price.dart';
@@ -18,32 +17,31 @@ import 'package:hassah_book_flutter/common/utils/snackbar.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hassah_book_flutter/graphql/product.fragment.graphql.dart'
+    hide queryDocumentProductDetail;
+import 'package:hassah_book_flutter/graphql/product_detail.query.graphql.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 
 class ProductDetailPageArguments {
   const ProductDetailPageArguments(
       {this.product, this.id, required this.heroTagPrefix})
-      : assert(product != null || id != null, "a product or an id is required"),
-        assert(heroTagPrefix != null, "heroTagPrefix is required");
+      : assert(product != null || id != null, "a product or an id is required");
 
   final String? id;
-  final ProductMixin? product;
+  final Fragment$Product? product;
   final String heroTagPrefix;
 }
 
 class ProductDetailPage extends HookWidget {
   ProductDetailPage({this.product, this.id, required this.heroTagPrefix})
-      : assert(product != null || id != null, "a product or an id is required"),
-        assert(heroTagPrefix != null, "heroTagPrefix must not be null");
+      : assert(product != null || id != null, "a product or an id is required");
 
   final String? id;
-  final ProductMixin? product;
+  final Fragment$Product? product;
   final String heroTagPrefix;
 
   static const routeName = "/product_detail";
-
-  final _productQuery = ProductDetailQuery();
 
   @override
   Widget build(BuildContext context) {
@@ -57,8 +55,9 @@ class ProductDetailPage extends HookWidget {
 
     return Query(
       options: QueryOptions(
-        document: _productQuery.document,
-        variables: {"id": id ?? product!.id},
+        document: queryDocumentProductDetail,
+        variables:
+            Variables$Query$ProductDetail(id: id ?? product!.id).toJson(),
         fetchPolicy: FetchPolicy.noCache,
       ),
       builder: (result, {fetchMore, refetch}) {
@@ -73,8 +72,9 @@ class ProductDetailPage extends HookWidget {
             );
         }
 
-        final data =
-            result.data != null ? _productQuery.parse(result.data!) : null;
+        final data = result.data != null
+            ? Query$ProductDetail.fromJson(result.data!)
+            : null;
         final product = (this.product ?? data?.product!)!;
 
         final language = data?.product?.language ?? "...";
@@ -137,7 +137,7 @@ class ProductDetailPage extends HookWidget {
                               .pushNamed(CartPage.routeName),
                           child: RoundContainer(
                             borderRadius: BorderRadius.circular(9999),
-                            color: theme.accentColor,
+                            color: theme.colorScheme.secondary,
                             child: Text(
                               context.loc!.goToCart,
                               style: theme.textTheme.button!
@@ -231,7 +231,7 @@ class ProductDetailPage extends HookWidget {
                             _buildInfoColumn(
                               title: context.loc!.publishedIn,
                               value:
-                                  data?.product?.publishedAt?.year.toString() ??
+                                  data?.product?.publishedAt.year.toString() ??
                                       "...",
                               theme: theme,
                             ),
@@ -281,8 +281,12 @@ class ProductDetailPage extends HookWidget {
     );
   }
 
-  Row _buildProductHeader(BuildContext context, ProductMixin product,
-      ProductDetailMixin? productDetail, VoidCallback? refetch) {
+  Row _buildProductHeader(
+    BuildContext context,
+    Fragment$Product product,
+    Fragment$ProductDetail? productDetail,
+    VoidCallback? refetch,
+  ) {
     final theme = Theme.of(context);
 
     return Row(
@@ -294,7 +298,8 @@ class ProductDetailPage extends HookWidget {
               Text(
                 "${formatPrice(product.price)} ${context.loc!.iqd}",
                 style: theme.textTheme.headline5!.copyWith(
-                    fontWeight: FontWeight.bold, color: theme.accentColor),
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.secondary),
               ),
               Text(
                 product.name,
@@ -314,7 +319,7 @@ class ProductDetailPage extends HookWidget {
                     TextSpan(
                       text: product.author.name,
                       style: theme.textTheme.bodyText1!.copyWith(
-                        color: theme.accentColor,
+                        color: theme.colorScheme.secondary,
                       ),
                     ),
                   ]),
@@ -379,14 +384,18 @@ class ProductDetailPage extends HookWidget {
 class Bookmark extends StatefulWidget {
   const Bookmark({Key? key, required this.product}) : super(key: key);
 
-  final ProductDetailMixin product;
+  final Fragment$ProductDetail product;
 
   @override
   _BookmarkState createState() => _BookmarkState();
 }
 
 class _BookmarkState extends State<Bookmark> {
-  ProductDetailMixin get product => widget.product;
+  _BookmarkState() {
+    _product = widget.product;
+  }
+
+  late Fragment$ProductDetail _product;
 
   @override
   Widget build(BuildContext context) {
@@ -404,13 +413,13 @@ class _BookmarkState extends State<Bookmark> {
               return;
             }
 
-            final isFavorite = product.isFavorite;
+            final isFavorite = _product.isFavorite;
 
             setState(() {
-              product.isFavorite = !isFavorite;
+              _product = _product.copyWith(isFavorite: !isFavorite);
             });
 
-            final productId = (product as dynamic).id;
+            final productId = (_product as dynamic).id;
 
             if (isFavorite) {
               await bookmarks.removeBookmark(productId);
@@ -432,14 +441,14 @@ class _BookmarkState extends State<Bookmark> {
           icon: Container(
             padding: const EdgeInsets.all(kDefaultPadding / 2),
             decoration: BoxDecoration(
-              color: product.isFavorite
-                  ? theme.accentColor
+              color: _product.isFavorite
+                  ? theme.colorScheme.secondary
                   : theme.backgroundColor,
               borderRadius: BorderRadius.circular(9999),
             ),
             child: Icon(
-              product.isFavorite ? Icons.bookmark : Icons.bookmark_border,
-              color: product.isFavorite ? Colors.white : Colors.grey.shade800,
+              _product.isFavorite ? Icons.bookmark : Icons.bookmark_border,
+              color: _product.isFavorite ? Colors.white : Colors.grey.shade800,
               size: 20,
             ),
           ),

@@ -6,11 +6,11 @@ import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
+import 'package:hassah_book_flutter/graphql/product.fragment.graphql.dart';
 
 const _kBookmarkIconWidth = 20.0;
 const _kBookmarkIconHeight = 35.0;
@@ -21,11 +21,9 @@ class ProductDetailsCard extends HookWidget {
     required this.product,
     this.isBookmarked = false,
     this.onBookmarkTap,
-  })  : assert(product != null),
-        assert(isBookmarked != null),
-        super(key: key);
+  }) : super(key: key);
 
-  final ProductMixin product;
+  final Fragment$Product product;
   final bool isBookmarked;
   final FutureOr<void> Function()? onBookmarkTap;
 
@@ -109,7 +107,7 @@ class ProductDetailsCard extends HookWidget {
                 decoration: BoxDecoration(
                   color: isLoading.value
                       ? Colors.grey.shade800
-                      : theme.accentColor,
+                      : theme.colorScheme.secondary,
                   borderRadius: BorderRadius.only(
                       bottomRight: Radius.circular(5),
                       bottomLeft: Radius.circular(5)),

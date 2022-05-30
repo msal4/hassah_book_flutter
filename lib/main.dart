@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -28,7 +27,6 @@ import 'package:hassah_book_flutter/app/pages/profile.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/pages/signup.dart';
 import 'package:hassah_book_flutter/app/pages/transitions/fade.dart';
-import 'package:hassah_book_flutter/common/api/api.graphql.dart';
 import 'package:hassah_book_flutter/common/auth/auth.dart';
 import 'package:hassah_book_flutter/common/utils/color.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
@@ -200,13 +198,14 @@ class _AppState extends State<App> {
   }
 
   final _theme = ThemeData(
-    primarySwatch: createMaterialColor(_kOrangeColor),
-    accentColor: _kGreenColor,
     scaffoldBackgroundColor: Colors.white,
     visualDensity: VisualDensity.adaptivePlatformDensity,
     fontFamily: "Dubai",
     splashColor: Colors.transparent,
     backgroundColor: const Color(0xFFF7F7F7),
+    colorScheme: ColorScheme.fromSwatch(
+      primarySwatch: createMaterialColor(_kOrangeColor),
+    ).copyWith(secondary: _kGreenColor),
   );
 
   ThemeData _buildTheme() {
@@ -243,7 +242,8 @@ class _AppState extends State<App> {
         backgroundColor: _theme.scaffoldBackgroundColor,
         elevation: 0,
         centerTitle: true,
-        textTheme: theme.textTheme,
+        toolbarTextStyle: theme.textTheme.bodyText2,
+        titleTextStyle: theme.textTheme.headline6,
       ),
     );
   }
@@ -346,7 +346,7 @@ class MainPage extends HookWidget {
                   icon: SvgPicture.asset("assets/svg/bag.svg",
                       color: Colors.grey.shade800),
                 ),
-                SizedBox(width: kDefaultPadding),
+                const SizedBox(width: kDefaultPadding),
                 IconButton(
                   padding: const EdgeInsets.only(),
                   onPressed: () {
@@ -443,7 +443,7 @@ class MainPage extends HookWidget {
       tooltip: description,
       icon: SvgPicture.asset(
         "assets/svg/$name${idx == currentIdx.value ? "_filled" : ""}.svg",
-        color: selected ? theme.accentColor : null,
+        color: selected ? theme.colorScheme.secondary : null,
       ),
     );
   }

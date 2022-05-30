@@ -5,7 +5,6 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/pages/product_detail.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/chips.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/utils/image.dart';
@@ -13,12 +12,14 @@ import 'package:hassah_book_flutter/common/utils/rand.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/product_card.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hassah_book_flutter/graphql/author.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/product.fragment.graphql.dart';
 
 const kImageWidth = kDefaultImageWidth * 1.2;
 const kImageHeight = kDefaultImageHeight * 1.2;
 
 class AuthorPageArguments {
-  const AuthorPageArguments({required this.id}) : assert(id != null);
+  const AuthorPageArguments({required this.id});
 
   final String id;
 }
@@ -30,13 +31,11 @@ class AuthorPage extends HookWidget {
 
   final String id;
 
-  final _authorQuery = AuthorQuery();
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final currentProduct = useState<ProductMixin?>(null);
+    final currentProduct = useState<Fragment$Product?>(null);
     final authorOverviewClipped = useState(true);
     final overviewClipped = useState(true);
     return Scaffold(
@@ -50,7 +49,7 @@ class AuthorPage extends HookWidget {
         ],
         body: Query(
           options: QueryOptions(
-              document: _authorQuery.document, variables: {"id": id}),
+              document: queryDocumentAuthor, variables: {"id": id}),
           builder: (result, {fetchMore, refetch}) {
             if (result.data == null) {
               if (result.isLoading) {
@@ -65,7 +64,7 @@ class AuthorPage extends HookWidget {
               }
             }
 
-            final author = _authorQuery.parse(result.data!).author!;
+            final author = Query$Author.fromJson(result.data!).author!;
 
             if (currentProduct.value == null &&
                 author.products.items.length > 0) {
@@ -135,7 +134,7 @@ class AuthorPage extends HookWidget {
                       if (idx + 1 == products.length &&
                           idx + 1 < author.products.total) {
                         final options = FetchMoreOptions(
-                          document: _authorQuery.document,
+                          document: queryDocumentAuthor,
                           updateQuery: (oldData, newData) =>
                               _updatePaginatedResponse(oldData!, newData!),
                           variables: {"skip": products.length},
@@ -174,7 +173,7 @@ class AuthorPage extends HookWidget {
                           style: theme.textTheme.headline6!
                               .copyWith(fontWeight: FontWeight.w500),
                         ),
-                        if (currentProduct.value?.categories?.isNotEmpty ??
+                        if (currentProduct.value?.categories.isNotEmpty ??
                             false)
                           const SizedBox(height: kDefaultPadding),
                         Chips(
@@ -184,8 +183,8 @@ class AuthorPage extends HookWidget {
                             arguments: SearchPageArguments(categoryID: item.id),
                           ),
                           items: currentProduct.value?.categories
-                              ?.map((e) => ChipItem(id: e.id, label: e.name))
-                              ?.toList(),
+                              .map((e) => ChipItem(id: e.id, label: e.name))
+                              .toList(),
                         ),
                         const SizedBox(height: kDefaultPadding),
                         GestureDetector(
@@ -269,11 +268,9 @@ class AuthorPage extends HookWidget {
 }
 
 class ProductImage extends HookWidget {
-  const ProductImage({Key? key, required this.product})
-      : assert(product != null),
-        super(key: key);
+  const ProductImage({Key? key, required this.product}) : super(key: key);
 
-  final ProductMixin product;
+  final Fragment$Product product;
 
   @override
   Widget build(BuildContext context) {

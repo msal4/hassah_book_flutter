@@ -1,4 +1,4 @@
-import 'package:hassah_book_flutter/common/api/api.dart';
+import 'package:hassah_book_flutter/graphql/product.fragment.graphql.dart';
 import 'package:hive/hive.dart';
 
 part 'cart_item.g.dart';
@@ -14,7 +14,7 @@ class CartItem extends HiveObject {
     required this.authorName,
   });
 
-  CartItem.fromProduct(ProductMixin product, [int quantity = 1])
+  CartItem.fromProduct(Fragment$Product product, [int quantity = 1])
       : id = product.id,
         name = product.name,
         image = product.image,

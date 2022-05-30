@@ -4,22 +4,23 @@ import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:hassah_book_flutter/app/pages/search.dart';
 import 'package:hassah_book_flutter/app/widgets/pagination_handler.dart';
 import 'package:hassah_book_flutter/app/widgets/round_container.dart';
-import 'package:hassah_book_flutter/common/api/api.dart';
 import 'package:hassah_book_flutter/common/utils/const.dart';
 import 'package:hassah_book_flutter/common/utils/ext.dart';
 import 'package:hassah_book_flutter/common/widgets/loading_indicator.dart';
 import 'package:hassah_book_flutter/common/widgets/retry.dart';
+import 'package:hassah_book_flutter/graphql/categories.query.graphql.dart';
+import 'package:hassah_book_flutter/graphql/category.fragment.graphql.dart';
 
 class CategoriesPage extends HookWidget {
-  final _categoriesQuery = CategoriesQuery();
-
   @override
   Widget build(BuildContext context) {
     final padding = MediaQuery.of(context).padding;
 
     return Query(
       options: QueryOptions(
-          document: _categoriesQuery.document, variables: {"take": 100}),
+        document: queryDocumentCategories,
+        variables: {"take": 100},
+      ),
       builder: (result, {fetchMore, refetch}) {
         if (result.isLoading && result.data == null ||
             result.data!["categories"] == null) {
@@ -33,14 +34,14 @@ class CategoriesPage extends HookWidget {
           );
         }
 
-        final data = _categoriesQuery.parse(result.data!);
+        final data = Query$Categories.fromJson(result.data!);
 
         return PaginationHandler(
           enabled: !result.isLoading &&
               data.categories.items.length != data.categories.total,
           fetchMore: () {
             final options = FetchMoreOptions(
-              document: _categoriesQuery.document,
+              document: queryDocumentCategories,
               updateQuery: _updatePaginatedQuery,
               variables: {"skip": data.categories.items.length, "take": 100},
             );
@@ -65,20 +66,19 @@ class CategoriesPage extends HookWidget {
   }
 
   Map<String, dynamic> _updatePaginatedQuery(oldData, newData) {
-    final oldDataParsed = _categoriesQuery.parse(oldData);
-    final newDataParsed = _categoriesQuery.parse(newData);
-
     final items = [
-      ...oldDataParsed.categories.items,
-      ...newDataParsed.categories.items
+      ...oldData["categories"]["items"],
+      ...newData["categories"]["items"]
     ];
 
-    newDataParsed.categories.items = items;
-
-    return newDataParsed.toJson();
+    return {
+      ...newData,
+      "categories":
+          Map<String, dynamic>.from({...newData["categories"], "items": items})
+    };
   }
 
-  Widget _buildCategoryItem(BuildContext context, CategoryMixin cat) {
+  Widget _buildCategoryItem(BuildContext context, Fragment$Category cat) {
     final textTheme = Theme.of(context).textTheme;
 
     return GestureDetector(
