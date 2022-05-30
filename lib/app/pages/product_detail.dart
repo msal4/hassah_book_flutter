@@ -212,7 +212,7 @@ class ProductDetailPage extends HookWidget {
                             arguments: SearchPageArguments(categoryID: item.id),
                           ),
                           items: product.categories
-                              .map((e) => ChipItem(id: e.id, label: e.name))
+                              ?.map((e) => ChipItem(id: e.id, label: e.name))
                               .toList(),
                         ),
                       ),
