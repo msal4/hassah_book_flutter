@@ -25,14 +25,17 @@ class LoginPage extends HookWidget {
     final passwordErr = useState("");
 
     final TextEditingController? phoneController = useTextEditingController();
-    final TextEditingController? passwordController = useTextEditingController();
+    final TextEditingController? passwordController =
+        useTextEditingController();
 
     final isLoading = context.watch<AuthProvider>().isLoading;
 
     return UnfocusOnTap(
       child: Scaffold(
         appBar: AppBar(
-            iconTheme: theme.iconTheme.copyWith(color: theme.accentColor)),
+          iconTheme:
+              theme.iconTheme.copyWith(color: theme.colorScheme.secondary),
+        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(kDefaultPadding),
           child: IgnorePointer(
@@ -158,12 +161,14 @@ class LoginPage extends HookWidget {
                     child: Text(
                       context.loc!.forgotPassword,
                       style: theme.textTheme.button!
-                          .copyWith(color: theme.accentColor),
+                          .copyWith(color: theme.colorScheme.secondary),
                     ),
                   ),
                   const SizedBox(height: kDefaultPadding * 2),
                   Material(
-                    color: isLoading ? Colors.grey.shade800 : theme.accentColor,
+                    color: isLoading
+                        ? Colors.grey.shade800
+                        : theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(9999),
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(
@@ -205,7 +210,7 @@ class LoginPage extends HookWidget {
                         Text(
                           context.loc!.signup.toUpperCase(),
                           style: theme.textTheme.button!.copyWith(
-                            color: theme.accentColor,
+                            color: theme.colorScheme.secondary,
                           ),
                         ),
                       ],

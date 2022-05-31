@@ -29,15 +29,39 @@ class ProductCard extends HookWidget {
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () async {
-            final page = await Future.microtask(
-              () => ProductDetailPage(
-                product: product,
-                heroTagPrefix: heroTagPrefix,
+            // final page = await Future.microtask(
+            //   () => ProductDetailPage(
+            //     product: product,
+            //     heroTagPrefix: heroTagPrefix,
+            //   ),
+            // );
+
+            // Navigator.push(context, MaterialPageRoute(builder: (_) => page));
+            Navigator.push(
+              context,
+              PageRouteBuilder(
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                  const begin = Offset(1.0, 0.0);
+                  const end = Offset.zero;
+                  final tween = Tween(begin: begin, end: end).chain(
+                    CurveTween(curve: Curves.ease),
+                  );
+                  final offsetAnimation = animation.drive(tween);
+
+                  return SlideTransition(
+                    position: offsetAnimation,
+                    child: child,
+                  );
+                },
+                transitionDuration: const Duration(milliseconds: 250),
+                pageBuilder: (_, animation, __) => ProductDetailPage(
+                  product: product,
+                  heroTagPrefix: heroTagPrefix,
+                  pageBuilderAnimation: animation,
+                ),
               ),
             );
-
-            Navigator.push(context, MaterialPageRoute(builder: (_) => page));
-
             // Navigator.pushNamed(
             //   context,
             //   ProductDetailPage.routeName,

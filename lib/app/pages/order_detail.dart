@@ -393,7 +393,7 @@ class OrderDetailPage extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Material(
-                        color: theme.accentColor,
+                        color: theme.colorScheme.secondary,
                         borderRadius: BorderRadius.circular(9999),
                         clipBehavior: Clip.antiAlias,
                         child: InkWell(

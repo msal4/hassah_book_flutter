@@ -319,12 +319,13 @@ class LanguageDialog extends StatelessWidget {
                 borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                 child: ListTile(
                   selected: !isArabic,
-                  selectedTileColor: theme.accentColor,
+                  selectedTileColor: theme.colorScheme.secondary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(kDefaultBorderRadius),
                   ),
-                  tileColor:
-                      !isArabic ? theme.accentColor : theme.backgroundColor,
+                  tileColor: !isArabic
+                      ? theme.colorScheme.secondary
+                      : theme.backgroundColor,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: kDefaultPadding,
                     vertical: kDefaultPadding / 2,
@@ -382,7 +383,7 @@ class LogoutDialog extends StatelessWidget {
                 Expanded(
                   flex: 2,
                   child: Material(
-                    color: theme.accentColor,
+                    color: theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(9999),
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(

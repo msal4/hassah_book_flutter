@@ -814,7 +814,7 @@ class RequestBookDialog extends HookWidget {
                   ),
                   const SizedBox(height: kDefaultPadding * 2),
                   Material(
-                    color: theme.accentColor,
+                    color: theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(9999),
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(

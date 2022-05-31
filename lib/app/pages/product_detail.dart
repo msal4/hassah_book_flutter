@@ -34,12 +34,17 @@ class ProductDetailPageArguments {
 }
 
 class ProductDetailPage extends HookWidget {
-  ProductDetailPage({this.product, this.id, required this.heroTagPrefix})
-      : assert(product != null || id != null, "a product or an id is required");
+  ProductDetailPage({
+    this.product,
+    this.id,
+    required this.heroTagPrefix,
+    this.pageBuilderAnimation,
+  }) : assert(product != null || id != null, "a product or an id is required");
 
   final String? id;
   final Fragment$Product? product;
   final String heroTagPrefix;
+  final Animation<double>? pageBuilderAnimation;
 
   static const routeName = "/product_detail";
 
@@ -52,15 +57,31 @@ class ProductDetailPage extends HookWidget {
         Hive.box<CartItem>(kCartBoxName).get(id ?? product!.id)?.quantity ?? 1;
     final overviewClipped = useState(true);
     final quantity = useState(defaultQuantity);
+    // final isTransitioning = useState(true);
+    final _refetch = useRef<Future<QueryResult<Object?>?> Function()?>(null);
 
-    return Query(
-      options: QueryOptions(
-        document: queryDocumentProductDetail,
-        variables:
-            Variables$Query$ProductDetail(id: id ?? product!.id).toJson(),
-        fetchPolicy: FetchPolicy.noCache,
+    useEffect(() {
+      void listener() {
+        if (pageBuilderAnimation?.isCompleted ?? false) {
+          // isTransitioning.value = false;
+          try {
+            _refetch.value?.call();
+          } catch (e) {}
+        }
+      }
+
+      pageBuilderAnimation?.addListener(listener);
+
+      return () => pageBuilderAnimation?.removeListener(listener);
+    }, []);
+
+    return Query$ProductDetail$Widget(
+      options: Options$Query$ProductDetail(
+        variables: Variables$Query$ProductDetail(id: id ?? product!.id),
+        // fetchPolicy: FetchPolicy.noCache,
       ),
       builder: (result, {fetchMore, refetch}) {
+        _refetch.value = refetch;
         if (this.product == null) {
           if (result.isLoading) return Scaffold(body: const LoadingIndicator());
           if (result.hasException)
@@ -108,7 +129,7 @@ class ProductDetailPage extends HookWidget {
                         const SizedBox(width: kDefaultPadding),
                         Text(quantity.value.toString(),
                             style: theme.textTheme.subtitle1!.copyWith(
-                                color: theme.accentColor,
+                                color: theme.colorScheme.secondary,
                                 fontWeight: FontWeight.bold)),
                         const SizedBox(width: kDefaultPadding),
                         GestureDetector(

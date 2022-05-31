@@ -55,7 +55,9 @@ class SignupPage extends HookWidget {
     return UnfocusOnTap(
       child: Scaffold(
         appBar: AppBar(
-            iconTheme: theme.iconTheme.copyWith(color: theme.accentColor)),
+          iconTheme:
+              theme.iconTheme.copyWith(color: theme.colorScheme.secondary),
+        ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(kDefaultPadding),
           child: IgnorePointer(
@@ -188,7 +190,9 @@ class SignupPage extends HookWidget {
                   ),
                   const SizedBox(height: kDefaultPadding),
                   Material(
-                    color: isLoading ? Colors.grey.shade800 : theme.accentColor,
+                    color: isLoading
+                        ? Colors.grey.shade800
+                        : theme.colorScheme.secondary,
                     borderRadius: BorderRadius.circular(9999),
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(
@@ -233,7 +237,7 @@ class SignupPage extends HookWidget {
                         Text(
                           context.loc!.login,
                           style: theme.textTheme.button!
-                              .copyWith(color: theme.accentColor),
+                              .copyWith(color: theme.colorScheme.secondary),
                         ),
                       ],
                     ),

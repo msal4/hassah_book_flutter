@@ -17,7 +17,7 @@ void showSnackBar(
       margin: margin?.copyWith(left: kDefaultPadding, right: kDefaultPadding),
       behavior: SnackBarBehavior.floating,
       backgroundColor: type == SnackBarType.success
-          ? theme.accentColor
+          ? theme.colorScheme.secondary
           : type == SnackBarType.error
               ? kDangerColor
               : null,

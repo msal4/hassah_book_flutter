@@ -232,7 +232,7 @@ class _CartPageState extends State<CartPage> {
                     Expanded(
                       flex: 2,
                       child: Material(
-                        color: theme.accentColor,
+                        color: theme.colorScheme.secondary,
                         borderRadius: BorderRadius.circular(9999),
                         clipBehavior: Clip.antiAlias,
                         child: InkWell(
@@ -501,7 +501,7 @@ class OrderSheet extends HookWidget {
                       padding: const EdgeInsets.all(kDefaultPadding),
                       color: box.isEmpty || result!.isLoading
                           ? Colors.grey.shade800
-                          : theme.accentColor,
+                          : theme.colorScheme.secondary,
                       borderRadius: BorderRadius.circular(9999),
                       child: Text(
                         context.loc!.orderNow.toUpperCase(),
