@@ -203,6 +203,7 @@ class _AppState extends State<App> {
     fontFamily: "Dubai",
     splashColor: Colors.transparent,
     backgroundColor: const Color(0xFFF7F7F7),
+    primaryColor: _kOrangeColor,
     colorScheme: ColorScheme.fromSwatch(
       primarySwatch: createMaterialColor(_kOrangeColor),
     ).copyWith(secondary: _kGreenColor),

@@ -35,9 +35,10 @@ class AuthorPage extends HookWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final currentProduct = useState<Fragment$Product?>(null);
+    final currentProduct = useRef<Fragment$Product?>(null);
     final authorOverviewClipped = useState(true);
     final overviewClipped = useState(true);
+
     return Scaffold(
       body: NestedScrollView(
         headerSliverBuilder: (context, innerBoxIsScrolled) => [

@@ -33,7 +33,7 @@ class BookmarksProvider extends ChangeNotifier {
     notifyListeners();
 
     _options = Options$Query$Bookmarks(
-      fetchPolicy: FetchPolicy.cacheAndNetwork,
+      fetchPolicy: FetchPolicy.noCache,
     );
 
     _result = await client.query$Bookmarks(_options);
@@ -59,8 +59,11 @@ class BookmarksProvider extends ChangeNotifier {
       variables: Variables$Query$Bookmarks(skip: bookmarks!.items.length),
     );
 
-    final result = await client.fetchMore(options,
-        originalOptions: _options, previousResult: _result!);
+    final result = await client.fetchMore(
+      options,
+      originalOptions: _options,
+      previousResult: _result!,
+    );
     if (result.hasException) {
       return;
     }
@@ -73,6 +76,7 @@ class BookmarksProvider extends ChangeNotifier {
     await client.mutate$AddBookmark(
       Options$Mutation$AddBookmark(
         variables: Variables$Mutation$AddBookmark(productId: productId),
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     await getBookmarks();
@@ -82,6 +86,7 @@ class BookmarksProvider extends ChangeNotifier {
     await client.mutate$RemoveBookmark(
       Options$Mutation$RemoveBookmark(
         variables: Variables$Mutation$RemoveBookmark(productId: productId),
+        fetchPolicy: FetchPolicy.noCache,
       ),
     );
     await getBookmarks();

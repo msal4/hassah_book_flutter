@@ -54,6 +54,7 @@ class ProductCard extends HookWidget {
                     child: child,
                   );
                 },
+                reverseTransitionDuration: const Duration(milliseconds: 150),
                 transitionDuration: const Duration(milliseconds: 250),
                 pageBuilder: (_, animation, __) => ProductDetailPage(
                   product: product,
